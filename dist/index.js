@@ -27,4 +27,5 @@ __exportStar(require("./log/log-core.module"), exports);
 __exportStar(require("./log/log-core.model"), exports);
 __exportStar(require("./log/log-core.service"), exports);
 __exportStar(require("./log-request/log-request-core.module"), exports);
+__exportStar(require("./log-console/log-console-core.module"), exports);
 //# sourceMappingURL=index.js.map

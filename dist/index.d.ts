@@ -11,3 +11,4 @@ export * from './log/log-core.module';
 export * from './log/log-core.model';
 export * from './log/log-core.service';
 export * from './log-request/log-request-core.module';
+export * from './log-console/log-console-core.module';

@@ -177,12 +177,34 @@ await this.logService.salvarLog({
 })
 ```
 
+### Console/logs das requests
+
+Para gerar consoles automático com todas as informações recebidas. 
+
+```javascript
+LogConsoleCoreModule()
+```
+
+Utiliza o nível `Verbose` para as printar as informações de todas as requests e responses de sucesso. E utiliza o nível `Error` para os responses que resultar em algum erro.
+
+
+#### Configuração dos níveis de logs ativados
+
+Para desabilitar algum nível de log, basta rodas o seguinte comando ao inicializar a aplicação:
+
+```javascript
+const listLogger: LogLevel[] = ['log', 'debug', 'error', 'warn', 'verbose', 'fatal'];
+Logger.overrideLogger(listLogger);
+```
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 # Módulos em desenvolvimento
-
-## LogConsoleCoreModule
-- Cria console log de todas as request recebidas no terminal
-
 
 ## HttpCoreModele
 - Implementa um Axios passando sempre um token válido na request

@@ -19,3 +19,6 @@ export * from './log/log-core.service';
 
 // Salvar log das requisições
 export * from './log-request/log-request-core.module';
+
+// Printar log das requisições
+export * from './log-console/log-console-core.module';

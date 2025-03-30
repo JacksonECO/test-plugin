@@ -20,7 +20,7 @@ const authorization_decorator_1 = require("../decorator/authorization.decorator"
 const roles_enum_1 = require("../decorator/roles.enum");
 const roles_decorator_1 = require("../decorator/roles.decorator");
 const constants_1 = require("../../constants");
-const plugin_core_module_1 = require("../../plugin-core.module");
+const options_dto_1 = require("../../options.dto");
 let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
     authorizationOption;
     reflector;
@@ -91,7 +91,7 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         return true;
     }
     hasRole(user, role) {
-        if (!this.authorizationOption.clientId) {
+        if (!this.authorizationOption.client.id) {
             return false;
         }
         if (this.hasRealmRole(user, 'ROLE_ADMIN')) {
@@ -201,7 +201,7 @@ exports.RoleCustomGuard = RoleCustomGuard;
 exports.RoleCustomGuard = RoleCustomGuard = RoleCustomGuard_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(constants_1.CORE_AUTHORIZATION_OPTION)),
-    __metadata("design:paramtypes", [plugin_core_module_1.AuthorizationOption,
+    __metadata("design:paramtypes", [options_dto_1.AuthorizationOption,
         core_1.Reflector])
 ], RoleCustomGuard);
 //# sourceMappingURL=role-custom.guard.js.map

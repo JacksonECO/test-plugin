@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthorizationOption } from 'src/plugin-core.module';
-import { AuthServerService } from '../auth-server/auth-server.interface';
+import { AuthServerService } from '../../auth-server/auth-server.interface';
+import { AuthorizationOption } from 'src/options.dto';
 export declare class AuthCustomGuard implements CanActivate {
     protected authorizationOption: AuthorizationOption;
     protected readonly reflector: Reflector;

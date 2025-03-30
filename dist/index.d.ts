@@ -1,4 +1,5 @@
 export * from './plugin-core.module';
+export * from './options.dto';
 export * from './authorization/authorization-core.module';
 export * from './authorization/decorator/authorization.decorator';
 export * from './authorization/decorator/roles.decorator';
@@ -12,3 +13,5 @@ export * from './log/log-core.model';
 export * from './log/log-core.service';
 export * from './log-request/log-request-core.module';
 export * from './log-console/log-console-core.module';
+export * from './http/http-core.module';
+export * from './http/http-core.service';

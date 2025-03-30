@@ -7,21 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var PluginCoreModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PluginCoreModule = exports.PluginCoreOption = exports.AuthorizationOption = void 0;
+exports.PluginCoreModule = void 0;
 const common_1 = require("@nestjs/common");
 const constants_1 = require("./constants");
-class AuthorizationOption {
-    authServerUrl;
-    realm;
-    clientId;
-    clientSecret;
-    isCoreServiceAuth = false;
-}
-exports.AuthorizationOption = AuthorizationOption;
-class PluginCoreOption {
-    authorization;
-}
-exports.PluginCoreOption = PluginCoreOption;
 let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
     static forRoot(option) {
         return {

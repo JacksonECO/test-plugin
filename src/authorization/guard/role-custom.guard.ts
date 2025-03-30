@@ -11,7 +11,7 @@ import { META_UNPROTECTED, META_UNPROTECTED_AUTH } from '../decorator/authorizat
 import { RoleMatchingMode, RoleMerge } from '../decorator/roles.enum';
 import { META_ROLES_CUSTOM, RoleCustomDecoratorOptionsInterface } from '../decorator/roles.decorator';
 import { CORE_AUTHORIZATION_OPTION } from '../../constants';
-import { AuthorizationOption } from '../../plugin-core.module';
+import { AuthorizationOption } from 'src/options.dto';
 
 
 @Injectable()
@@ -134,7 +134,7 @@ export class RoleCustomGuard implements CanActivate {
    * @returns Retorna `true` se o usuário possuir a role, caso contrário `false`.
    */
   private hasRole(user: any, role: string) {
-    if (!this.authorizationOption.clientId) {
+    if (!this.authorizationOption.client.id) {
       return false;
     }
 

@@ -1,49 +1,6 @@
 import { DynamicModule, Global } from "@nestjs/common";
 import { CORE_AUTHORIZATION_OPTION, CORE_PLUGIN_OPTION } from "./constants";
-
-/**
- * Representa as opções de autorização para o módulo do plugin core.
- */
-export class AuthorizationOption {
-
-  /** 
-   * URL base do servidor de autenticação ou do core banking.
-   */
-  authServerUrl: string;
-
-  /** 
-   * Reino do servidor de autenticação.
-   */
-  realm: string;
-
-  /** 
-   * Identificador do cliente do micro serviço.
-   */
-  clientId: string;
-
-  /** 
-   * Secret do cliente do micro serviço.
-   */
-  clientSecret: string;
-
-  /** 
-   * Indica se o servidor a ser usado para autenticação é o core banking.
-   * 
-   * @default `false` utiliza diretamente o servidor de autenticação.
-   */
-  isCoreServiceAuth?: boolean = false;
-}
-
-/**
- * Representa as opções gerais para o módulo do plugin core.
- */
-export class PluginCoreOption {
-
-  /**
-   * Configurações de autorização.
-   */
-  authorization: AuthorizationOption;
-}
+import { PluginCoreOption } from "./options.dto";
 
 /**
  * Módulo principal do plugin core.

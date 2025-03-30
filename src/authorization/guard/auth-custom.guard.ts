@@ -7,10 +7,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthorizationOption } from 'src/plugin-core.module';
 import { META_UNPROTECTED_AUTH, META_UNPROTECTED } from '../decorator/authorization.decorator';
-import { AuthServerService } from '../auth-server/auth-server.interface';
+import { AuthServerService } from '../../auth-server/auth-server.interface';
 import { CORE_AUTHORIZATION_OPTION } from 'src/constants';
+import { AuthorizationOption } from 'src/options.dto';
 
 @Injectable()
 export class AuthCustomGuard implements CanActivate {

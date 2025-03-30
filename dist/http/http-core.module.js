@@ -6,28 +6,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorizationCoreModule = void 0;
+exports.HttpCoreModule = void 0;
 const common_1 = require("@nestjs/common");
-const core_1 = require("@nestjs/core");
-const auth_custom_guard_1 = require("./guard/auth-custom.guard");
-const role_custom_guard_1 = require("./guard/role-custom.guard");
 const auth_server_module_1 = require("../auth-server/auth-server.module");
-let AuthorizationCoreModule = class AuthorizationCoreModule {
+const request_info_core_module_1 = require("../request-info/request-info-core.module");
+const http_core_service_1 = require("./http-core.service");
+let HttpCoreModule = class HttpCoreModule {
 };
-exports.AuthorizationCoreModule = AuthorizationCoreModule;
-exports.AuthorizationCoreModule = AuthorizationCoreModule = __decorate([
+exports.HttpCoreModule = HttpCoreModule;
+exports.HttpCoreModule = HttpCoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_server_module_1.AuthServerCoreModule],
-        providers: [
-            {
-                provide: core_1.APP_GUARD,
-                useClass: auth_custom_guard_1.AuthCustomGuard,
-            },
-            {
-                provide: core_1.APP_GUARD,
-                useClass: role_custom_guard_1.RoleCustomGuard,
-            },
+        imports: [
+            auth_server_module_1.AuthServerCoreModule,
+            request_info_core_module_1.RequestInfoCoreModule,
         ],
+        providers: [
+            http_core_service_1.HttpCoreService,
+            {
+                provide: 'default-undefined',
+                useValue: undefined
+            }
+        ],
+        exports: [
+            http_core_service_1.HttpCoreService,
+        ]
     })
-], AuthorizationCoreModule);
-//# sourceMappingURL=authorization-core.module.js.map
+], HttpCoreModule);
+//# sourceMappingURL=http-core.module.js.map

@@ -1,4 +1,5 @@
 export * from './plugin-core.module';
+export * from './options.dto';
 
 // Autenticação e autorização das rotas
 export * from './authorization/authorization-core.module';
@@ -22,3 +23,7 @@ export * from './log-request/log-request-core.module';
 
 // Printar log das requisições
 export * from './log-console/log-console-core.module';
+
+// Requisição HTTP com gestão de tokens
+export * from './http/http-core.module';
+export * from './http/http-core.service';

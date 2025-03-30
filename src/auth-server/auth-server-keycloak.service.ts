@@ -56,8 +56,8 @@ export class AuthServerKeycloakService extends AuthServerService {
         },
       );
 
-      const access_token = resp.data.data.tokenType + ' ' + resp.data.data.accessToken;
-      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, (resp.data.data.expiresIn * 1000) - 60000);
+      const access_token = resp.data.token_type + ' ' + resp.data.access_token;
+      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, (resp.data.expires_in * 1000) - 60000);
       return access_token;
     } catch (error) {
       this.logger.error(

@@ -57,15 +57,6 @@ describe("AuthServerBackService", () => {
       expect(accessData).toEqual({});
     });
 
-    it("Deve retornar false e um objeto vazio quando o token for inválido com ative igual a false2", async () => {
-      mockAxios.onPost(options.authServerUrl + "/system-user/introspect").reply(() => { throw 'error' });
-
-      const [isActive, accessData] = await service.validateToken("invalid-jwt");
-
-      expect(isActive).toBe(false);
-      expect(accessData).toEqual({});
-    });
-
     it.each([
       { typeErro: () => mockAxios.onPost(options.authServerUrl + "/system-user/introspect").passThrough(), message: "Pass Through" },
       { typeErro: () => mockAxios.onPost(options.authServerUrl + "/system-user/introspect").abortRequest(), message: "Abort Request" },

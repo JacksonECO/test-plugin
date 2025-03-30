@@ -88,6 +88,9 @@
       "lcov",
       "text",
       "clover"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/../test/jest.setup.ts"
     ]
   }
 }

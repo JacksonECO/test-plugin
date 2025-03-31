@@ -84,10 +84,7 @@
       "^src/(.*)$": "<rootDir>/$1"
     },
     "coverageReporters": [
-      "json",
-      "lcov",
-      "text",
-      "clover"
+      "lcov"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/../test/jest.setup.ts"

@@ -44,12 +44,7 @@ export class AuthCustomGuard implements CanActivate {
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
 
-    // Se não for possível obter o request
-    if (!request) {
-      return true;
-    }
-
-    const jwt = this.extractJwt(request.headers);
+    const jwt = this.extractJwt(request?.headers);
     const isJwtEmpty = jwt === null || jwt === undefined;
 
     // Se for uma rota pública com autenticação opcional e não houver JWT
@@ -73,6 +68,13 @@ export class AuthCustomGuard implements CanActivate {
       return true;
     }
 
+    if (isUnprotectedAuth) {
+      this.logger.verbose(
+        'JWT inválido, mas como é opcional, foi permitido.',
+      );
+      return true;
+    }
+
     throw new UnauthorizedException();
   }
 
@@ -83,7 +85,7 @@ export class AuthCustomGuard implements CanActivate {
    * @returns O token JWT ou `null` se não encontrado.
    */
   protected extractJwt(headers: { [key: string]: string }) {
-    if (headers && !headers.authorization) {
+    if (!headers?.authorization) {
       return null;
     }
 

@@ -27,7 +27,7 @@ describe('AuthCustomGuard', () => {
   } as unknown as ExecutionContext;
 
   beforeEach(async () => {
-    var module: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       imports: [PluginCoreModule.forRoot(mockPluginCoreOption()), AuthServerCoreModule],
       providers: [AuthCustomGuard, { provide: Reflector, useValue: mockReflector }],
     }).compile();

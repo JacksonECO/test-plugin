@@ -20,9 +20,9 @@ describe('AuthServerBackService', () => {
     mockAxios = new MockAdapter(axios);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     mockAxios.restore();
-    cache.clear();
+    await cache.clear();
   });
 
   describe('validateToken', () => {
@@ -86,7 +86,7 @@ describe('AuthServerBackService', () => {
       {
         typeErro: () =>
           mockAxios.onPost(options.authServerUrl + '/system-user/introspect').reply(() => {
-            throw 'error';
+            throw new InternalServerErrorException();
           }),
         message: 'Error',
       },
@@ -142,7 +142,7 @@ describe('AuthServerBackService', () => {
       {
         typeErro: () =>
           mockAxios.onPost(options.authServerUrl + '/system-user/auth').reply(() => {
-            throw 'error';
+            throw new InternalServerErrorException();
           }),
         message: 'Error',
       },

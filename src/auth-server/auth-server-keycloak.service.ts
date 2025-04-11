@@ -37,7 +37,7 @@ export class AuthServerKeycloakService extends AuthServerService {
 
   async getTokenForce(): Promise<string> {
     try {
-      let instance = axios.create({
+      const instance = axios.create({
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 

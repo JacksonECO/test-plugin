@@ -1,4 +1,4 @@
-import { Cache } from "cache-manager";
+import { Cache } from 'cache-manager';
 
 export class CacheManagerMock {
   private stores: Record<string, any> = {};

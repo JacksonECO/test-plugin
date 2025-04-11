@@ -24,5 +24,5 @@ export enum RoleMerge {
   /**
    * Merges all roles from both controller and handlers.
    */
-  ALL = 1
+  ALL = 1,
 }

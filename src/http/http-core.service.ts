@@ -5,7 +5,6 @@ import { CORE_AUTHORIZATION_OPTION } from 'src/constants';
 import { AuthorizationOption } from 'src/options.dto';
 import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
 
-
 @Injectable()
 export class HttpCoreService {
   private axios: AxiosInstance;
@@ -63,7 +62,7 @@ export class HttpCoreService {
 
   private createInstance(isTokenRequest: boolean): AxiosInstance {
     const axios = axiosGlobal.create({
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     // Interceptor de Requisição
@@ -78,13 +77,13 @@ export class HttpCoreService {
               config.headers.Authorization = await this.authServer.getToken();
             }
           }
-        } catch (_) { }
+        } catch (_) {}
 
         return config;
       },
       (error: any) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Interceptor de Resposta
@@ -93,7 +92,6 @@ export class HttpCoreService {
       async (error: any) => {
         const originalRequest = error.config;
         try {
-
           if (isTokenRequest || !(error?.response?.status === 401 || error?.response?.status === 403)) {
             return Promise.reject(error);
           }
@@ -138,10 +136,9 @@ export class HttpCoreService {
           // });
           return Promise.reject(error);
         }
-      }
+      },
     );
 
     return axios;
   }
 }
-

@@ -8,7 +8,8 @@ import { mockPluginCoreOption } from 'test/mocks/options.dto.mock';
 import { AuthServerCoreModule } from 'src/auth-server/auth-server.module';
 
 describe('AuthCustomGuard', () => {
-  const tokenValid = 'Bearer header.eyJpc3MiOiJ0ZXN0ZSIsImlhdCI6MTc0MzM3NzE1NSwiZXhwIjoyNTMyMjk1NTU1LCJhdWQiOiJ3d3cudGVzdC5wbHVnaW4uY29tIiwic3ViIjoiZW1haWxAZXhhbXBsZS5jb20iLCJmdWxsTmFtZSI6IkpvaG5ueSBSb2NrZXQiLCJlbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJyb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.signature';
+  const tokenValid =
+    'Bearer header.eyJpc3MiOiJ0ZXN0ZSIsImlhdCI6MTc0MzM3NzE1NSwiZXhwIjoyNTMyMjk1NTU1LCJhdWQiOiJ3d3cudGVzdC5wbHVnaW4uY29tIiwic3ViIjoiZW1haWxAZXhhbXBsZS5jb20iLCJmdWxsTmFtZSI6IkpvaG5ueSBSb2NrZXQiLCJlbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJyb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.signature';
   let guard: AuthCustomGuard;
   let reflector: Reflector;
   let authServerService: AuthServerService;
@@ -27,14 +28,8 @@ describe('AuthCustomGuard', () => {
 
   beforeEach(async () => {
     var module: TestingModule = await Test.createTestingModule({
-      imports: [
-        PluginCoreModule.forRoot(mockPluginCoreOption()),
-        AuthServerCoreModule,
-      ],
-      providers: [
-        AuthCustomGuard,
-        { provide: Reflector, useValue: mockReflector },
-      ],
+      imports: [PluginCoreModule.forRoot(mockPluginCoreOption()), AuthServerCoreModule],
+      providers: [AuthCustomGuard, { provide: Reflector, useValue: mockReflector }],
     }).compile();
 
     guard = module.get<AuthCustomGuard>(AuthCustomGuard);
@@ -47,7 +42,9 @@ describe('AuthCustomGuard', () => {
       }
       return Promise.resolve([true, { email: 'user@example.com' }]);
     });
-    jest.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: { authorization: tokenValid } });
+    jest
+      .spyOn(mockExecutionContext.switchToHttp(), 'getRequest')
+      .mockReturnValue({ headers: { authorization: tokenValid } });
   });
 
   afterEach(() => {
@@ -76,7 +73,6 @@ describe('AuthCustomGuard', () => {
 
   it('deve permitir acesso a rotas com user opcional, sendo informado deve ser extraído suas informações', async () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
-
 
     const result = await guard.canActivate(mockExecutionContext);
     expect(result).toBe(true);
@@ -137,7 +133,6 @@ describe('AuthCustomGuard', () => {
     const result = guard['extractJwt']({ authorization: 'invalid' });
     expect(result).toBeNull();
   });
-
 
   it('deve fazer o parse do token corretamente em parseToken', () => {
     const token = 'header.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20ifQ.signature';

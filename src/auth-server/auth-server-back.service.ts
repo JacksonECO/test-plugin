@@ -1,6 +1,6 @@
-import axios from "axios";
-import { AuthServerService } from "./auth-server.interface";
-import { InternalServerErrorException, Logger } from "@nestjs/common";
+import axios from 'axios';
+import { AuthServerService } from './auth-server.interface';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 
 export class AuthServerBackService extends AuthServerService {
   private logger = new Logger(AuthServerBackService.name + 'Plugin');
@@ -8,14 +8,12 @@ export class AuthServerBackService extends AuthServerService {
   async validateToken(jwt: string): Promise<[boolean, any]> {
     try {
       const instance = axios.create();
-      const url = this.authorizationOption.authServerUrl + '/system-user/introspect'
-      const resp = await instance.post<any>(
-        url,
-        {
-          token: jwt,
-          client_id: this.authorizationOption.client.id,
-          client_secret: this.authorizationOption.client.secret,
-        });
+      const url = this.authorizationOption.authServerUrl + '/system-user/introspect';
+      const resp = await instance.post<any>(url, {
+        token: jwt,
+        client_id: this.authorizationOption.client.id,
+        client_secret: this.authorizationOption.client.secret,
+      });
 
       const body = resp.data;
       return [
@@ -26,9 +24,7 @@ export class AuthServerBackService extends AuthServerService {
         },
       ];
     } catch (error) {
-      this.logger.error(
-        error?.response?.body ?? error?.message ?? 'Error validating token',
-      );
+      this.logger.error(error?.response?.body ?? error?.message ?? 'Error validating token');
       return [false, {}];
     }
   }
@@ -42,12 +38,10 @@ export class AuthServerBackService extends AuthServerService {
       const resp = await instance.post<any>(url, login);
 
       const access_token = resp.data.data.tokenType + ' ' + resp.data.data.accessToken;
-      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, (resp.data.data.expiresIn * 1000) - 60000);
+      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, resp.data.data.expiresIn * 1000 - 60000);
       return access_token;
     } catch (error) {
-      this.logger.error(
-        error?.response?.body ?? error?.message ?? 'Falha ao realizar login internamente',
-      );
+      this.logger.error(error?.response?.body ?? error?.message ?? 'Falha ao realizar login internamente');
 
       throw new InternalServerErrorException('Tente novamente mais tarde');
     }

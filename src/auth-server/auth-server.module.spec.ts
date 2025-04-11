@@ -9,10 +9,7 @@ import { AuthServerBackService } from './auth-server-back.service';
 describe('AuthServerCoreModule', () => {
   it('deve fornecer o AuthServerService', async () => {
     const customModule = await Test.createTestingModule({
-      imports: [
-        PluginCoreModule.forRoot(mockPluginCoreOption()),
-        AuthServerCoreModule,
-      ],
+      imports: [PluginCoreModule.forRoot(mockPluginCoreOption()), AuthServerCoreModule],
     }).compile();
 
     const service = customModule.get<AuthServerService>(AuthServerService);
@@ -53,4 +50,3 @@ describe('AuthServerCoreModule', () => {
     expect(service).toBeInstanceOf(AuthServerKeycloakService);
   });
 });
-

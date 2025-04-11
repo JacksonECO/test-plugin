@@ -1,15 +1,14 @@
-import axios from "axios";
-import { AuthServerService } from "./auth-server.interface";
-import { InternalServerErrorException, Logger } from "@nestjs/common";
+import axios from 'axios';
+import { AuthServerService } from './auth-server.interface';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 
 export class AuthServerKeycloakService extends AuthServerService {
   private logger = new Logger(AuthServerKeycloakService.name + 'Plugin');
 
-
   async validateToken(jwt: string): Promise<[boolean, any]> {
     try {
       const instance = axios.create({
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 
       const resp = await instance.post<any>(
@@ -18,7 +17,8 @@ export class AuthServerKeycloakService extends AuthServerService {
           token: jwt,
           client_id: this.authorizationOption.client.id,
           client_secret: this.authorizationOption.client.secret,
-        });
+        },
+      );
 
       const body = resp.data;
 
@@ -30,9 +30,7 @@ export class AuthServerKeycloakService extends AuthServerService {
         },
       ];
     } catch (error) {
-      this.logger.error(
-        error?.response?.body ?? error?.message ?? 'Error validating token',
-      );
+      this.logger.error(error?.response?.body ?? error?.message ?? 'Error validating token');
       return [false, {}];
     }
   }
@@ -40,29 +38,24 @@ export class AuthServerKeycloakService extends AuthServerService {
   async getTokenForce(): Promise<string> {
     try {
       let instance = axios.create({
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 
       const url = this.authorizationOption.authServerUrl;
       const realm = this.authorizationOption.client.realm;
-      const resp = await instance.post<any>(
-        `${url}/realms/${realm}/protocol/openid-connect/token`,
-        {
-          grant_type: 'password',
-          client_id: this.authorizationOption.client.id,
-          client_secret: this.authorizationOption.client.secret,
-          username: this.authorizationOption.user.username,
-          password: this.authorizationOption.user.password,
-        },
-      );
+      const resp = await instance.post<any>(`${url}/realms/${realm}/protocol/openid-connect/token`, {
+        grant_type: 'password',
+        client_id: this.authorizationOption.client.id,
+        client_secret: this.authorizationOption.client.secret,
+        username: this.authorizationOption.user.username,
+        password: this.authorizationOption.user.password,
+      });
 
       const access_token = resp.data.token_type + ' ' + resp.data.access_token;
-      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, (resp.data.expires_in * 1000) - 60000);
+      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, resp.data.expires_in * 1000 - 60000);
       return access_token;
     } catch (error) {
-      this.logger.error(
-        error?.response?.body ?? error?.message ?? 'Falha ao realizar login internamente',
-      );
+      this.logger.error(error?.response?.body ?? error?.message ?? 'Falha ao realizar login internamente');
 
       throw new InternalServerErrorException('Tente novamente mais tarde');
     }

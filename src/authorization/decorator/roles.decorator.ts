@@ -35,10 +35,9 @@ export interface RoleCustomDecoratorOptionsInterface {
 
 /**
  * Decorador para definir roles customizadas em rotas.
- * 
+ *
  * @param roleMetaData Metadados das roles customizadas.
  * @returns Decorador de metadado.
  */
-export const RolesCustom = (
-  roleMetaData: RoleCustomDecoratorOptionsInterface,
-) => SetMetadata(META_ROLES_CUSTOM, roleMetaData);
+export const RolesCustom = (roleMetaData: RoleCustomDecoratorOptionsInterface) =>
+  SetMetadata(META_ROLES_CUSTOM, roleMetaData);

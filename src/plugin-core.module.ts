@@ -1,6 +1,6 @@
-import { DynamicModule, Global } from "@nestjs/common";
-import { CORE_AUTHORIZATION_OPTION, CORE_PLUGIN_OPTION } from "./constants";
-import { PluginCoreOption } from "./options.dto";
+import { DynamicModule, Global } from '@nestjs/common';
+import { CORE_AUTHORIZATION_OPTION, CORE_PLUGIN_OPTION } from './constants';
+import { PluginCoreOption } from './options.dto';
 
 /**
  * Módulo principal do plugin core.
@@ -9,7 +9,7 @@ import { PluginCoreOption } from "./options.dto";
 export class PluginCoreModule {
   /**
    * Configura o módulo com as opções fornecidas.
-   * 
+   *
    * @param option Opções para configurar o módulo.
    * @returns Um módulo dinâmico configurado.
    */
@@ -27,11 +27,7 @@ export class PluginCoreModule {
           useValue: option.authorization,
         },
       ],
-      exports: [
-        CORE_PLUGIN_OPTION,
-        CORE_AUTHORIZATION_OPTION,
-      ],
-    }
+      exports: [CORE_PLUGIN_OPTION, CORE_AUTHORIZATION_OPTION],
+    };
   }
 }
-

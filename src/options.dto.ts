@@ -2,7 +2,6 @@
  * Representa as opções gerais para o módulo do plugin core.
  */
 export class PluginCoreOption {
-
   /**
    * Configurações de autorização.
    */
@@ -13,22 +12,21 @@ export class PluginCoreOption {
  * Representa as opções de autorização para o módulo do plugin core.
  */
 export class AuthorizationOption {
-
-  /** 
+  /**
    * URL base do servidor de autenticação ou do core banking.
    */
   authServerUrl: string;
 
-  /** 
+  /**
    * Indica se o servidor a ser usado para autenticação é o core banking.
-   * 
+   *
    * @default `false` utiliza diretamente o servidor de autenticação.
    */
   isCoreServiceAuth?: boolean = false;
 
   /**
    * Indica se o token usado nas request será gerado pelo serviço atual ou reutilizado da request atual;
-   * 
+   *
    * Caso a request atual seja pública, o token será gerado pelo serviço;
    */
   isTokenRequestDefault: boolean = true;
@@ -38,7 +36,7 @@ export class AuthorizationOption {
    */
   user: UserOptions;
 
-  /** 
+  /**
    * Cliente do serviço
    */
   client: ClientOptions;
@@ -52,7 +50,7 @@ export class UserOptions {
   password: string;
 }
 
-/** 
+/**
  * Cliente do serviço
  */
 export class ClientOptions {

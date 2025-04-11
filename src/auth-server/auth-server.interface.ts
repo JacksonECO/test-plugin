@@ -1,5 +1,5 @@
-import { Cache } from "cache-manager";
-import { AuthorizationOption } from "src/options.dto";
+import { Cache } from 'cache-manager';
+import { AuthorizationOption } from 'src/options.dto';
 
 export abstract class AuthServerService {
   static readonly keyAuthCache = 'token_auth';
@@ -7,7 +7,7 @@ export abstract class AuthServerService {
   constructor(
     protected authorizationOption: AuthorizationOption,
     protected cacheManager: Cache,
-  ) { }
+  ) {}
 
   abstract validateToken(jwt: string): Promise<[boolean, any]>;
 

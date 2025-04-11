@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthCustomGuard } from "./guard/auth-custom.guard";
-import { RoleCustomGuard } from "./guard/role-custom.guard";
-import { AuthServerCoreModule } from "src/auth-server/auth-server.module";
+import { AuthCustomGuard } from './guard/auth-custom.guard';
+import { RoleCustomGuard } from './guard/role-custom.guard';
+import { AuthServerCoreModule } from 'src/auth-server/auth-server.module';
 
 @Module({
   imports: [AuthServerCoreModule],
@@ -17,4 +17,4 @@ import { AuthServerCoreModule } from "src/auth-server/auth-server.module";
     },
   ],
 })
-export class AuthorizationCoreModule { }
+export class AuthorizationCoreModule {}

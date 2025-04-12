@@ -16,7 +16,9 @@ export class HttpCoreService {
     // private guardiao: GuardiaoCoreService,
     @Inject('default-undefined') private isTokenRequest: boolean,
   ) {
-    this.axios = this.createInstance(this.isTokenRequest || this.authorizationOption?.isTokenRequestDefault);
+    this.isTokenRequest =
+      this.isTokenRequest === false ? false : this.isTokenRequest || this.authorizationOption?.isTokenRequestDefault;
+    this.axios = this.createInstance(this.isTokenRequest);
   }
 
   token(isTokenRequest: boolean) {
@@ -66,76 +68,65 @@ export class HttpCoreService {
     });
 
     // Interceptor de Requisição
-    axios.interceptors.request.use(
-      async (config: any) => {
-        try {
-          // Modificar o config da requisição aqui add o token de autenticação
-          if (!config?.headers?.Authorization) {
-            if (isTokenRequest && this.requestInfo.getAuthorization()) {
-              config.headers.Authorization = this.requestInfo.getAuthorization();
-            } else {
-              config.headers.Authorization = await this.authServer.getToken();
-            }
+    axios.interceptors.request.use(async (config: any) => {
+      try {
+        // Modificar o config da requisição aqui add o token de autenticação
+        if (!config?.headers?.Authorization) {
+          if (isTokenRequest && this.requestInfo.getAuthorization()) {
+            config.headers.Authorization = this.requestInfo.getAuthorization();
+          } else {
+            config.headers.Authorization = await this.authServer.getToken();
           }
-        } catch (_) {}
+        }
+      } catch (_) {
+        // TODO: Informar guardião
+      }
 
-        return config;
-      },
-      (error: any) => {
-        return Promise.reject(error);
-      },
-    );
+      return config;
+    });
 
     // Interceptor de Resposta
     axios.interceptors.response.use(
       (response: any) => response,
       async (error: any) => {
         const originalRequest = error.config;
-        try {
-          if (isTokenRequest || !(error?.response?.status === 401 || error?.response?.status === 403)) {
-            return Promise.reject(error);
-          }
-
-          if (originalRequest._retry) {
-            // Se já tentou uma vez, não tenta de novo
-            // Aviso via Guardião
-            // this.guardiao.salvaRequest({
-            //   title: 'Erro de autenticação',
-            //   message: error.message,
-            //   url: originalRequest?.url,
-            //   body: originalRequest?.data,
-            // });
-            return Promise.reject(error);
-          }
-
-          try {
-            const newToken = await this.authServer.getTokenForce();
-            originalRequest.headers['Authorization'] = newToken;
-            originalRequest._retry = true;
-
-            // devemos retornar a requisição original com o novo token
-            return this.axios(originalRequest);
-          } catch (error) {
-            // Aviso via Guardião
-            // this.guardiao.salvaRequest({
-            //   title: 'Erro ao tentar se logar durante uma request',
-            //   message: error.message,
-            //   url: originalRequest?.url,
-            //   body: originalRequest?.data,
-            // });
-          }
-
-          // Tratar o erro da resposta aqui
+        if (isTokenRequest || error?.response?.status !== 401) {
           return Promise.reject(error);
-        } catch (error) {
+        }
+
+        if (originalRequest._retry) {
+          // TODO: Informar guardião
+          // Se já tentou uma vez, não tenta de novo
+          // Aviso via Guardião
           // this.guardiao.salvaRequest({
-          //   title: 'Erro ao tentar reenviar a request',
+          //   title: 'Erro de autenticação',
           //   message: error.message,
           //   url: originalRequest?.url,
           //   body: originalRequest?.data,
           // });
           return Promise.reject(error);
         }
+
+        try {
+          const newToken = await this.authServer.getTokenForce();
+          originalRequest.headers['Authorization'] = newToken;
+          originalRequest._retry = true;
+
+          // devemos retornar a requisição original com o novo token
+          return this.axios(originalRequest);
+        } catch (_error) {
+          // TODO: Informar guardião
+          // Aviso via Guardião
+          // this.guardiao.salvaRequest({
+          //   title: 'Erro ao tentar se logar durante uma request',
+          //   message: error.message,
+          //   url: originalRequest?.url,
+          //   body: originalRequest?.data,
+          // });
+        }
+
+        // Tratar o erro da resposta aqui
+        return Promise.reject(error);
       },
     );
 

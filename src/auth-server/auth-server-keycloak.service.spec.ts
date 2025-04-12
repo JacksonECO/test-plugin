@@ -22,9 +22,9 @@ describe('AuthServerKeycloakService', () => {
     mockAxios = new MockAdapter(axios);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     mockAxios.restore();
-    cache.clear();
+    await cache.clear();
   });
 
   describe('validateToken', () => {

@@ -75,7 +75,7 @@ export class AuthCustomGuard implements CanActivate {
    * @param headers Cabeçalhos da requisição.
    * @returns O token JWT ou `null` se não encontrado.
    */
-  protected extractJwt(headers: { [key: string]: string }) {
+  protected extractJwt(headers: any) {
     if (!headers?.authorization) {
       return null;
     }

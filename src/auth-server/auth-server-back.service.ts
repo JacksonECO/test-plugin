@@ -38,7 +38,9 @@ export class AuthServerBackService extends AuthServerService {
       const resp = await instance.post<any>(url, login);
 
       const access_token = resp.data.data.tokenType + ' ' + resp.data.data.accessToken;
-      this.cacheManager.set(AuthServerService.keyAuthCache, access_token, resp.data.data.expiresIn * 1000 - 60000);
+      this.cacheManager
+        .set(AuthServerService.keyAuthCache, access_token, resp.data.data.expiresIn * 1000 - 60000)
+        .catch(() => {});
       return access_token;
     } catch (error) {
       this.logger.error(error?.response?.body ?? error?.message ?? 'Falha ao realizar login internamente');

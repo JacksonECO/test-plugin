@@ -86,7 +86,7 @@ describe('AuthServerBackService', () => {
       {
         typeErro: () =>
           mockAxios.onPost(options.authServerUrl + '/system-user/introspect').reply(() => {
-            throw new InternalServerErrorException();
+            throw 'error';
           }),
         message: 'Error',
       },
@@ -142,7 +142,7 @@ describe('AuthServerBackService', () => {
       {
         typeErro: () =>
           mockAxios.onPost(options.authServerUrl + '/system-user/auth').reply(() => {
-            throw new InternalServerErrorException();
+            throw 'error';
           }),
         message: 'Error',
       },

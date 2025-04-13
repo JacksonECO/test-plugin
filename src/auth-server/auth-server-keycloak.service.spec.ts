@@ -121,6 +121,24 @@ describe('AuthServerKeycloakService', () => {
         new InternalServerErrorException('Tente novamente mais tarde'),
       );
     });
+
+    it('Deve retornar o token de autenticação com sucesso', async () => {
+      const mockResponse = {
+        token_type: 'Bearer',
+        access_token: 'mock-access-token',
+        expires_in: 3600,
+      };
+      mockAxios.onPost(urlAuth).reply(200, mockResponse);
+
+      const setToken = jest.spyOn(cache, 'set').mockImplementation(async () => {
+        throw new Error();
+      });
+
+      const token = await service.getTokenForce();
+
+      expect(token).toBe('Bearer mock-access-token');
+      expect(setToken).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getToken', () => {

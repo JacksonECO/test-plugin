@@ -153,6 +153,26 @@ describe('AuthServerBackService', () => {
         new InternalServerErrorException('Tente novamente mais tarde'),
       );
     });
+
+    it('Deve retornar o token do cache mesmo se der erro ao salvar', async () => {
+      const mockResponse = {
+        data: {
+          tokenType: 'Bearer',
+          accessToken: 'mock-access-token',
+          expiresIn: 3600,
+        },
+      };
+      mockAxios.onPost(options.authServerUrl + '/system-user/auth').reply(200, mockResponse);
+
+      const setToken = jest.spyOn(cache, 'set').mockImplementation(async () => {
+        throw new Error();
+      });
+
+      const token = await service.getTokenForce();
+
+      expect(token).toBe('Bearer mock-access-token');
+      expect(setToken).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getToken', () => {

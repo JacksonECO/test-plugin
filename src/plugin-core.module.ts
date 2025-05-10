@@ -1,5 +1,5 @@
 import { DynamicModule, Global } from '@nestjs/common';
-import { CORE_AUTHORIZATION_OPTION, CORE_PLUGIN_OPTION } from './constants';
+import { CORE_AUTHORIZATION_OPTION, CORE_LOG_OPTION, CORE_PLUGIN_OPTION } from './constants';
 import { PluginCoreOption } from './options.dto';
 
 /**
@@ -26,8 +26,12 @@ export class PluginCoreModule {
           provide: CORE_AUTHORIZATION_OPTION,
           useValue: option.authorization,
         },
+        {
+          provide: CORE_LOG_OPTION,
+          useValue: option.log,
+        },
       ],
-      exports: [CORE_PLUGIN_OPTION, CORE_AUTHORIZATION_OPTION],
+      exports: [CORE_PLUGIN_OPTION, CORE_AUTHORIZATION_OPTION, CORE_LOG_OPTION],
     };
   }
 }

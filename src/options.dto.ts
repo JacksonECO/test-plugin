@@ -6,6 +6,11 @@ export class PluginCoreOption {
    * Configurações de autorização.
    */
   authorization: AuthorizationOption;
+
+  /**
+   * Configurações de log.
+   */
+  log?: LogOptions = new LogOptions();
 }
 
 /**
@@ -57,4 +62,16 @@ export class ClientOptions {
   id: string;
   secret: string;
   realm: string;
+}
+
+/**
+ * Opções de log para o módulo do plugin core.
+ */
+export class LogOptions {
+  /**
+   * Indica se o nome da coleção de log, onde será registrado as requestes e alguns logs adicionais.
+   *
+   * @default `log-sistema`
+   */
+  logSistemaCollectionName: string = 'log-sistema';
 }

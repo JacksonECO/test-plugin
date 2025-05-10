@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { PluginCoreOption, AuthorizationOption, UserOptions, ClientOptions } from '../../src/options.dto';
 
 export const mockPluginCoreOption = (): PluginCoreOption => ({
@@ -6,8 +7,8 @@ export const mockPluginCoreOption = (): PluginCoreOption => ({
 
 export const mockAuthorizationOption = (): AuthorizationOption => ({
   authServerUrl: 'http://mock-auth-server',
-  isCoreServiceAuth: false,
-  isTokenRequestDefault: true,
+  isCoreServiceAuth: faker.datatype.boolean(),
+  isTokenRequestDefault: faker.datatype.boolean(),
   user: mockUserOptions(),
   client: mockClientOptions(),
 });

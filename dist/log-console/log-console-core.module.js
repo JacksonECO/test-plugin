@@ -16,15 +16,13 @@ let LogConsoleCoreModule = class LogConsoleCoreModule {
 exports.LogConsoleCoreModule = LogConsoleCoreModule;
 exports.LogConsoleCoreModule = LogConsoleCoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            request_info_core_module_1.RequestInfoCoreModule
-        ],
+        imports: [request_info_core_module_1.RequestInfoCoreModule],
         providers: [
             {
                 provide: core_1.APP_INTERCEPTOR,
                 scope: common_1.Scope.REQUEST,
                 useClass: log_console_interceptor_1.LogConsoleInterceptor,
-            }
+            },
         ],
     })
 ], LogConsoleCoreModule);

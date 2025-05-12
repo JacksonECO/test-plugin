@@ -15,3 +15,5 @@ export * from './log-request/log-request-core.module';
 export * from './log-console/log-console-core.module';
 export * from './http/http-core.module';
 export * from './http/http-core.service';
+export * from './webhook/webhook-core.module';
+export * from './webhook/webhook-core.service';

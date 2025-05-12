@@ -12,7 +12,7 @@ class AuthServerKeycloakService extends auth_server_interface_1.AuthServerServic
     async validateToken(jwt) {
         try {
             const instance = axios_1.default.create({
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             });
             const resp = await instance.post(`${this.authorizationOption.authServerUrl}/realms/${this.authorizationOption.client.realm}/protocol/openid-connect/token/introspect`, {
                 token: jwt,
@@ -35,8 +35,8 @@ class AuthServerKeycloakService extends auth_server_interface_1.AuthServerServic
     }
     async getTokenForce() {
         try {
-            let instance = axios_1.default.create({
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            const instance = axios_1.default.create({
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             });
             const url = this.authorizationOption.authServerUrl;
             const realm = this.authorizationOption.client.realm;
@@ -47,8 +47,10 @@ class AuthServerKeycloakService extends auth_server_interface_1.AuthServerServic
                 username: this.authorizationOption.user.username,
                 password: this.authorizationOption.user.password,
             });
-            const access_token = resp.data.data.tokenType + ' ' + resp.data.data.accessToken;
-            this.cacheManager.set(auth_server_interface_1.AuthServerService.keyAuthCache, access_token, (resp.data.data.expiresIn * 1000) - 60000);
+            const access_token = resp.data.token_type + ' ' + resp.data.access_token;
+            this.cacheManager
+                .set(auth_server_interface_1.AuthServerService.keyAuthCache, access_token, resp.data.expires_in * 1000 - 60000)
+                .catch(() => { });
             return access_token;
         }
         catch (error) {

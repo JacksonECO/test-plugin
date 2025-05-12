@@ -31,4 +31,6 @@ __exportStar(require("./log-request/log-request-core.module"), exports);
 __exportStar(require("./log-console/log-console-core.module"), exports);
 __exportStar(require("./http/http-core.module"), exports);
 __exportStar(require("./http/http-core.service"), exports);
+__exportStar(require("./webhook/webhook-core.module"), exports);
+__exportStar(require("./webhook/webhook-core.service"), exports);
 //# sourceMappingURL=index.js.map

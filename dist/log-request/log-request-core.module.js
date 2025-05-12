@@ -29,8 +29,8 @@ class LogRequestCoreModule {
                     provide: core_1.APP_FILTER,
                     scope: common_1.Scope.REQUEST,
                     useClass: http_forbidden_filter_1.HttpForbiddenFilter,
-                }
-            ]
+                },
+            ],
         };
     }
 }

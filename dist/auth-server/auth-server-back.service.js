@@ -39,7 +39,9 @@ class AuthServerBackService extends auth_server_interface_1.AuthServerService {
             const instance = axios_1.default.create();
             const resp = await instance.post(url, login);
             const access_token = resp.data.data.tokenType + ' ' + resp.data.data.accessToken;
-            this.cacheManager.set(auth_server_interface_1.AuthServerService.keyAuthCache, access_token, (resp.data.data.expiresIn * 1000) - 60000);
+            this.cacheManager
+                .set(auth_server_interface_1.AuthServerService.keyAuthCache, access_token, resp.data.data.expiresIn * 1000 - 60000)
+                .catch(() => { });
             return access_token;
         }
         catch (error) {

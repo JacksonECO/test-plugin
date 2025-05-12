@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PluginCoreModule = void 0;
 const common_1 = require("@nestjs/common");
 const constants_1 = require("./constants");
+const options_dto_1 = require("./options.dto");
 let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
     static forRoot(option) {
         return {
@@ -24,11 +25,16 @@ let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
                     provide: constants_1.CORE_AUTHORIZATION_OPTION,
                     useValue: option.authorization,
                 },
+                {
+                    provide: constants_1.CORE_LOG_OPTION,
+                    useValue: option.log,
+                },
+                {
+                    provide: constants_1.CORE_WEBHOOK_OPTION,
+                    useValue: new options_dto_1.WebhookOptions(option.webhook),
+                },
             ],
-            exports: [
-                constants_1.CORE_PLUGIN_OPTION,
-                constants_1.CORE_AUTHORIZATION_OPTION,
-            ],
+            exports: [constants_1.CORE_PLUGIN_OPTION, constants_1.CORE_AUTHORIZATION_OPTION, constants_1.CORE_LOG_OPTION, constants_1.CORE_WEBHOOK_OPTION],
         };
     }
 };

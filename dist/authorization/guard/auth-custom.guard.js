@@ -32,20 +32,19 @@ let AuthCustomGuard = AuthCustomGuard_1 = class AuthCustomGuard {
     }
     async canActivate(context) {
         const isUnprotected = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED, [
-            context.getClass(), context.getHandler()
+            context.getClass(),
+            context.getHandler(),
         ]);
         if (isUnprotected) {
             return true;
         }
         const isUnprotectedAuth = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED_AUTH, [
-            context.getClass(), context.getHandler(),
+            context.getClass(),
+            context.getHandler(),
         ]);
         const httpContext = context.switchToHttp();
         const request = httpContext.getRequest();
-        if (!request) {
-            return true;
-        }
-        const jwt = this.extractJwt(request.headers);
+        const jwt = this.extractJwt(request?.headers);
         const isJwtEmpty = jwt === null || jwt === undefined;
         if (isJwtEmpty && isUnprotectedAuth) {
             this.logger.verbose('JWT não encontrado, mas como é opcional, foi permitido.');
@@ -61,10 +60,14 @@ let AuthCustomGuard = AuthCustomGuard_1 = class AuthCustomGuard {
             this.logger.verbose(`Usuário autenticado: ${request?.user?.email}`);
             return true;
         }
+        if (isUnprotectedAuth) {
+            this.logger.verbose('JWT inválido, mas como é opcional, foi permitido.');
+            return true;
+        }
         throw new common_1.UnauthorizedException();
     }
     extractJwt(headers) {
-        if (headers && !headers.authorization) {
+        if (!headers?.authorization) {
             return null;
         }
         const auth = headers.authorization.split(' ');

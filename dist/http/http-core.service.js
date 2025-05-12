@@ -34,7 +34,9 @@ let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
         this.authServer = authServer;
         this.requestInfo = requestInfo;
         this.isTokenRequest = isTokenRequest;
-        this.axios = this.createInstance(this.isTokenRequest || this.authorizationOption?.isTokenRequestDefault);
+        this.isTokenRequest =
+            this.isTokenRequest === false ? false : this.isTokenRequest || this.authorizationOption?.isTokenRequestDefault;
+        this.axios = this.createInstance(this.isTokenRequest);
     }
     token(isTokenRequest) {
         return new HttpCoreService_1(this.authorizationOption, this.authServer, this.requestInfo, isTokenRequest);
@@ -77,7 +79,7 @@ let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
     }
     createInstance(isTokenRequest) {
         const axios = axios_1.default.create({
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
         });
         axios.interceptors.request.use(async (config) => {
             try {
@@ -90,33 +92,27 @@ let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
                     }
                 }
             }
-            catch (_) { }
+            catch (_) {
+            }
             return config;
-        }, (error) => {
-            return Promise.reject(error);
         });
         axios.interceptors.response.use((response) => response, async (error) => {
             const originalRequest = error.config;
+            if (isTokenRequest || error?.response?.status !== 401) {
+                return Promise.reject(error);
+            }
+            if (originalRequest._retry) {
+                return Promise.reject(error);
+            }
             try {
-                if (isTokenRequest || !(error?.response?.status === 401 || error?.response?.status === 403)) {
-                    return Promise.reject(error);
-                }
-                if (originalRequest._retry) {
-                    return Promise.reject(error);
-                }
-                try {
-                    const newToken = await this.authServer.getTokenForce();
-                    originalRequest.headers['Authorization'] = newToken;
-                    originalRequest._retry = true;
-                    return this.axios(originalRequest);
-                }
-                catch (error) {
-                }
-                return Promise.reject(error);
+                const newToken = await this.authServer.getTokenForce();
+                originalRequest.headers['Authorization'] = newToken;
+                originalRequest._retry = true;
+                return this.axios(originalRequest);
             }
-            catch (error) {
-                return Promise.reject(error);
+            catch (_error) {
             }
+            return Promise.reject(error);
         });
         return axios;
     }

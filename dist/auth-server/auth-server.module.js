@@ -18,9 +18,7 @@ let AuthServerCoreModule = class AuthServerCoreModule {
 exports.AuthServerCoreModule = AuthServerCoreModule;
 exports.AuthServerCoreModule = AuthServerCoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            cache_manager_1.CacheModule.register({ isGlobal: false, cacheId: 'auth-core-plugin' }),
-        ],
+        imports: [cache_manager_1.CacheModule.register({ isGlobal: false, cacheId: 'auth-core-plugin' })],
         providers: [
             {
                 provide: auth_server_interface_1.AuthServerService,
@@ -35,7 +33,7 @@ exports.AuthServerCoreModule = AuthServerCoreModule = __decorate([
                 },
             },
         ],
-        exports: [auth_server_interface_1.AuthServerService]
+        exports: [auth_server_interface_1.AuthServerService],
     })
 ], AuthServerCoreModule);
 //# sourceMappingURL=auth-server.module.js.map

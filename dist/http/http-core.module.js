@@ -16,20 +16,15 @@ let HttpCoreModule = class HttpCoreModule {
 exports.HttpCoreModule = HttpCoreModule;
 exports.HttpCoreModule = HttpCoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            auth_server_module_1.AuthServerCoreModule,
-            request_info_core_module_1.RequestInfoCoreModule,
-        ],
+        imports: [auth_server_module_1.AuthServerCoreModule, request_info_core_module_1.RequestInfoCoreModule],
         providers: [
             http_core_service_1.HttpCoreService,
             {
                 provide: 'default-undefined',
-                useValue: undefined
-            }
+                useValue: undefined,
+            },
         ],
-        exports: [
-            http_core_service_1.HttpCoreService,
-        ]
+        exports: [http_core_service_1.HttpCoreService],
     })
 ], HttpCoreModule);
 //# sourceMappingURL=http-core.module.js.map

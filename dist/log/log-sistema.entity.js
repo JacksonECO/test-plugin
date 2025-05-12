@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LogSistemaSchema = exports.LogSistemaEntity = void 0;
+exports.createLogSistemaSchema = exports.LogSistemaEntity = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 let LogSistemaEntity = class LogSistemaEntity {
     dataOcorrencia;
@@ -50,7 +50,12 @@ __decorate([
     __metadata("design:type", String)
 ], LogSistemaEntity.prototype, "user", void 0);
 exports.LogSistemaEntity = LogSistemaEntity = __decorate([
-    (0, mongoose_1.Schema)({ collection: 'log-sistema' })
+    (0, mongoose_1.Schema)()
 ], LogSistemaEntity);
-exports.LogSistemaSchema = mongoose_1.SchemaFactory.createForClass(LogSistemaEntity);
+const createLogSistemaSchema = (collectionName) => {
+    const schema = mongoose_1.SchemaFactory.createForClass(LogSistemaEntity);
+    schema.set('collection', collectionName);
+    return schema;
+};
+exports.createLogSistemaSchema = createLogSistemaSchema;
 //# sourceMappingURL=log-sistema.entity.js.map

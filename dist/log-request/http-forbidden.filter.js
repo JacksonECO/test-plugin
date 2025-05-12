@@ -27,9 +27,9 @@ let HttpForbiddenFilter = class HttpForbiddenFilter {
             query: request?.query,
         };
         const responseHttp = {
-            "message": "Forbidden resource",
-            "error": "Forbidden",
-            "statusCode": 403
+            message: 'Forbidden resource',
+            error: 'Forbidden',
+            statusCode: 403,
         };
         this.logService.salvarRequest({
             url: request.path || request.config?.url || request.url,

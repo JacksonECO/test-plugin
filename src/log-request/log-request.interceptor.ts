@@ -1,16 +1,11 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LogCoreService } from 'src/log/log-core.service';
 
 @Injectable()
 export class LogRequestInterceptor implements NestInterceptor {
-  constructor(private logService: LogCoreService) { }
+  constructor(private logService: LogCoreService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const httpContext = context.switchToHttp();
@@ -50,8 +45,7 @@ export class LogRequestInterceptor implements NestInterceptor {
         });
 
         throw error;
-      })
+      }),
     );
-
   }
 }

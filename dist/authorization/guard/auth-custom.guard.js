@@ -16,10 +16,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthCustomGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
-const plugin_core_module_1 = require("../../plugin-core.module");
 const authorization_decorator_1 = require("../decorator/authorization.decorator");
-const auth_server_interface_1 = require("../auth-server/auth-server.interface");
+const auth_server_interface_1 = require("../../auth-server/auth-server.interface");
 const constants_1 = require("../../constants");
+const options_dto_1 = require("../../options.dto");
 let AuthCustomGuard = AuthCustomGuard_1 = class AuthCustomGuard {
     authorizationOption;
     reflector;
@@ -32,20 +32,19 @@ let AuthCustomGuard = AuthCustomGuard_1 = class AuthCustomGuard {
     }
     async canActivate(context) {
         const isUnprotected = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED, [
-            context.getClass(), context.getHandler()
+            context.getClass(),
+            context.getHandler(),
         ]);
         if (isUnprotected) {
             return true;
         }
         const isUnprotectedAuth = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED_AUTH, [
-            context.getClass(), context.getHandler(),
+            context.getClass(),
+            context.getHandler(),
         ]);
         const httpContext = context.switchToHttp();
         const request = httpContext.getRequest();
-        if (!request) {
-            return true;
-        }
-        const jwt = this.extractJwt(request.headers);
+        const jwt = this.extractJwt(request?.headers);
         const isJwtEmpty = jwt === null || jwt === undefined;
         if (isJwtEmpty && isUnprotectedAuth) {
             this.logger.verbose('JWT não encontrado, mas como é opcional, foi permitido.');
@@ -61,10 +60,14 @@ let AuthCustomGuard = AuthCustomGuard_1 = class AuthCustomGuard {
             this.logger.verbose(`Usuário autenticado: ${request?.user?.email}`);
             return true;
         }
+        if (isUnprotectedAuth) {
+            this.logger.verbose('JWT inválido, mas como é opcional, foi permitido.');
+            return true;
+        }
         throw new common_1.UnauthorizedException();
     }
     extractJwt(headers) {
-        if (headers && !headers.authorization) {
+        if (!headers?.authorization) {
             return null;
         }
         const auth = headers.authorization.split(' ');
@@ -87,7 +90,7 @@ exports.AuthCustomGuard = AuthCustomGuard;
 exports.AuthCustomGuard = AuthCustomGuard = AuthCustomGuard_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(constants_1.CORE_AUTHORIZATION_OPTION)),
-    __metadata("design:paramtypes", [plugin_core_module_1.AuthorizationOption,
+    __metadata("design:paramtypes", [options_dto_1.AuthorizationOption,
         core_1.Reflector,
         auth_server_interface_1.AuthServerService])
 ], AuthCustomGuard);

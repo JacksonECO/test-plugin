@@ -1,16 +1,9 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthorizationOption } from 'src/plugin-core.module';
 import { META_UNPROTECTED_AUTH, META_UNPROTECTED } from '../decorator/authorization.decorator';
-import { AuthServerService } from '../auth-server/auth-server.interface';
+import { AuthServerService } from '../../auth-server/auth-server.interface';
 import { CORE_AUTHORIZATION_OPTION } from 'src/constants';
+import { AuthorizationOption } from 'src/options.dto';
 
 @Injectable()
 export class AuthCustomGuard implements CanActivate {
@@ -19,17 +12,18 @@ export class AuthCustomGuard implements CanActivate {
     @Inject(CORE_AUTHORIZATION_OPTION) protected authorizationOption: AuthorizationOption,
     protected readonly reflector: Reflector,
     protected authServerService: AuthServerService,
-  ) { }
+  ) {}
 
   /**
    * Verifica se a requisição pode ser ativada com base nas regras de autenticação.
-   * 
+   *
    * @param context Contexto de execução.
    * @returns `true` se a requisição for permitida, caso contrário lança uma exceção.
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isUnprotected = this.reflector.getAllAndOverride<boolean>(META_UNPROTECTED, [
-      context.getClass(), context.getHandler()
+      context.getClass(),
+      context.getHandler(),
     ]);
     // Se a rota for pública
     if (isUnprotected) {
@@ -37,26 +31,20 @@ export class AuthCustomGuard implements CanActivate {
     }
 
     const isUnprotectedAuth = this.reflector.getAllAndOverride<boolean>(META_UNPROTECTED_AUTH, [
-      context.getClass(), context.getHandler(),
+      context.getClass(),
+      context.getHandler(),
     ]);
 
     // Obtém o contexto HTTP
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
 
-    // Se não for possível obter o request
-    if (!request) {
-      return true;
-    }
-
-    const jwt = this.extractJwt(request.headers);
+    const jwt = this.extractJwt(request?.headers);
     const isJwtEmpty = jwt === null || jwt === undefined;
 
     // Se for uma rota pública com autenticação opcional e não houver JWT
     if (isJwtEmpty && isUnprotectedAuth) {
-      this.logger.verbose(
-        'JWT não encontrado, mas como é opcional, foi permitido.',
-      );
+      this.logger.verbose('JWT não encontrado, mas como é opcional, foi permitido.');
       return true;
     }
 
@@ -73,17 +61,22 @@ export class AuthCustomGuard implements CanActivate {
       return true;
     }
 
+    if (isUnprotectedAuth) {
+      this.logger.verbose('JWT inválido, mas como é opcional, foi permitido.');
+      return true;
+    }
+
     throw new UnauthorizedException();
   }
 
   /**
    * Extrai o JWT do cabeçalho da requisição.
-   * 
+   *
    * @param headers Cabeçalhos da requisição.
    * @returns O token JWT ou `null` se não encontrado.
    */
-  protected extractJwt(headers: { [key: string]: string }) {
-    if (headers && !headers.authorization) {
+  protected extractJwt(headers: any) {
+    if (!headers?.authorization) {
       return null;
     }
 
@@ -100,7 +93,7 @@ export class AuthCustomGuard implements CanActivate {
 
   /**
    * Faz o parse do token JWT e adiciona informações extras do usuário.
-   * 
+   *
    * @param token Token JWT.
    * @param addUser Informações adicionais do usuário.
    * @returns Objeto do usuário com informações do token e adicionais.

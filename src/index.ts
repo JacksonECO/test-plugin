@@ -1,4 +1,5 @@
 export * from './plugin-core.module';
+export * from './options.dto';
 
 // Autenticação e autorização das rotas
 export * from './authorization/authorization-core.module';
@@ -19,3 +20,14 @@ export * from './log/log-core.service';
 
 // Salvar log das requisições
 export * from './log-request/log-request-core.module';
+
+// Printar log das requisições
+export * from './log-console/log-console-core.module';
+
+// Requisição HTTP com gestão de tokens
+export * from './http/http-core.module';
+export * from './http/http-core.service';
+
+// Webhook
+export * from './webhook/webhook-core.module';
+export * from './webhook/webhook-core.service';

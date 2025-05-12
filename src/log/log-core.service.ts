@@ -1,7 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { LogCoreRepository } from "./log-core.repository";
-import { RequestInfoCoreService } from "src/request-info/request-info-core.service";
-import { LogSistemaCreateModel, LogSistemaRequestModel } from "./log-core.model";
+import { Injectable, Logger } from '@nestjs/common';
+import { LogCoreRepository } from './log-core.repository';
+import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
+import { LogSistemaCreateModel, LogSistemaRequestModel } from './log-core.model';
 
 @Injectable()
 export class LogCoreService {
@@ -9,11 +9,10 @@ export class LogCoreService {
   constructor(
     protected repository: LogCoreRepository,
     protected requestInfo: RequestInfoCoreService,
-  ) { }
+  ) {}
 
   async salvarLog(dto: LogSistemaCreateModel) {
     try {
-
       if (dto.response?.['request'] || dto.response?.['name'] == 'HttpException') {
         dto.response = {
           ...(dto.response['data'] || {}),

@@ -4,7 +4,7 @@ import { UserRequest } from './user-request.model';
 
 @Injectable()
 export class RequestInfoCoreService {
-  constructor(@Inject(REQUEST) private readonly request: Request) { }
+  constructor(@Inject(REQUEST) private readonly request: Request) {}
 
   getRequest(): Request {
     return this.request;

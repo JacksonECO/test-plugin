@@ -1,18 +1,10 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { META_UNPROTECTED, META_UNPROTECTED_AUTH } from '../decorator/authorization.decorator';
 import { RoleMatchingMode, RoleMerge } from '../decorator/roles.enum';
 import { META_ROLES_CUSTOM, RoleCustomDecoratorOptionsInterface } from '../decorator/roles.decorator';
 import { CORE_AUTHORIZATION_OPTION } from '../../constants';
-import { AuthorizationOption } from '../../plugin-core.module';
-
+import { AuthorizationOption } from 'src/options.dto';
 
 @Injectable()
 export class RoleCustomGuard implements CanActivate {
@@ -21,7 +13,7 @@ export class RoleCustomGuard implements CanActivate {
   constructor(
     @Inject(CORE_AUTHORIZATION_OPTION) protected authorizationOption: AuthorizationOption,
     private readonly reflector: Reflector,
-  ) { }
+  ) {}
 
   /**
    * Método principal que verifica se o usuário tem permissão para acessar o recurso.
@@ -29,13 +21,14 @@ export class RoleCustomGuard implements CanActivate {
    * @returns Retorna `true` se o acesso for permitido, caso contrário `false`.
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isUnprotected = this.reflector.getAllAndOverride<boolean>(
-      META_UNPROTECTED,
-      [context.getClass(), context.getHandler()],
-    );
+    const isUnprotected = this.reflector.getAllAndOverride<boolean>(META_UNPROTECTED, [
+      context.getClass(),
+      context.getHandler(),
+    ]);
 
     const isUnprotectedAuth = this.reflector.getAllAndOverride<boolean>(META_UNPROTECTED_AUTH, [
-      context.getClass(), context.getHandler(),
+      context.getClass(),
+      context.getHandler(),
     ]);
 
     if (isUnprotected || isUnprotectedAuth) {
@@ -46,25 +39,23 @@ export class RoleCustomGuard implements CanActivate {
     const rolesMetaDatas: RoleCustomDecoratorOptionsInterface[] = [];
 
     if (roleMerge == RoleMerge.ALL) {
-      const mergedRoleMetaData = this.reflector.getAll<
-        RoleCustomDecoratorOptionsInterface[]
-      >(META_ROLES_CUSTOM, [context.getClass(), context.getHandler()]);
+      const mergedRoleMetaData = this.reflector.getAll<RoleCustomDecoratorOptionsInterface[]>(META_ROLES_CUSTOM, [
+        context.getClass(),
+        context.getHandler(),
+      ]);
 
       if (mergedRoleMetaData) {
         if (Array.isArray(mergedRoleMetaData)) {
-          rolesMetaDatas.push(
-            ...mergedRoleMetaData.filter((e) => (e ? true : false)),
-          );
+          rolesMetaDatas.push(...mergedRoleMetaData.filter((e) => (e ? true : false)));
         } else {
           rolesMetaDatas.push(mergedRoleMetaData);
         }
       }
     } else if (roleMerge == RoleMerge.OVERRIDE) {
-      const roleMetaData =
-        this.reflector.getAllAndOverride<RoleCustomDecoratorOptionsInterface>(
-          META_ROLES_CUSTOM,
-          [context.getClass(), context.getHandler()],
-        );
+      const roleMetaData = this.reflector.getAllAndOverride<RoleCustomDecoratorOptionsInterface>(META_ROLES_CUSTOM, [
+        context.getClass(),
+        context.getHandler(),
+      ]);
 
       if (roleMetaData) {
         rolesMetaDatas.push(roleMetaData);
@@ -98,9 +89,7 @@ export class RoleCustomGuard implements CanActivate {
 
     // Usa o modo de correspondência do primeiro item
     const roleMetaData = rolesMetaDatas[rolesMetaDatas.length - 1];
-    const roleMatchingMode = roleMetaData.mode
-      ? roleMetaData.mode
-      : RoleMatchingMode.ALL;
+    const roleMatchingMode = roleMetaData.mode ? roleMetaData.mode : RoleMatchingMode.ALL;
 
     // console log com todas as roles do usuário
     // this.logger.verbose(
@@ -134,7 +123,7 @@ export class RoleCustomGuard implements CanActivate {
    * @returns Retorna `true` se o usuário possuir a role, caso contrário `false`.
    */
   private hasRole(user: any, role: string) {
-    if (!this.authorizationOption.clientId) {
+    if (!this.authorizationOption.client.id) {
       return false;
     }
 
@@ -166,10 +155,7 @@ export class RoleCustomGuard implements CanActivate {
       return false;
     }
 
-    return (
-      user.realm_access.roles.find((role: string) => role === roleName) !==
-      undefined
-    );
+    return user.realm_access.roles.find((role: string) => role === roleName) !== undefined;
   }
 
   /**
@@ -179,11 +165,7 @@ export class RoleCustomGuard implements CanActivate {
    * @param roleName Nome da role.
    * @returns Retorna `true` se o usuário possuir a role, caso contrário `false`.
    */
-  private hasApplicationRoleAgencia(
-    user: any,
-    clientId: string,
-    roleName: string,
-  ) {
+  private hasApplicationRoleAgencia(user: any, clientId: string, roleName: string) {
     if (!user.resource_access) {
       return false;
     }
@@ -193,9 +175,7 @@ export class RoleCustomGuard implements CanActivate {
       return false;
     }
 
-    return (
-      appRoles.roles.find((role: string) => role === roleName) !== undefined
-    );
+    return appRoles.roles.find((role: string) => role === roleName) !== undefined;
   }
 
   /**
@@ -235,19 +215,13 @@ export class RoleCustomGuard implements CanActivate {
    * @param user Usuário autenticado.
    * @param roleMetaData Metadados da role.
    */
-  private addAgenciaRequest(
-    request: any,
-    user: any,
-    roleMetaData: RoleCustomDecoratorOptionsInterface,
-  ): void {
+  private addAgenciaRequest(request: any, user: any, roleMetaData: RoleCustomDecoratorOptionsInterface): void {
     roleMetaData.agenciaFieldName = roleMetaData.agenciaFieldName || 'agencia';
 
     const agencias = this.getClientsWithRole(user, roleMetaData.roles[0]);
     if (agencias.length === 0) {
       // Validação de role já feita anteriormente, condição não deveria ser alcançada
-      this.logger.verbose(
-        `Usuário sem autorização: Usuário não tem acesso ao recurso: ${roleMetaData.roles[0]}`,
-      );
+      this.logger.verbose(`Usuário sem autorização: Usuário não tem acesso ao recurso: ${roleMetaData.roles[0]}`);
       throw new ForbiddenException();
     }
 
@@ -298,9 +272,7 @@ export class RoleCustomGuard implements CanActivate {
         request.body[roleMetaData.agenciaFieldName] = agencias;
       }
     } else {
-      agenciasRequest = agenciasRequest.map((agencia) =>
-        agencia.toString().padStart(4, '0'),
-      );
+      agenciasRequest = agenciasRequest.map((agencia) => agencia.toString().padStart(4, '0'));
       for (const agencia of agenciasRequest) {
         if (!agencias.includes(agencia)) {
           this.logger.verbose(`Usuário sem autorização ao recurso ${roleMetaData.roles[0]} da agência ${agencia}`);

@@ -20,7 +20,7 @@ const authorization_decorator_1 = require("../decorator/authorization.decorator"
 const roles_enum_1 = require("../decorator/roles.enum");
 const roles_decorator_1 = require("../decorator/roles.decorator");
 const constants_1 = require("../../constants");
-const plugin_core_module_1 = require("../../plugin-core.module");
+const options_dto_1 = require("../../options.dto");
 let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
     authorizationOption;
     reflector;
@@ -30,9 +30,13 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         this.reflector = reflector;
     }
     async canActivate(context) {
-        const isUnprotected = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED, [context.getClass(), context.getHandler()]);
+        const isUnprotected = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED, [
+            context.getClass(),
+            context.getHandler(),
+        ]);
         const isUnprotectedAuth = this.reflector.getAllAndOverride(authorization_decorator_1.META_UNPROTECTED_AUTH, [
-            context.getClass(), context.getHandler(),
+            context.getClass(),
+            context.getHandler(),
         ]);
         if (isUnprotected || isUnprotectedAuth) {
             return true;
@@ -40,7 +44,10 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         const roleMerge = roles_enum_1.RoleMerge.ALL;
         const rolesMetaDatas = [];
         if (roleMerge == roles_enum_1.RoleMerge.ALL) {
-            const mergedRoleMetaData = this.reflector.getAll(roles_decorator_1.META_ROLES_CUSTOM, [context.getClass(), context.getHandler()]);
+            const mergedRoleMetaData = this.reflector.getAll(roles_decorator_1.META_ROLES_CUSTOM, [
+                context.getClass(),
+                context.getHandler(),
+            ]);
             if (mergedRoleMetaData) {
                 if (Array.isArray(mergedRoleMetaData)) {
                     rolesMetaDatas.push(...mergedRoleMetaData.filter((e) => (e ? true : false)));
@@ -51,7 +58,10 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
             }
         }
         else if (roleMerge == roles_enum_1.RoleMerge.OVERRIDE) {
-            const roleMetaData = this.reflector.getAllAndOverride(roles_decorator_1.META_ROLES_CUSTOM, [context.getClass(), context.getHandler()]);
+            const roleMetaData = this.reflector.getAllAndOverride(roles_decorator_1.META_ROLES_CUSTOM, [
+                context.getClass(),
+                context.getHandler(),
+            ]);
             if (roleMetaData) {
                 rolesMetaDatas.push(roleMetaData);
             }
@@ -74,9 +84,7 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
             return true;
         }
         const roleMetaData = rolesMetaDatas[rolesMetaDatas.length - 1];
-        const roleMatchingMode = roleMetaData.mode
-            ? roleMetaData.mode
-            : roles_enum_1.RoleMatchingMode.ALL;
+        const roleMatchingMode = roleMetaData.mode ? roleMetaData.mode : roles_enum_1.RoleMatchingMode.ALL;
         const granted = roleMatchingMode === roles_enum_1.RoleMatchingMode.ANY
             ? combinedRoles.some((role) => this.hasRole(user, role))
             : combinedRoles.every((role) => this.hasRole(user, role));
@@ -91,7 +99,7 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         return true;
     }
     hasRole(user, role) {
-        if (!this.authorizationOption.clientId) {
+        if (!this.authorizationOption.client.id) {
             return false;
         }
         if (this.hasRealmRole(user, 'ROLE_ADMIN')) {
@@ -110,8 +118,7 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         if (!user.realm_access || !user.realm_access.roles) {
             return false;
         }
-        return (user.realm_access.roles.find((role) => role === roleName) !==
-            undefined);
+        return user.realm_access.roles.find((role) => role === roleName) !== undefined;
     }
     hasApplicationRoleAgencia(user, clientId, roleName) {
         if (!user.resource_access) {
@@ -121,7 +128,7 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         if (!appRoles) {
             return false;
         }
-        return (appRoles.roles.find((role) => role === roleName) !== undefined);
+        return appRoles.roles.find((role) => role === roleName) !== undefined;
     }
     getClients(user) {
         if (!user?.resource_access) {
@@ -201,7 +208,7 @@ exports.RoleCustomGuard = RoleCustomGuard;
 exports.RoleCustomGuard = RoleCustomGuard = RoleCustomGuard_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(constants_1.CORE_AUTHORIZATION_OPTION)),
-    __metadata("design:paramtypes", [plugin_core_module_1.AuthorizationOption,
+    __metadata("design:paramtypes", [options_dto_1.AuthorizationOption,
         core_1.Reflector])
 ], RoleCustomGuard);
 //# sourceMappingURL=role-custom.guard.js.map

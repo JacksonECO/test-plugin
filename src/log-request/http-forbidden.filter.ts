@@ -1,10 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, ForbiddenException, HttpException, Injectable } from "@nestjs/common";
-import { LogCoreService } from "src/log/log-core.service";
+import { ArgumentsHost, Catch, ExceptionFilter, ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import { LogCoreService } from 'src/log/log-core.service';
 
 @Injectable()
 @Catch(ForbiddenException)
 export class HttpForbiddenFilter implements ExceptionFilter {
-  constructor(private logService: LogCoreService) { }
+  constructor(private logService: LogCoreService) {}
 
   catch(_: HttpException, host: ArgumentsHost) {
     const httpContext = host.switchToHttp();
@@ -18,10 +18,10 @@ export class HttpForbiddenFilter implements ExceptionFilter {
     };
 
     const responseHttp = {
-      "message": "Forbidden resource",
-      "error": "Forbidden",
-      "statusCode": 403
-    }
+      message: 'Forbidden resource',
+      error: 'Forbidden',
+      statusCode: 403,
+    };
 
     this.logService.salvarRequest({
       url: request.path || request.config?.url || request.url,

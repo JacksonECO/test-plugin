@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema({ collection: 'log-sistema' })
+@Schema()
 export class LogSistemaEntity {
   @Prop({ type: Date })
   dataOcorrencia?: Date;
@@ -23,4 +23,11 @@ export class LogSistemaEntity {
   @Prop({ type: String })
   user?: string;
 }
-export const LogSistemaSchema = SchemaFactory.createForClass(LogSistemaEntity);
+
+// export const LogSistemaSchema = SchemaFactory.createForClass(LogSistemaEntity);
+
+export const createLogSistemaSchema = (collectionName: string) => {
+  const schema = SchemaFactory.createForClass(LogSistemaEntity);
+  schema.set('collection', collectionName);
+  return schema;
+};

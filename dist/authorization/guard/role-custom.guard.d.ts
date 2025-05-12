@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthorizationOption } from '../../plugin-core.module';
+import { AuthorizationOption } from 'src/options.dto';
 export declare class RoleCustomGuard implements CanActivate {
     protected authorizationOption: AuthorizationOption;
     private readonly reflector;

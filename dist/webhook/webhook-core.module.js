@@ -17,6 +17,7 @@ exports.WebhookCoreModule = WebhookCoreModule = __decorate([
     (0, common_1.Module)({
         imports: [http_core_module_1.HttpCoreModule],
         providers: [webhook_core_service_1.WebhookCoreService],
+        exports: [webhook_core_service_1.WebhookCoreService],
     })
 ], WebhookCoreModule);
 //# sourceMappingURL=webhook-core.module.js.map

@@ -1,6 +1,6 @@
 import { DynamicModule, Global } from '@nestjs/common';
-import { CORE_AUTHORIZATION_OPTION, CORE_LOG_OPTION, CORE_PLUGIN_OPTION } from './constants';
-import { PluginCoreOption } from './options.dto';
+import { CORE_AUTHORIZATION_OPTION, CORE_LOG_OPTION, CORE_PLUGIN_OPTION, CORE_WEBHOOK_OPTION } from './constants';
+import { PluginCoreOption, WebhookOptions } from './options.dto';
 
 /**
  * Módulo principal do plugin core.
@@ -30,8 +30,12 @@ export class PluginCoreModule {
           provide: CORE_LOG_OPTION,
           useValue: option.log,
         },
+        {
+          provide: CORE_WEBHOOK_OPTION,
+          useValue: new WebhookOptions(option.webhook),
+        },
       ],
-      exports: [CORE_PLUGIN_OPTION, CORE_AUTHORIZATION_OPTION, CORE_LOG_OPTION],
+      exports: [CORE_PLUGIN_OPTION, CORE_AUTHORIZATION_OPTION, CORE_LOG_OPTION, CORE_WEBHOOK_OPTION],
     };
   }
 }

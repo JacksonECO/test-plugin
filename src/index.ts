@@ -27,3 +27,7 @@ export * from './log-console/log-console-core.module';
 // Requisição HTTP com gestão de tokens
 export * from './http/http-core.module';
 export * from './http/http-core.service';
+
+// Webhook
+export * from './webhook/webhook-core.module';
+export * from './webhook/webhook-core.service';

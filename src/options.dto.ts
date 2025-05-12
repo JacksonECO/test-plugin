@@ -10,7 +10,12 @@ export class PluginCoreOption {
   /**
    * Configurações de log.
    */
-  log?: LogOptions = new LogOptions();
+  log?: LogOptions;
+
+  /**
+   * Configurações de webhook.
+   */
+  webhook?: WebhookOptions;
 }
 
 /**
@@ -74,4 +79,77 @@ export class LogOptions {
    * @default `log-sistema`
    */
   logSistemaCollectionName: string = 'log-sistema';
+}
+
+export class WebhookOptions {
+  constructor(input?: WebhookOptions) {
+    Object.assign(this, input);
+  }
+
+  /**
+   * URL do webhook do serviço de webhook.
+   */
+  url: string;
+
+  /**
+   * Se true, caso não encontre nenhum webhook para o evento, será lançada uma exceção.\
+   * Se false, não será lançada exceção.
+   * @default `false`
+   */
+  emptyException: boolean;
+
+  /**
+   * Se true, caso ao enviar evento tenha sucesso e erro, será lançada uma exceção.\
+   * Se false, não será lançada exceção, se tiver pelo menos um sucesso.\
+   * Não tendo nenhum sucesso, será lançada uma exceção independente da configuração do modulo.
+   * @default `true`
+   */
+  successAndErrorsException: boolean = true;
+
+  /**
+   * Se true, caso não encontre nenhum webhook para o evento, será enviado um alerta para o guardião.\
+   * Se false, não será enviado alerta.
+   * @default `false`
+   */
+  emptyAlert: boolean = true;
+
+  /**
+   * Se true, caso ao enviar evento tenha sucesso e erro, será enviado um alerta para o guardião.\
+   * Se false, não será enviado alerta, se tiver pelo menos um sucesso.\
+   * Não tendo nenhum sucesso, será enviado um alerta independente da configuração do modulo.
+   * @default `true`
+   */
+  successAndErrorsAlert: boolean = true;
+
+  /**
+   * Se true, será registrado o log da operação em uma coleção especifica com tempo de expiração.
+   * @default `false`
+   */
+  logOperation: boolean = false;
+
+  /**
+   * Nome da coleção de log, onde será registrado as operações do webhook.
+   * @default `webhook-sender`
+   */
+  logCollectionName: string = 'webhook-sender';
+
+  /**
+   * Tempo de expiração do log em dias.
+   * @default `15 dias`
+   */
+  logCollectionDuration: number = 15;
+
+  /**
+   * Combina as opções do webhook com as opções personalizadas.
+   * @param custom
+   * @returns `WebhookOptions` combinadas
+   */
+  public combine(custom: WebhookOptions): WebhookOptions {
+    const defaultClass = Object.assign(new WebhookOptions(), this);
+    Object.keys(custom).forEach((key) => {
+      defaultClass[key] = custom[key];
+    });
+
+    return defaultClass;
+  }
 }

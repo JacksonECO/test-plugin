@@ -1,5 +1,7 @@
 {
   "*.ts": [
+    "npm run build",
+    "git add dist/",
     "eslint --fix",
     "prettier --write"
   ]

@@ -30,7 +30,7 @@ let LogCoreRepository = class LogCoreRepository {
 exports.LogCoreRepository = LogCoreRepository;
 exports.LogCoreRepository = LogCoreRepository = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(log_sistema_entity_1.LogSistemaEntity.name)),
+    __param(0, (0, mongoose_1.InjectModel)(log_sistema_entity_1.LogSistemaCoreEntity.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], LogCoreRepository);
 //# sourceMappingURL=log-core.repository.js.map

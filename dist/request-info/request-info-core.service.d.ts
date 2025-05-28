@@ -10,4 +10,6 @@ export declare class RequestInfoCoreService {
     getUserId(): string;
     getUserEmail(): string;
     getUserAgencia(): string;
+    getInfo(): Record<string, string | number> | undefined;
+    addInfo(data: Record<string, string | number>): void;
 }

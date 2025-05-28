@@ -16,7 +16,9 @@ export * from './request-info/request-info-core.service';
 // Gerenciar logs
 export * from './log/log-core.module';
 export * from './log/log-core.model';
+export * from './log/log-sistema.entity';
 export * from './log/log-core.service';
+export * from './log/log-core.repository';
 
 // Salvar log das requisições
 export * from './log-request/log-request-core.module';

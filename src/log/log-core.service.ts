@@ -13,30 +13,10 @@ export class LogCoreService {
 
   async salvarLog(dto: LogSistemaCreateModel) {
     try {
-      if (dto.response?.['request'] || dto.response?.['name'] == 'HttpException') {
-        dto.response = {
-          ...(dto.response['data'] || {}),
-          ...(dto.response['body'] || {}),
-          name: dto.response['name'],
-          message: dto.response['message'],
-          statusCode: dto.response['status'],
-          stack: dto.response['stack'],
-        };
-      }
-
-      if (dto.request?.['request'] || dto.request?.['name'] == 'HttpException') {
-        dto.request = {
-          ...(dto.request['data'] || {}),
-          ...(dto.request['body'] || {}),
-          name: dto.request['name'],
-          message: dto.request['message'],
-          statusCode: dto.request['status'],
-          stack: dto.request['stack'],
-        };
-      }
-
       await this.repository.save({
         ...dto,
+        request: this.cleanRequest(dto.request),
+        response: this.cleanRequest(dto.response),
         dataOcorrencia: new Date(),
         user: this.requestInfo.getUserEmail(),
       });
@@ -53,13 +33,30 @@ export class LogCoreService {
 
       await this.repository.save({
         ...dto,
+        request: this.cleanRequest(dto.request),
+        response: this.cleanRequest(dto.response),
         dataOcorrencia: new Date(),
         user: this.requestInfo.getUserEmail(),
         tipo: 'request',
         message: dto.method + ': ' + dto.url,
+        info: this.requestInfo.getInfo(),
       });
     } catch (error) {
       this.logger.error('Erro ao salvar uma requisição ' + dto.url, error);
     }
+  }
+
+  private cleanRequest(request: any) {
+    if (request?.['request'] || request?.['name'] == 'HttpException') {
+      return {
+        ...(request['data'] || {}),
+        ...(request['body'] || {}),
+        name: request['name'],
+        message: request['message'],
+        statusCode: request['status'],
+        stack: request['stack'],
+      };
+    }
+    return request;
   }
 }

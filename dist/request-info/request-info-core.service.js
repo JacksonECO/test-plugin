@@ -53,6 +53,17 @@ let RequestInfoCoreService = class RequestInfoCoreService {
         }
         return agencia;
     }
+    getInfo() {
+        return this.request?.['_info'];
+    }
+    addInfo(data) {
+        if (!this.request)
+            return;
+        this.request['_info'] = {
+            ...(this.request['_info'] || {}),
+            ...data,
+        };
+    }
 };
 exports.RequestInfoCoreService = RequestInfoCoreService;
 exports.RequestInfoCoreService = RequestInfoCoreService = __decorate([

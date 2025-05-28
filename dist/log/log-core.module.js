@@ -22,7 +22,7 @@ exports.LogCoreModule = LogCoreModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forFeatureAsync([
                 {
-                    name: log_sistema_entity_1.LogSistemaEntity.name,
+                    name: log_sistema_entity_1.LogSistemaCoreEntity.name,
                     inject: [constants_1.CORE_LOG_OPTION],
                     useFactory: (logOptions) => (0, log_sistema_entity_1.createLogSistemaSchema)(logOptions.logSistemaCollectionName),
                 },

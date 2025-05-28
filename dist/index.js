@@ -35,4 +35,6 @@ __exportStar(require("./http/http-core.module"), exports);
 __exportStar(require("./http/http-core.service"), exports);
 __exportStar(require("./webhook/webhook-core.module"), exports);
 __exportStar(require("./webhook/webhook-core.service"), exports);
+__exportStar(require("./webhook/webhook-core.exception"), exports);
+__exportStar(require("./webhook/webhook.model"), exports);
 //# sourceMappingURL=index.js.map

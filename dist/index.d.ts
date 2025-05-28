@@ -19,3 +19,5 @@ export * from './http/http-core.module';
 export * from './http/http-core.service';
 export * from './webhook/webhook-core.module';
 export * from './webhook/webhook-core.service';
+export * from './webhook/webhook-core.exception';
+export * from './webhook/webhook.model';

@@ -1,29 +1,31 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { WebhookModel } from './webhook.model';
-export declare class RequestWebhookWException extends InternalServerErrorException {
-    constructor(message?: string, error?: string);
+import { WebhookCoreModel } from './webhook.model';
+export interface WebhookExceptionDTO {
+    webhook: WebhookCoreModel;
+    error?: any;
+    success?: any;
 }
-export declare class WebhookNotFoundException extends InternalServerErrorException {
-    constructor(message?: string, error?: string);
+export declare class WebhookCoreException extends Error {
+    protected response: WebhookExceptionDTO[];
+    protected event: string;
+    protected agencia: string;
+    protected error: WebhookExceptionDTO[];
+    constructor({ message, error, response, event, agencia }?: {
+        message?: string;
+        event?: string;
+        agencia?: string;
+        response?: WebhookExceptionDTO[];
+        error?: WebhookExceptionDTO[];
+    });
 }
-export declare class WebhookErrorException extends Error {
-    errors: {
-        webhook: WebhookModel;
-        error: any;
-    }[];
-    constructor(errors: {
-        webhook: WebhookModel;
-        error: any;
-    }[]);
+export declare class RequestWebhookCoreException extends WebhookCoreException {
+    constructor(error: any, event: string, agencia: string);
 }
-export declare class WebhookPartialErrorException extends Error {
-    errors: {
-        webhook: WebhookModel;
-        error: any;
-    }[];
-    successLength: number;
-    constructor(errors: {
-        webhook: WebhookModel;
-        error: any;
-    }[], successLength: number);
+export declare class WebhookNotFoundException extends WebhookCoreException {
+    constructor(event: string, agencia: string);
+}
+export declare class WebhookErrorException extends WebhookCoreException {
+    constructor(error: WebhookExceptionDTO[]);
+}
+export declare class WebhookPartialErrorException extends WebhookCoreException {
+    constructor(error: WebhookExceptionDTO[], success: WebhookExceptionDTO[]);
 }

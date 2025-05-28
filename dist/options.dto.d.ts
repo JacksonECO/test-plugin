@@ -32,5 +32,5 @@ export declare class WebhookOptions {
     logOperation?: boolean;
     logCollectionName?: string;
     logCollectionDuration?: number;
-    combine?(custom: WebhookOptions): WebhookOptions;
+    combine?(custom: Partial<WebhookOptions>): WebhookOptions;
 }

@@ -144,7 +144,7 @@ export class WebhookOptions {
    * @param custom
    * @returns `WebhookOptions` combinadas
    */
-  public combine?(custom: WebhookOptions): WebhookOptions {
+  public combine?(custom: Partial<WebhookOptions>): WebhookOptions {
     const defaultClass = Object.assign(new WebhookOptions(), this);
     Object.keys(custom).forEach((key) => {
       defaultClass[key] = custom[key];

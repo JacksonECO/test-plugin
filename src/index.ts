@@ -33,3 +33,5 @@ export * from './http/http-core.service';
 // Webhook
 export * from './webhook/webhook-core.module';
 export * from './webhook/webhook-core.service';
+export * from './webhook/webhook-core.exception';
+export * from './webhook/webhook.model';

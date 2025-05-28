@@ -5,5 +5,6 @@ import { WebhookCoreService } from './webhook-core.service';
 @Module({
   imports: [HttpCoreModule],
   providers: [WebhookCoreService],
+  exports: [WebhookCoreService],
 })
 export class WebhookCoreModule {}

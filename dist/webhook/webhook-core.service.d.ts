@@ -1,4 +1,4 @@
-import { WebhookOptions } from 'src/options.dto';
+import { WebhookConfigOptions, WebhookOptions } from 'src/options.dto';
 import { WebhookCoreModel } from './webhook.model';
 import { HttpCoreService } from 'src/http/http-core.service';
 import { WebhookExceptionDTO } from './webhook-core.exception';
@@ -8,5 +8,5 @@ export declare class WebhookCoreService {
     private http;
     constructor(webhookOption: WebhookOptions, http: HttpCoreService);
     getWebhookUrl(event: string, agencia: string): Promise<WebhookCoreModel[]>;
-    send(event: string, agencia: string, body: any, methodHttp: Method, customOption?: Partial<WebhookOptions>): Promise<WebhookExceptionDTO[]>;
+    send(event: string, agencia: string, body: any, methodHttp: Method, customOption?: Partial<WebhookConfigOptions>): Promise<WebhookExceptionDTO[]>;
 }

@@ -81,35 +81,30 @@ export class LogOptions {
   logSistemaCollectionName?: string = 'log-sistema';
 }
 
-export class WebhookOptions {
-  constructor(input?: WebhookOptions) {
+export class WebhookConfigOptions {
+  constructor(input?: WebhookConfigOptions) {
     Object.assign(this, input);
   }
 
   /**
-   * URL do webhook do serviço de webhook.
-   */
-  url: string;
-
-  /**
    * Se true, caso não encontre nenhum webhook para o evento, será lançada uma exceção.\
    * Se false, não será lançada exceção.
-   * @default `false`
+   * @default `true`
    */
-  emptyException: boolean;
+  emptyException?: boolean = true;
 
   /**
    * Se true, caso ao enviar evento tenha sucesso e erro, será lançada uma exceção.\
    * Se false, não será lançada exceção, se tiver pelo menos um sucesso.\
    * Não tendo nenhum sucesso, será lançada uma exceção independente da configuração do modulo.
-   * @default `true`
+   * @default `false`
    */
-  successAndErrorsException?: boolean = true;
+  successAndErrorsException?: boolean = false;
 
   /**
    * Se true, caso não encontre nenhum webhook para o evento, será enviado um alerta para o guardião.\
    * Se false, não será enviado alerta.
-   * @default `false`
+   * @default `true`
    */
   emptyAlert?: boolean = true;
 
@@ -120,6 +115,31 @@ export class WebhookOptions {
    * @default `true`
    */
   successAndErrorsAlert?: boolean = true;
+
+  /**
+   * Combina as opções do webhook com as opções personalizadas.
+   * @param custom
+   * @returns `WebhookOptions` combinadas
+   */
+  public combine?(custom: Partial<WebhookOptions>): WebhookOptions {
+    const defaultClass = Object.assign(new WebhookOptions(), this);
+    Object.keys(custom).forEach((key) => {
+      defaultClass[key] = custom[key];
+    });
+
+    return defaultClass;
+  }
+}
+
+export class WebhookOptions extends WebhookConfigOptions {
+  constructor(input?: WebhookOptions) {
+    super(input);
+  }
+
+  /**
+   * URL do webhook do serviço de webhook.
+   */
+  url: string;
 
   /**
    * Se true, será registrado o log da operação em uma coleção especifica com tempo de expiração.
@@ -138,18 +158,4 @@ export class WebhookOptions {
    * @default `15 dias`
    */
   logCollectionDuration?: number = 15;
-
-  /**
-   * Combina as opções do webhook com as opções personalizadas.
-   * @param custom
-   * @returns `WebhookOptions` combinadas
-   */
-  public combine?(custom: Partial<WebhookOptions>): WebhookOptions {
-    const defaultClass = Object.assign(new WebhookOptions(), this);
-    Object.keys(custom).forEach((key) => {
-      defaultClass[key] = custom[key];
-    });
-
-    return defaultClass;
-  }
 }

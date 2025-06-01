@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CORE_WEBHOOK_OPTION } from 'src/constants';
-import { WebhookOptions } from 'src/options.dto';
+import { WebhookConfigOptions, WebhookOptions } from 'src/options.dto';
 import { WebhookCoreModel } from './webhook.model';
 import { HttpCoreService } from 'src/http/http-core.service';
 import {
@@ -23,11 +23,13 @@ export class WebhookCoreService {
   async getWebhookUrl(event: string, agencia: string): Promise<WebhookCoreModel[]> {
     try {
       const webhooks = await this.http.get(this.webhookOption.url + `/webhook/${agencia}/${event}`);
-      return {
-        ...webhooks.data.data,
-        evento: event,
-        agencia: agencia,
-      };
+      return webhooks.data.data.map((webhook: any) => {
+        return {
+          ...webhook,
+          evento: event,
+          agencia: agencia,
+        };
+      });
     } catch (error) {
       if (error.status === 404) {
         return [];
@@ -41,7 +43,7 @@ export class WebhookCoreService {
     agencia: string,
     body: any,
     methodHttp: Method,
-    customOption?: Partial<WebhookOptions>,
+    customOption?: Partial<WebhookConfigOptions>,
   ): Promise<WebhookExceptionDTO[]> {
     const options = customOption ? this.webhookOption.combine(customOption) : this.webhookOption;
     const webhooks = await this.getWebhookUrl(event, agencia);
@@ -54,7 +56,7 @@ export class WebhookCoreService {
       if (options.emptyException) {
         throw new WebhookNotFoundException(event, agencia);
       }
-      return;
+      return [];
     }
 
     const errosList: WebhookExceptionDTO[] = [];
@@ -74,15 +76,23 @@ export class WebhookCoreService {
           outputSuccess.push({ webhook, success: resp.data });
         }
       } catch (error) {
-        errosList.push({ webhook, error });
+        const obj = error.response?.data || error.response || error;
+        if (typeof obj === 'string') {
+          errosList.push({ webhook, error, erroObj: obj, erroString: obj });
+        } else {
+          errosList.push({ webhook, error, erroObj: obj, erroString: JSON.stringify(obj) });
+        }
       }
     }
 
     // TODO: Criar log da operação
 
     if (errosList.length > 0) {
-      // TODO: Enviar alerta para o guardião
-      // if (options.successAndErrorsAlert) { }
+      errosList.forEach((_: WebhookExceptionDTO) => {
+        console.log(errosList[errosList.length - 1].erroString);
+        // TODO: Enviar alerta para o guardião
+        // if (options.successAndErrorsAlert) { }
+      });
 
       if (success > 0 && options.successAndErrorsException) {
         throw new WebhookPartialErrorException(errosList, outputSuccess);
@@ -92,6 +102,6 @@ export class WebhookCoreService {
       }
     }
 
-    return outputSuccess;
+    return [...outputSuccess, ...errosList];
   }
 }

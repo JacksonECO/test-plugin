@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebhookOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
+exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
 class PluginCoreOption {
     authorization;
     log;
@@ -30,18 +30,14 @@ class LogOptions {
     logSistemaCollectionName = 'log-sistema';
 }
 exports.LogOptions = LogOptions;
-class WebhookOptions {
+class WebhookConfigOptions {
     constructor(input) {
         Object.assign(this, input);
     }
-    url;
-    emptyException;
-    successAndErrorsException = true;
+    emptyException = true;
+    successAndErrorsException = false;
     emptyAlert = true;
     successAndErrorsAlert = true;
-    logOperation = false;
-    logCollectionName = 'webhook-sender';
-    logCollectionDuration = 15;
     combine(custom) {
         const defaultClass = Object.assign(new WebhookOptions(), this);
         Object.keys(custom).forEach((key) => {
@@ -49,6 +45,16 @@ class WebhookOptions {
         });
         return defaultClass;
     }
+}
+exports.WebhookConfigOptions = WebhookConfigOptions;
+class WebhookOptions extends WebhookConfigOptions {
+    constructor(input) {
+        super(input);
+    }
+    url;
+    logOperation = false;
+    logCollectionName = 'webhook-sender';
+    logCollectionDuration = 15;
 }
 exports.WebhookOptions = WebhookOptions;
 //# sourceMappingURL=options.dto.js.map

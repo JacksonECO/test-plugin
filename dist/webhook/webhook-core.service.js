@@ -28,11 +28,13 @@ let WebhookCoreService = class WebhookCoreService {
     async getWebhookUrl(event, agencia) {
         try {
             const webhooks = await this.http.get(this.webhookOption.url + `/webhook/${agencia}/${event}`);
-            return {
-                ...webhooks.data.data,
-                evento: event,
-                agencia: agencia,
-            };
+            return webhooks.data.data.map((webhook) => {
+                return {
+                    ...webhook,
+                    evento: event,
+                    agencia: agencia,
+                };
+            });
         }
         catch (error) {
             if (error.status === 404) {
@@ -48,7 +50,7 @@ let WebhookCoreService = class WebhookCoreService {
             if (options.emptyException) {
                 throw new webhook_core_exception_1.WebhookNotFoundException(event, agencia);
             }
-            return;
+            return [];
         }
         const errosList = [];
         const outputSuccess = [];
@@ -66,10 +68,19 @@ let WebhookCoreService = class WebhookCoreService {
                 }
             }
             catch (error) {
-                errosList.push({ webhook, error });
+                const obj = error.response?.data || error.response || error;
+                if (typeof obj === 'string') {
+                    errosList.push({ webhook, error, erroObj: obj, erroString: obj });
+                }
+                else {
+                    errosList.push({ webhook, error, erroObj: obj, erroString: JSON.stringify(obj) });
+                }
             }
         }
         if (errosList.length > 0) {
+            errosList.forEach((_) => {
+                console.log(errosList[errosList.length - 1].erroString);
+            });
             if (success > 0 && options.successAndErrorsException) {
                 throw new webhook_core_exception_1.WebhookPartialErrorException(errosList, outputSuccess);
             }
@@ -77,7 +88,10 @@ let WebhookCoreService = class WebhookCoreService {
                 throw new webhook_core_exception_1.WebhookErrorException(errosList);
             }
         }
-        return outputSuccess;
+        return [
+            ...outputSuccess,
+            ...errosList,
+        ];
     }
 };
 exports.WebhookCoreService = WebhookCoreService;

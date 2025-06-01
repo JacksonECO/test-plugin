@@ -22,15 +22,18 @@ export declare class ClientOptions {
 export declare class LogOptions {
     logSistemaCollectionName?: string;
 }
-export declare class WebhookOptions {
-    constructor(input?: WebhookOptions);
-    url: string;
-    emptyException: boolean;
+export declare class WebhookConfigOptions {
+    constructor(input?: WebhookConfigOptions);
+    emptyException?: boolean;
     successAndErrorsException?: boolean;
     emptyAlert?: boolean;
     successAndErrorsAlert?: boolean;
+    combine?(custom: Partial<WebhookOptions>): WebhookOptions;
+}
+export declare class WebhookOptions extends WebhookConfigOptions {
+    constructor(input?: WebhookOptions);
+    url: string;
     logOperation?: boolean;
     logCollectionName?: string;
     logCollectionDuration?: number;
-    combine?(custom: Partial<WebhookOptions>): WebhookOptions;
 }

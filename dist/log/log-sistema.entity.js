@@ -9,51 +9,56 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createLogSistemaSchema = exports.LogSistemaEntity = void 0;
+exports.createLogSistemaSchema = exports.LogSistemaCoreEntity = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
-let LogSistemaEntity = class LogSistemaEntity {
+let LogSistemaCoreEntity = class LogSistemaCoreEntity {
     dataOcorrencia;
     message;
     request;
     response;
+    info;
     statusCode;
     tipo;
     user;
 };
-exports.LogSistemaEntity = LogSistemaEntity;
+exports.LogSistemaCoreEntity = LogSistemaCoreEntity;
 __decorate([
     (0, mongoose_1.Prop)({ type: Date }),
     __metadata("design:type", Date)
-], LogSistemaEntity.prototype, "dataOcorrencia", void 0);
+], LogSistemaCoreEntity.prototype, "dataOcorrencia", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: String }),
     __metadata("design:type", String)
-], LogSistemaEntity.prototype, "message", void 0);
+], LogSistemaCoreEntity.prototype, "message", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: Object }),
     __metadata("design:type", Object)
-], LogSistemaEntity.prototype, "request", void 0);
+], LogSistemaCoreEntity.prototype, "request", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: Object }),
     __metadata("design:type", Object)
-], LogSistemaEntity.prototype, "response", void 0);
+], LogSistemaCoreEntity.prototype, "response", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Object }),
+    __metadata("design:type", Object)
+], LogSistemaCoreEntity.prototype, "info", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: Number }),
     __metadata("design:type", Number)
-], LogSistemaEntity.prototype, "statusCode", void 0);
+], LogSistemaCoreEntity.prototype, "statusCode", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: String }),
     __metadata("design:type", String)
-], LogSistemaEntity.prototype, "tipo", void 0);
+], LogSistemaCoreEntity.prototype, "tipo", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: String }),
     __metadata("design:type", String)
-], LogSistemaEntity.prototype, "user", void 0);
-exports.LogSistemaEntity = LogSistemaEntity = __decorate([
+], LogSistemaCoreEntity.prototype, "user", void 0);
+exports.LogSistemaCoreEntity = LogSistemaCoreEntity = __decorate([
     (0, mongoose_1.Schema)()
-], LogSistemaEntity);
+], LogSistemaCoreEntity);
 const createLogSistemaSchema = (collectionName) => {
-    const schema = mongoose_1.SchemaFactory.createForClass(LogSistemaEntity);
+    const schema = mongoose_1.SchemaFactory.createForClass(LogSistemaCoreEntity);
     schema.set('collection', collectionName);
     return schema;
 };

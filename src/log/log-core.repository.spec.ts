@@ -3,7 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { LogCoreRepository } from './log-core.repository';
-import { LogSistemaEntity } from './log-sistema.entity';
+import { LogSistemaCoreEntity } from './log-sistema.entity';
 import { Model } from 'mongoose';
 import { HttpCoreService } from 'src/http/http-core.service';
 import { mockAuthorizationOption } from 'test/mocks/options.dto.mock';
@@ -29,7 +29,7 @@ class TestCoreLogModule {}
 
 describe('LogCoreRepository', () => {
   let repository: LogCoreRepository;
-  let model: Model<LogSistemaEntity>;
+  let model: Model<LogSistemaCoreEntity>;
   let module: TestingModule;
 
   const urlBase = 'http://host.com';
@@ -53,7 +53,7 @@ describe('LogCoreRepository', () => {
     }).compile();
 
     repository = module.get<LogCoreRepository>(LogCoreRepository);
-    model = module.get<Model<LogSistemaEntity>>(getModelToken(LogSistemaEntity.name));
+    model = module.get<Model<LogSistemaCoreEntity>>(getModelToken(LogSistemaCoreEntity.name));
   });
 
   beforeEach(() => {
@@ -80,7 +80,7 @@ describe('LogCoreRepository', () => {
 
   describe('save', () => {
     it('should save a log entity with success', async () => {
-      const dto: LogSistemaEntity = {
+      const dto: LogSistemaCoreEntity = {
         dataOcorrencia: new Date(),
         message: 'Test message',
         request: {},
@@ -115,7 +115,7 @@ describe('LogCoreRepository', () => {
   });
 
   it('should save a log entity with error', async () => {
-    const dto: LogSistemaEntity = {
+    const dto: LogSistemaCoreEntity = {
       dataOcorrencia: new Date(),
       message: 'Test message',
       request: {},

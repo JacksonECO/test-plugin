@@ -28,13 +28,17 @@ let WebhookCoreService = class WebhookCoreService {
     async getWebhookUrl(event, agencia) {
         try {
             const webhooks = await this.http.get(this.webhookOption.url + `/webhook/${agencia}/${event}`);
-            return webhooks.data.data;
+            return {
+                ...webhooks.data.data,
+                evento: event,
+                agencia: agencia,
+            };
         }
         catch (error) {
             if (error.status === 404) {
                 return [];
             }
-            throw new webhook_core_exception_1.RequestWebhookWException();
+            throw new webhook_core_exception_1.RequestWebhookCoreException(error, event, agencia);
         }
     }
     async send(event, agencia, body, methodHttp, customOption) {
@@ -42,20 +46,24 @@ let WebhookCoreService = class WebhookCoreService {
         const webhooks = await this.getWebhookUrl(event, agencia);
         if (!webhooks || webhooks.length === 0) {
             if (options.emptyException) {
-                throw new webhook_core_exception_1.WebhookNotFoundException();
+                throw new webhook_core_exception_1.WebhookNotFoundException(event, agencia);
             }
             return;
         }
         const errosList = [];
+        const outputSuccess = [];
         let success = 0;
         for await (const webhook of webhooks) {
             try {
-                await this.http.request({
+                const resp = await this.http.request({
                     method: methodHttp,
                     url: webhook.url,
                     data: body,
                 });
                 success++;
+                if (resp?.data) {
+                    outputSuccess.push({ webhook, success: resp.data });
+                }
             }
             catch (error) {
                 errosList.push({ webhook, error });
@@ -63,12 +71,13 @@ let WebhookCoreService = class WebhookCoreService {
         }
         if (errosList.length > 0) {
             if (success > 0 && options.successAndErrorsException) {
-                throw new webhook_core_exception_1.WebhookPartialErrorException(errosList, success);
+                throw new webhook_core_exception_1.WebhookPartialErrorException(errosList, outputSuccess);
             }
             if (success == 0) {
                 throw new webhook_core_exception_1.WebhookErrorException(errosList);
             }
         }
+        return outputSuccess;
     }
 };
 exports.WebhookCoreService = WebhookCoreService;

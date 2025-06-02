@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CORE_WEBHOOK_OPTION } from 'src/constants';
 import { WebhookOptions } from 'src/options.dto';
-import { WebhookModel } from './webhook.model';
+import { WebhookCoreModel } from './webhook.model';
 import { HttpCoreService } from 'src/http/http-core.service';
 import {
-  RequestWebhookWException,
+  RequestWebhookCoreException,
   WebhookErrorException,
+  WebhookExceptionDTO,
   WebhookNotFoundException,
   WebhookPartialErrorException,
 } from './webhook-core.exception';
@@ -19,15 +20,19 @@ export class WebhookCoreService {
     private http: HttpCoreService,
   ) {}
 
-  async getWebhookUrl(event: string, agencia: string): Promise<WebhookModel[]> {
+  async getWebhookUrl(event: string, agencia: string): Promise<WebhookCoreModel[]> {
     try {
       const webhooks = await this.http.get(this.webhookOption.url + `/webhook/${agencia}/${event}`);
-      return webhooks.data.data;
+      return {
+        ...webhooks.data.data,
+        evento: event,
+        agencia: agencia,
+      };
     } catch (error) {
       if (error.status === 404) {
         return [];
       }
-      throw new RequestWebhookWException();
+      throw new RequestWebhookCoreException(error, event, agencia);
     }
   }
 
@@ -36,8 +41,8 @@ export class WebhookCoreService {
     agencia: string,
     body: any,
     methodHttp: Method,
-    customOption?: WebhookOptions,
-  ): Promise<void> {
+    customOption?: Partial<WebhookOptions>,
+  ): Promise<WebhookExceptionDTO[]> {
     const options = customOption ? this.webhookOption.combine(customOption) : this.webhookOption;
     const webhooks = await this.getWebhookUrl(event, agencia);
     if (!webhooks || webhooks.length === 0) {
@@ -47,22 +52,27 @@ export class WebhookCoreService {
       // TODO: Criar log
 
       if (options.emptyException) {
-        throw new WebhookNotFoundException();
+        throw new WebhookNotFoundException(event, agencia);
       }
       return;
     }
 
-    const errosList = [];
+    const errosList: WebhookExceptionDTO[] = [];
+    const outputSuccess: WebhookExceptionDTO[] = [];
     let success = 0;
 
     for await (const webhook of webhooks) {
       try {
-        await this.http.request({
+        const resp = await this.http.request({
           method: methodHttp,
           url: webhook.url,
           data: body,
         });
         success++;
+
+        if (resp?.data) {
+          outputSuccess.push({ webhook, success: resp.data });
+        }
       } catch (error) {
         errosList.push({ webhook, error });
       }
@@ -75,11 +85,13 @@ export class WebhookCoreService {
       // if (options.successAndErrorsAlert) { }
 
       if (success > 0 && options.successAndErrorsException) {
-        throw new WebhookPartialErrorException(errosList, success);
+        throw new WebhookPartialErrorException(errosList, outputSuccess);
       }
       if (success == 0) {
         throw new WebhookErrorException(errosList);
       }
     }
+
+    return outputSuccess;
   }
 }

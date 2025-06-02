@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { LogSistemaEntity } from './log-sistema.entity';
+import { LogSistemaCoreEntity } from './log-sistema.entity';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class LogCoreRepository {
   constructor(
-    @InjectModel(LogSistemaEntity.name)
-    private logSistema: Model<LogSistemaEntity>,
+    @InjectModel(LogSistemaCoreEntity.name)
+    private logSistema: Model<LogSistemaCoreEntity>,
   ) {}
 
-  async save(dto: LogSistemaEntity) {
+  async save(dto: LogSistemaCoreEntity) {
     const requisicao = new this.logSistema(dto);
     await requisicao.save();
   }
+
+  // TODO: Implementar o método find para buscar logs com filtros e paginação, e busca por id
+  // TODO: Implementar um controller padrão e uma forma de exportar o controller de forma opcional e customizável
 }

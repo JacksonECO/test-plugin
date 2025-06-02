@@ -48,4 +48,16 @@ export class RequestInfoCoreService {
     }
     return agencia;
   }
+
+  getInfo(): Record<string, string | number> | undefined {
+    return this.request?.['_info'];
+  }
+
+  addInfo(data: Record<string, string | number>): void {
+    if (!this.request) return;
+    this.request['_info'] = {
+      ...(this.request['_info'] || {}),
+      ...data,
+    };
+  }
 }

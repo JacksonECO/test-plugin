@@ -1,1 +1,2 @@
-export declare class WebhookCoreModule {}
+export declare class WebhookCoreModule {
+}

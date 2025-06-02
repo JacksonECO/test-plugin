@@ -88,10 +88,7 @@ let WebhookCoreService = class WebhookCoreService {
                 throw new webhook_core_exception_1.WebhookErrorException(errosList);
             }
         }
-        return [
-            ...outputSuccess,
-            ...errosList,
-        ];
+        return [...outputSuccess, ...errosList];
     }
 };
 exports.WebhookCoreService = WebhookCoreService;

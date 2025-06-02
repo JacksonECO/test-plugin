@@ -2,10 +2,16 @@
  * Representa as opções gerais para o módulo do plugin core.
  */
 export class PluginCoreOption {
+  constructor(input?: PluginCoreOption) {
+    this.authorization = new AuthorizationOption(input?.authorization);
+    this.log = new LogOptions(input?.log);
+    this.webhook = new WebhookOptions(input?.webhook);
+    this.guardian = new GuardianOptions(input?.guardian);
+  }
   /**
    * Configurações de autorização.
    */
-  authorization: AuthorizationOption;
+  authorization?: AuthorizationOption;
 
   /**
    * Configurações de log.
@@ -16,12 +22,22 @@ export class PluginCoreOption {
    * Configurações de webhook.
    */
   webhook?: WebhookOptions;
+
+  /**
+   * Configurações do guardião.
+   */
+  guardian?: GuardianOptions;
 }
 
 /**
  * Representa as opções de autorização para o módulo do plugin core.
  */
 export class AuthorizationOption {
+  constructor(input?: AuthorizationOption) {
+    Object.assign(this, input);
+    Object.assign(this.user, input.user);
+    Object.assign(this.client, input.client);
+  }
   /**
    * URL base do servidor de autenticação ou do core banking.
    */
@@ -73,6 +89,9 @@ export class ClientOptions {
  * Opções de log para o módulo do plugin core.
  */
 export class LogOptions {
+  constructor(input?: LogOptions) {
+    Object.assign(this, input);
+  }
   /**
    * Indica se o nome da coleção de log, onde será registrado as requestes e alguns logs adicionais.
    *
@@ -158,4 +177,23 @@ export class WebhookOptions extends WebhookConfigOptions {
    * @default `15 dias`
    */
   logCollectionDuration?: number = 15;
+}
+
+export class GuardianOptions {
+  constructor(input?: GuardianOptions) {
+    Object.assign(this, input);
+  }
+
+  /**
+   * URL do serviço
+   */
+  url: string;
+  /**
+   * Nome do sistema atual que está enviando o alerta.
+   */
+  nameSystem?: string;
+  /**
+   * Código do banco
+   */
+  codigoBanco?: string;
 }

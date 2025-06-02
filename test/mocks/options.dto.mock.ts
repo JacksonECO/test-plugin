@@ -5,6 +5,7 @@ import {
   UserOptions,
   ClientOptions,
   WebhookOptions,
+  GuardianOptions,
 } from '../../src/options.dto';
 
 export const mockPluginCoreOption = (): PluginCoreOption => ({
@@ -33,4 +34,12 @@ export const mockClientOptions = (): ClientOptions => ({
 export const mockWebhookOptions = (): WebhookOptions =>
   new WebhookOptions({
     url: 'http://mock-webhook-url',
+  });
+
+export const mockGuardianOptions = (base: Partial<GuardianOptions> = {}): GuardianOptions =>
+  new GuardianOptions({
+    url: 'http://mock-guardian-url',
+    codigoBanco: '000',
+    nameSystem: 'Mock System',
+    ...base,
   });

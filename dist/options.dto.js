@@ -1,13 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
+exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
 class PluginCoreOption {
+    constructor(input) {
+        this.authorization = new AuthorizationOption(input?.authorization);
+        this.log = new LogOptions(input?.log);
+        this.webhook = new WebhookOptions(input?.webhook);
+        this.guardian = new GuardianOptions(input?.guardian);
+    }
     authorization;
     log;
     webhook;
+    guardian;
 }
 exports.PluginCoreOption = PluginCoreOption;
 class AuthorizationOption {
+    constructor(input) {
+        Object.assign(this, input);
+        Object.assign(this.user, input.user);
+        Object.assign(this.client, input.client);
+    }
     authServerUrl;
     isCoreServiceAuth = false;
     isTokenRequestDefault = true;
@@ -27,6 +39,9 @@ class ClientOptions {
 }
 exports.ClientOptions = ClientOptions;
 class LogOptions {
+    constructor(input) {
+        Object.assign(this, input);
+    }
     logSistemaCollectionName = 'log-sistema';
 }
 exports.LogOptions = LogOptions;
@@ -57,4 +72,13 @@ class WebhookOptions extends WebhookConfigOptions {
     logCollectionDuration = 15;
 }
 exports.WebhookOptions = WebhookOptions;
+class GuardianOptions {
+    constructor(input) {
+        Object.assign(this, input);
+    }
+    url;
+    nameSystem;
+    codigoBanco;
+}
+exports.GuardianOptions = GuardianOptions;
 //# sourceMappingURL=options.dto.js.map

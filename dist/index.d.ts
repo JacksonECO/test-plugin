@@ -21,3 +21,7 @@ export * from './webhook/webhook-core.module';
 export * from './webhook/webhook-core.service';
 export * from './webhook/webhook-core.exception';
 export * from './webhook/webhook.model';
+export * from './guardian/guardian-core.module';
+export * from './guardian/guardian-core.service';
+export * from './guardian/message-guardian-core.dto';
+export * from './util/util.module';

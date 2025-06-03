@@ -17,7 +17,7 @@ exports.GuardianCoreModule = GuardianCoreModule = __decorate([
         imports: [],
         controllers: [],
         providers: [guardian_core_service_1.GuardianCoreService],
-        exports: [guardian_core_service_1.GuardianCoreService]
+        exports: [guardian_core_service_1.GuardianCoreService],
     })
 ], GuardianCoreModule);
 //# sourceMappingURL=guardian-core.module.js.map

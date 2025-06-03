@@ -38,7 +38,13 @@ let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
                     useValue: new options_dto_1.GuardianOptions(option.webhook),
                 },
             ],
-            exports: [constants_1.CORE_PLUGIN_OPTION, constants_1.CORE_AUTHORIZATION_OPTION, constants_1.CORE_LOG_OPTION, constants_1.CORE_WEBHOOK_OPTION, constants_1.CORE_GUARDIAN_OPTION],
+            exports: [
+                constants_1.CORE_PLUGIN_OPTION,
+                constants_1.CORE_AUTHORIZATION_OPTION,
+                constants_1.CORE_LOG_OPTION,
+                constants_1.CORE_WEBHOOK_OPTION,
+                constants_1.CORE_GUARDIAN_OPTION,
+            ],
         };
     }
 };

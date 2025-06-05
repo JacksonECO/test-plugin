@@ -1,18 +1,24 @@
-import { HttpCoreService } from './http-core.service';
+import { mockAuthorizationOption } from 'test/mocks/options.dto.mock';
+import { HttpCoreRequestService } from './http-core-request.service';
 import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
-import { AuthServerServiceMock, mockAuthServerService } from 'test/mocks/services/auth-server.service.mock';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  mockRequestInfoCoreService,
+  RequestInfoCoreServiceMock,
+} from 'test/mocks/services/request-info-core.service.mock';
+import { mockAuthServerService } from 'test/mocks/services/auth-server.service.mock';
 
-describe('HttpCoreService', () => {
+describe('HttpCoreRequestService', () => {
   const urlBase = 'http://host.com';
+  const options = mockAuthorizationOption();
+  const requestInfoCoreService = mockRequestInfoCoreService();
   const authServerService = mockAuthServerService();
   const mockAxios: MockAdapter = new MockAdapter(axios);
 
-  let service: HttpCoreService;
+  let service: HttpCoreRequestService;
 
   beforeEach(() => {
-    service = new HttpCoreService(authServerService);
+    service = new HttpCoreRequestService(requestInfoCoreService);
   });
 
   afterEach(() => {
@@ -24,20 +30,21 @@ describe('HttpCoreService', () => {
     expect(service).toBeDefined();
   });
 
-  it('deve usar o token do serviço', async () => {
+  it('deve usar o token que veio na request', async () => {
     const req = mockAxios.onGet(urlBase).reply(200, {});
 
     await service.get(urlBase);
 
     expect(req.history).toHaveLength(1);
     expect(req.history[0].headers).toHaveProperty('Authorization');
-    expect(req.history[0].headers.Authorization).toBe(AuthServerServiceMock.tokenGerado);
+    expect(req.history[0].headers.Authorization).toBe(RequestInfoCoreServiceMock.tokenGerado);
   });
 
   it.each([
     { status: 200 },
     { status: 201 },
     { status: 400 },
+    { status: 401 },
     { status: 403 },
     { status: 404 },
     { status: 500 },
@@ -54,35 +61,6 @@ describe('HttpCoreService', () => {
     expect(req.history[0].headers).toHaveProperty('Authorization');
     expect(req.history[0].headers).not.toHaveProperty('_retry');
     expect(getTokenForce).toHaveBeenCalledTimes(0);
-  });
-
-  it('resposta com status 401 deve tentar obter um novo token', async () => {
-    const req = mockAxios.onGet(urlBase).reply(401, {});
-
-    const getTokenForce = jest.spyOn(authServerService, 'getTokenForce');
-
-    await service.get(urlBase).catch(() => {});
-
-    expect(req.history).toHaveLength(2);
-    expect(req.history[0].headers).toHaveProperty('Authorization');
-    expect(req.history[0].headers).not.toHaveProperty('_retry');
-    expect(getTokenForce).toHaveBeenCalledTimes(1);
-  });
-
-  it('tratar erro ao tentar obter um novo token', async () => {
-    const req = mockAxios.onGet(urlBase).reply(401, {});
-
-    const getTokenForce = jest.spyOn(authServerService, 'getTokenForce').mockImplementation(() => {
-      throw new InternalServerErrorException('Erro ao obter token');
-    });
-
-    const result = await service.get(urlBase).catch(() => false);
-
-    expect(result).toBe(false);
-    expect(getTokenForce).toHaveBeenCalledTimes(1);
-    expect(req.history).toHaveLength(1);
-
-    // TODO: Validar com guardião
   });
 
   describe('realizando requests corretamente do tipo:', () => {

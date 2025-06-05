@@ -12,15 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HttpCoreService = void 0;
+exports.HttpCoreRequestService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = __importDefault(require("axios"));
-const auth_server_interface_1 = require("../auth-server/auth-server.interface");
-let HttpCoreService = class HttpCoreService {
-    authServer;
+const request_info_core_service_1 = require("../request-info/request-info-core.service");
+let HttpCoreRequestService = class HttpCoreRequestService {
+    requestInfo;
     axios;
-    constructor(authServer) {
-        this.authServer = authServer;
+    constructor(requestInfo) {
+        this.requestInfo = requestInfo;
         this.axios = this.createInstance();
     }
     getUri(config) {
@@ -66,37 +66,19 @@ let HttpCoreService = class HttpCoreService {
         axios.interceptors.request.use(async (config) => {
             try {
                 if (!config?.headers?.Authorization) {
-                    config.headers.Authorization = await this.authServer.getToken();
+                    config.headers.Authorization = this.requestInfo.getAuthorization();
                 }
             }
             catch (_) {
             }
             return config;
         });
-        axios.interceptors.response.use((response) => response, async (error) => {
-            const originalRequest = error.config;
-            if (error?.response?.status !== 401) {
-                return Promise.reject(error);
-            }
-            if (originalRequest._retry) {
-                return Promise.reject(error);
-            }
-            try {
-                const newToken = await this.authServer.getTokenForce();
-                originalRequest.headers['Authorization'] = newToken;
-                originalRequest._retry = true;
-                return this.axios(originalRequest);
-            }
-            catch (_error) {
-            }
-            return Promise.reject(error);
-        });
         return axios;
     }
 };
-exports.HttpCoreService = HttpCoreService;
-exports.HttpCoreService = HttpCoreService = __decorate([
+exports.HttpCoreRequestService = HttpCoreRequestService;
+exports.HttpCoreRequestService = HttpCoreRequestService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [auth_server_interface_1.AuthServerService])
-], HttpCoreService);
-//# sourceMappingURL=http-core.service.js.map
+    __metadata("design:paramtypes", [request_info_core_service_1.RequestInfoCoreService])
+], HttpCoreRequestService);
+//# sourceMappingURL=http-core-request.service.js.map

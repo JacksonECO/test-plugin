@@ -7,7 +7,6 @@ import { LogSistemaCoreEntity } from './log-sistema.entity';
 import { Model } from 'mongoose';
 import { HttpCoreService } from 'src/http/http-core.service';
 import { mockAuthorizationOption } from 'test/mocks/options.dto.mock';
-import { mockRequestInfoCoreService } from 'test/mocks/services/request-info-core.service.mock';
 import { CORE_LOG_OPTION } from 'src/constants';
 import { LogOptions } from 'src/options.dto';
 import { AuthServerKeycloakService } from 'src/auth-server/auth-server-keycloak.service';
@@ -38,7 +37,7 @@ describe('LogCoreRepository', () => {
   const mockAxios = new MockAdapter(axios);
   const cache = mockCacheManager();
   const authServer = new AuthServerKeycloakService(options, cache);
-  const httpRequest = new HttpCoreService(mockAuthorizationOption(), authServer, mockRequestInfoCoreService(), false);
+  const httpRequest = new HttpCoreService(authServer);
 
   beforeAll(async () => {
     const now = new Date();

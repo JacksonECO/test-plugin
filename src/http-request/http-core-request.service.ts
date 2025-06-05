@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axiosGlobal, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { AuthServerService } from 'src/auth-server/auth-server.interface';
+import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
 
 @Injectable()
-export class HttpCoreService {
+export class HttpCoreRequestService {
   private axios: AxiosInstance;
 
-  constructor(
-    private authServer: AuthServerService,
-    // private guardiao: GuardiaoCoreService,
-  ) {
+  constructor(private requestInfo: RequestInfoCoreService) {
     this.axios = this.createInstance();
   }
 
@@ -60,7 +57,7 @@ export class HttpCoreService {
       try {
         // Modificar o config da requisição aqui add o token de autenticação
         if (!config?.headers?.Authorization) {
-          config.headers.Authorization = await this.authServer.getToken();
+          config.headers.Authorization = this.requestInfo.getAuthorization();
         }
       } catch (_) {
         // TODO: Informar guardião
@@ -68,51 +65,6 @@ export class HttpCoreService {
 
       return config;
     });
-
-    // Interceptor de Resposta
-    axios.interceptors.response.use(
-      (response: any) => response,
-      async (error: any) => {
-        const originalRequest = error.config;
-        if (error?.response?.status !== 401) {
-          return Promise.reject(error);
-        }
-
-        if (originalRequest._retry) {
-          // TODO: Informar guardião
-          // Se já tentou uma vez, não tenta de novo
-          // Aviso via Guardião
-          // this.guardiao.salvaRequest({
-          //   title: 'Erro de autenticação',
-          //   message: error.message,
-          //   url: originalRequest?.url,
-          //   body: originalRequest?.data,
-          // });
-          return Promise.reject(error);
-        }
-
-        try {
-          const newToken = await this.authServer.getTokenForce();
-          originalRequest.headers['Authorization'] = newToken;
-          originalRequest._retry = true;
-
-          // devemos retornar a requisição original com o novo token
-          return this.axios(originalRequest);
-        } catch (_error) {
-          // TODO: Informar guardião
-          // Aviso via Guardião
-          // this.guardiao.salvaRequest({
-          //   title: 'Erro ao tentar se logar durante uma request',
-          //   message: error.message,
-          //   url: originalRequest?.url,
-          //   body: originalRequest?.data,
-          // });
-        }
-
-        // Tratar o erro da resposta aqui
-        return Promise.reject(error);
-      },
-    );
 
     return axios;
   }

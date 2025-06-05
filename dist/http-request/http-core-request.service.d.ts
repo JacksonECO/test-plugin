@@ -1,9 +1,9 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { AuthServerService } from 'src/auth-server/auth-server.interface';
-export declare class HttpCoreService {
-    private authServer;
+import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
+export declare class HttpCoreRequestService {
+    private requestInfo;
     private axios;
-    constructor(authServer: AuthServerService);
+    constructor(requestInfo: RequestInfoCoreService);
     getUri(config?: AxiosRequestConfig): string;
     request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>;
     get<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;

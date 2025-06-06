@@ -25,3 +25,4 @@ export * from './guardian/guardian-core.module';
 export * from './guardian/guardian-core.service';
 export * from './guardian/message-guardian-core.dto';
 export * from './util/util.module';
+export * from './context/context-core.module';

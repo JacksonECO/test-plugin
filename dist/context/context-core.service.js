@@ -20,7 +20,7 @@ let ContextCoreService = class ContextCoreService {
     }
     set(key, value) {
         this.asyncLocalStorage.enterWith({
-            ...this.asyncLocalStorage.getStore() || new Map(),
+            ...(this.asyncLocalStorage.getStore() || new Map()),
             [key]: value,
         });
     }
@@ -34,7 +34,7 @@ let ContextCoreService = class ContextCoreService {
         if (!request)
             return;
         this.asyncLocalStorage.enterWith({
-            ...this.asyncLocalStorage.getStore() || new Map(),
+            ...(this.asyncLocalStorage.getStore() || new Map()),
             ...{
                 ip: request.headers?.['x-forwarded-for'],
                 userId: request?.['user']?.['sub'],

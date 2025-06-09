@@ -33,7 +33,7 @@ export class LogConsoleInterceptor implements NestInterceptor {
       }),
       catchError((error) => {
         if (error.response) {
-          error.response.request = {};
+          error.response.request = undefined;
         }
         this.logger.error(
           `Error::${error.status} ${routePathClean} ${user} ${

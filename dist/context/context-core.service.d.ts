@@ -4,7 +4,7 @@ export declare class ContextCoreService {
   run(callback: () => void, value?: Map<string, any>): void;
   set(key: string, value: any): void;
   get(key: string): any;
-  getAll(): Map<string, any>;
+  getAll(): {};
   importRequest(request: Request): void;
   getUserId(): string;
   getUserEmail(): string;

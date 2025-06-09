@@ -28,7 +28,9 @@ let ContextCoreService = class ContextCoreService {
         return this.asyncLocalStorage.getStore()?.[key];
     }
     getAll() {
-        return this.asyncLocalStorage.getStore();
+        const store = this.asyncLocalStorage.getStore() || {};
+        delete store['setInfoRequest'];
+        return store;
     }
     importRequest(request) {
         if (!request)
@@ -56,10 +58,12 @@ let ContextCoreService = class ContextCoreService {
         return this.get('info') || {};
     }
     addInfo(data) {
-        this.set('info', {
-            ...(this.getInfo() || {}),
+        const newValue = {
+            ...(this.get('info') || {}),
             ...data,
-        });
+        };
+        this.set('info', newValue);
+        this.get('setInfoRequest')?.(newValue);
     }
     getUserAgencia() {
         const email = this.getUserEmail();

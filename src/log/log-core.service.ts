@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LogCoreRepository } from './log-core.repository';
-import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
 import { LogSistemaCreateModel, LogSistemaRequestModel } from './log-core.model';
+import { ContextCoreService } from 'src/context/context-core.module';
 
 @Injectable()
 export class LogCoreService {
   protected logger = new Logger(LogCoreService.name + 'Plugin');
   constructor(
     protected repository: LogCoreRepository,
-    protected requestInfo: RequestInfoCoreService,
+    protected contextService: ContextCoreService,
   ) {}
 
   async salvarLog(dto: LogSistemaCreateModel) {
@@ -18,7 +18,7 @@ export class LogCoreService {
         request: this.cleanRequest(dto.request),
         response: this.cleanRequest(dto.response),
         dataOcorrencia: new Date(),
-        user: this.requestInfo.getUserEmail(),
+        user: this.contextService.getUserEmail(),
       });
     } catch (error) {
       this.logger.error('Erro ao salvar um log', error);
@@ -36,10 +36,9 @@ export class LogCoreService {
         request: this.cleanRequest(dto.request),
         response: this.cleanRequest(dto.response),
         dataOcorrencia: new Date(),
-        user: this.requestInfo.getUserEmail(),
+        user: this.contextService.getUserEmail(),
         tipo: 'request',
         message: dto.method + ': ' + dto.url,
-        info: this.requestInfo.getInfo(),
       });
     } catch (error) {
       this.logger.error('Erro ao salvar uma requisição ' + dto.url, error);

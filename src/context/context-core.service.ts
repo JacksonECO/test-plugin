@@ -23,7 +23,9 @@ export class ContextCoreService {
   }
 
   getAll() {
-    return this.asyncLocalStorage.getStore();
+    const store = this.asyncLocalStorage.getStore() || {};
+    delete store['setInfoRequest'];
+    return store;
   }
 
   importRequest(request: Request): void {
@@ -57,10 +59,13 @@ export class ContextCoreService {
   }
 
   addInfo(data: Record<string, string | number>): void {
-    this.set('info', {
-      ...(this.getInfo() || {}),
+    const newValue = {
+      ...(this.get('info') || {}),
       ...data,
-    });
+    };
+
+    this.set('info', newValue);
+    this.get('setInfoRequest')?.(newValue);
   }
 
   getUserAgencia(): string {

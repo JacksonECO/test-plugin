@@ -23,4 +23,5 @@ export interface LogSistemaRequestModel {
   statusCode: number;
   request?: any;
   response?: any;
+  info?: Record<string, string | number>;
 }

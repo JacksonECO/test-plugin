@@ -12,15 +12,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogRequestInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 const operators_1 = require("rxjs/operators");
+const context_core_service_1 = require("../context/context-core.service");
 const log_core_service_1 = require("../log/log-core.service");
 let LogRequestInterceptor = class LogRequestInterceptor {
     logService;
-    constructor(logService) {
+    contextCoreService;
+    constructor(logService, contextCoreService) {
         this.logService = logService;
+        this.contextCoreService = contextCoreService;
     }
     intercept(context, next) {
         const httpContext = context.switchToHttp();
         const request = httpContext.getRequest();
+        this.contextCoreService.set('setInfoRequest', (dto) => {
+            request._info = dto;
+        });
         return next.handle().pipe((0, operators_1.tap)((response) => {
             const responseHttp = httpContext.getResponse();
             const requestFormat = {
@@ -34,6 +40,7 @@ let LogRequestInterceptor = class LogRequestInterceptor {
                 request: requestFormat,
                 response: response,
                 statusCode: responseHttp?.statusCode,
+                info: request._info,
             });
         }), (0, operators_1.catchError)((error) => {
             const requestFormat = {
@@ -47,6 +54,7 @@ let LogRequestInterceptor = class LogRequestInterceptor {
                 statusCode: error.status || 500,
                 request: requestFormat,
                 response: error.response || error.message,
+                info: request._info,
             });
             throw error;
         }));
@@ -55,6 +63,7 @@ let LogRequestInterceptor = class LogRequestInterceptor {
 exports.LogRequestInterceptor = LogRequestInterceptor;
 exports.LogRequestInterceptor = LogRequestInterceptor = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [log_core_service_1.LogCoreService])
+    __metadata("design:paramtypes", [log_core_service_1.LogCoreService,
+        context_core_service_1.ContextCoreService])
 ], LogRequestInterceptor);
 //# sourceMappingURL=log-request.interceptor.js.map

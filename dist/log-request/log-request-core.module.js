@@ -6,11 +6,12 @@ const core_1 = require("@nestjs/core");
 const log_request_interceptor_1 = require("./log-request.interceptor");
 const log_core_module_1 = require("../log/log-core.module");
 const http_forbidden_filter_1 = require("./http-forbidden.filter");
+const context_core_module_1 = require("../context/context-core.module");
 class LogRequestCoreModule {
     static request() {
         return {
             module: LogRequestCoreModule,
-            imports: [log_core_module_1.LogCoreModule],
+            imports: [log_core_module_1.LogCoreModule, context_core_module_1.ContextCoreModule],
             providers: [
                 {
                     provide: core_1.APP_INTERCEPTOR,

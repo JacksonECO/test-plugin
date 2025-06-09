@@ -7,36 +7,39 @@ export class ContextCoreService {
 
   constructor() {}
 
-  run(callback: (...args: any[]) => void) {
-    this.asyncLocalStorage.run(new Map(), callback);
+  run(callback: () => void, value: Map<string, any> = new Map<string, any>()) {
+    this.asyncLocalStorage.run(value, callback);
   }
 
   set(key: string, value: any) {
-    const store = this.asyncLocalStorage.getStore();
-    if (store) {
-      store.set(key, value);
-    }
+    this.asyncLocalStorage.enterWith({
+      ...(this.asyncLocalStorage.getStore() || new Map()),
+      [key]: value,
+    });
   }
 
   get(key: string) {
-    const store = this.asyncLocalStorage.getStore();
-    return store ? store.get(key) : undefined;
+    return this.asyncLocalStorage.getStore()?.[key];
   }
 
   getAll() {
-    return this.asyncLocalStorage.getStore();
+    const store = this.asyncLocalStorage.getStore() || {};
+    delete store['setInfoRequest'];
+    return store;
   }
 
   importRequest(request: Request): void {
     if (!request) return;
 
-    const store = this.asyncLocalStorage.getStore();
-    if (store) {
-      store.set('ip', request.headers?.['x-forwarded-for']);
-      store.set('userId', request?.['user']?.['sub']);
-      store.set('userEmail', request?.['user']?.['email']);
-      store.set('auth', request.headers?.['authorization']);
-    }
+    this.asyncLocalStorage.enterWith({
+      ...(this.asyncLocalStorage.getStore() || new Map()),
+      ...{
+        ip: request.headers?.['x-forwarded-for'],
+        userId: request?.['user']?.['sub'],
+        userEmail: request?.['user']?.['email'],
+        auth: request.headers?.['authorization'],
+      },
+    });
   }
 
   getUserId(): string {
@@ -52,17 +55,17 @@ export class ContextCoreService {
   }
 
   getInfo(): Record<string, string | number> | undefined {
-    return this.get('info');
+    return this.get('info') || {};
   }
 
   addInfo(data: Record<string, string | number>): void {
-    const store = this.asyncLocalStorage.getStore();
-    if (store) {
-      store.set('info', {
-        ...(store.get('info') || {}),
-        ...data,
-      });
-    }
+    const newValue = {
+      ...(this.get('info') || {}),
+      ...data,
+    };
+
+    this.set('info', newValue);
+    this.get('setInfoRequest')?.(newValue);
   }
 
   getUserAgencia(): string {

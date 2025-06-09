@@ -19,33 +19,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-var ContextCoreModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContextCoreModule = void 0;
 const common_1 = require("@nestjs/common");
+const context_core_service_1 = require("./context-core.service");
 const core_1 = require("@nestjs/core");
 const context_core_interceptor_1 = require("./context-core.interceptor");
-const context_core_service_1 = require("./context-core.service");
 __exportStar(require("./context-core.service"), exports);
-let ContextCoreModule = ContextCoreModule_1 = class ContextCoreModule {
-    static forRoot() {
+let ContextCoreModule = class ContextCoreModule {
+    static interceptor() {
         return {
-            module: ContextCoreModule_1,
-            providers: [
-                context_core_service_1.ContextCoreService,
-                {
-                    provide: core_1.APP_INTERCEPTOR,
-                    useClass: context_core_interceptor_1.ContextCoreInterceptor,
-                },
-            ],
+            provide: core_1.APP_INTERCEPTOR,
+            useClass: context_core_interceptor_1.ContextCoreInterceptor,
         };
     }
 };
 exports.ContextCoreModule = ContextCoreModule;
-exports.ContextCoreModule = ContextCoreModule = ContextCoreModule_1 = __decorate([
+exports.ContextCoreModule = ContextCoreModule = __decorate([
     (0, common_1.Module)({
         providers: [context_core_service_1.ContextCoreService],
-        exports: [context_core_service_1.ContextCoreService]
+        exports: [context_core_service_1.ContextCoreService],
     })
 ], ContextCoreModule);
 //# sourceMappingURL=context-core.module.js.map

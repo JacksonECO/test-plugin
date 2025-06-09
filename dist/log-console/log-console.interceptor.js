@@ -34,7 +34,7 @@ let LogConsoleInterceptor = class LogConsoleInterceptor {
             this.logger.verbose(`${request.method}::${responseHttp?.statusCode ?? ''} ${user} ${Date.now() - now}ms\n${bigResponse}`, `End ${routePathClean}`);
         }), (0, operators_1.catchError)((error) => {
             if (error.response) {
-                error.response.request = {};
+                error.response.request = undefined;
             }
             this.logger.error(`Error::${error.status} ${routePathClean} ${user} ${Date.now() - now}ms\n${JSON.stringify(error.response || error.message).substring(0, 10000)}`, error.stack.toString(), '');
             throw error;

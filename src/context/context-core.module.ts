@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ContextCoreService } from './context-core.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ContextCoreInterceptor } from './context-core.interceptor';
-import { ContextCoreService } from './context-core.service';
 
 export * from './context-core.service';
 
@@ -10,16 +10,10 @@ export * from './context-core.service';
   exports: [ContextCoreService],
 })
 export class ContextCoreModule {
-  static forRoot() {
+  static interceptor() {
     return {
-      module: ContextCoreModule,
-      providers: [
-        ContextCoreService,
-        {
-          provide: APP_INTERCEPTOR,
-          useClass: ContextCoreInterceptor,
-        },
-      ],
+      provide: APP_INTERCEPTOR,
+      useClass: ContextCoreInterceptor,
     };
   }
 }

@@ -20,14 +20,10 @@ let ContextCoreInterceptor = class ContextCoreInterceptor {
     }
     intercept(context, next) {
         const request = context.switchToHttp().getRequest();
-        return new rxjs_1.Observable(observer => {
+        return new rxjs_1.Observable((observer) => {
             this.contextService.run(() => {
                 this.contextService.importRequest(request);
-                next.handle().subscribe({
-                    next: (value) => observer.next(value),
-                    error: (err) => observer.error(err),
-                    complete: () => observer.complete(),
-                });
+                next.handle().subscribe(observer);
             });
         });
     }

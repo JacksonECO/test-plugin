@@ -15,18 +15,17 @@ const async_hooks_1 = require("async_hooks");
 let ContextCoreService = class ContextCoreService {
     asyncLocalStorage = new async_hooks_1.AsyncLocalStorage();
     constructor() { }
-    run(callback) {
-        this.asyncLocalStorage.run(new Map(), callback);
+    run(callback, value = new Map()) {
+        this.asyncLocalStorage.run(value, callback);
     }
     set(key, value) {
-        const store = this.asyncLocalStorage.getStore();
-        if (store) {
-            store.set(key, value);
-        }
+        this.asyncLocalStorage.enterWith({
+            ...this.asyncLocalStorage.getStore() || new Map(),
+            [key]: value,
+        });
     }
     get(key) {
-        const store = this.asyncLocalStorage.getStore();
-        return store ? store.get(key) : undefined;
+        return this.asyncLocalStorage.getStore()?.[key];
     }
     getAll() {
         return this.asyncLocalStorage.getStore();
@@ -34,13 +33,15 @@ let ContextCoreService = class ContextCoreService {
     importRequest(request) {
         if (!request)
             return;
-        const store = this.asyncLocalStorage.getStore();
-        if (store) {
-            store.set('ip', request.headers?.['x-forwarded-for']);
-            store.set('userId', request?.['user']?.['sub']);
-            store.set('userEmail', request?.['user']?.['email']);
-            store.set('auth', request.headers?.['authorization']);
-        }
+        this.asyncLocalStorage.enterWith({
+            ...this.asyncLocalStorage.getStore() || new Map(),
+            ...{
+                ip: request.headers?.['x-forwarded-for'],
+                userId: request?.['user']?.['sub'],
+                userEmail: request?.['user']?.['email'],
+                auth: request.headers?.['authorization'],
+            },
+        });
     }
     getUserId() {
         return this.get('userId');
@@ -52,16 +53,13 @@ let ContextCoreService = class ContextCoreService {
         return this.get('ip');
     }
     getInfo() {
-        return this.get('info');
+        return this.get('info') || {};
     }
     addInfo(data) {
-        const store = this.asyncLocalStorage.getStore();
-        if (store) {
-            store.set('info', {
-                ...(store.get('info') || {}),
-                ...data,
-            });
-        }
+        this.set('info', {
+            ...(this.getInfo() || {}),
+            ...data,
+        });
     }
     getUserAgencia() {
         const email = this.getUserEmail();

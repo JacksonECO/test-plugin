@@ -18,7 +18,7 @@ import { ContextCoreModule } from 'src/context/context-core.module';
     ]),
     ContextCoreModule,
   ],
-  providers: [LogCoreRepository, LogCoreService],
-  exports: [LogCoreService],
+  providers: [LogCoreRepository, LogCoreService, LogSistemaCoreEntity],
+  exports: [LogCoreService, LogCoreRepository, LogSistemaCoreEntity],
 })
 export class LogCoreModule {}

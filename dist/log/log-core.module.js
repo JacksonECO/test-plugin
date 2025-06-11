@@ -29,8 +29,8 @@ exports.LogCoreModule = LogCoreModule = __decorate([
             ]),
             context_core_module_1.ContextCoreModule,
         ],
-        providers: [log_core_repository_1.LogCoreRepository, log_core_service_1.LogCoreService],
-        exports: [log_core_service_1.LogCoreService],
+        providers: [log_core_repository_1.LogCoreRepository, log_core_service_1.LogCoreService, log_sistema_entity_1.LogSistemaCoreEntity],
+        exports: [log_core_service_1.LogCoreService, log_core_repository_1.LogCoreRepository, log_sistema_entity_1.LogSistemaCoreEntity],
     })
 ], LogCoreModule);
 //# sourceMappingURL=log-core.module.js.map

@@ -34,3 +34,15 @@ export const createLogSistemaSchema = (collectionName: string) => {
   schema.set('collection', collectionName);
   return schema;
 };
+
+// export const modelNameLogCore = 'LogSistemaCoreEntity';
+
+// export const createLogSistemaSchema = (collectionName: string) => {
+//   if (!mongoose.models[modelNameLogCore]) {
+//     const schema = SchemaFactory.createForClass(LogSistemaCoreEntity);
+//     schema.set('collection', collectionName);
+//     mongoose.model(modelNameLogCore, schema);
+//   }
+
+//   return mongoose.models[modelNameLogCore];
+// };

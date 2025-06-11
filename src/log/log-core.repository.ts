@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 export class LogCoreRepository {
   constructor(
     @InjectModel(LogSistemaCoreEntity.name)
-    private logSistema: Model<LogSistemaCoreEntity>,
+    protected logSistema: Model<LogSistemaCoreEntity>,
   ) {}
 
   async save(dto: LogSistemaCoreEntity) {

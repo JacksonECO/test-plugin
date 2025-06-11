@@ -153,6 +153,7 @@ export class WebhookConfigOptions {
 export class WebhookOptions extends WebhookConfigOptions {
   constructor(input?: WebhookOptions) {
     super(input);
+    Object.assign(this, input);
   }
 
   /**

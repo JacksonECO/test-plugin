@@ -65,6 +65,7 @@ exports.WebhookConfigOptions = WebhookConfigOptions;
 class WebhookOptions extends WebhookConfigOptions {
     constructor(input) {
         super(input);
+        Object.assign(this, input);
     }
     url;
     logOperation = false;

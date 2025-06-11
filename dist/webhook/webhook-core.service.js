@@ -18,6 +18,7 @@ const constants_1 = require("../constants");
 const options_dto_1 = require("../options.dto");
 const http_core_service_1 = require("../http/http-core.service");
 const webhook_core_exception_1 = require("./webhook-core.exception");
+const resume_erro_core_1 = require("../util/resume-erro-core");
 let WebhookCoreService = class WebhookCoreService {
     webhookOption;
     http;
@@ -69,11 +70,18 @@ let WebhookCoreService = class WebhookCoreService {
             }
             catch (error) {
                 const obj = error.response?.data || error.response || error;
+                if (typeof obj === 'object') {
+                    obj.trace = undefined;
+                    obj.stack = undefined;
+                    obj.request = undefined;
+                    obj.config = undefined;
+                    obj.headers = undefined;
+                }
                 if (typeof obj === 'string') {
                     errosList.push({ webhook, error, erroObj: obj, erroString: obj });
                 }
                 else {
-                    errosList.push({ webhook, error, erroObj: obj, erroString: JSON.stringify(obj) });
+                    errosList.push({ webhook, error, erroObj: obj, erroString: (0, resume_erro_core_1.resumeErrorCore)(obj) });
                 }
             }
         }

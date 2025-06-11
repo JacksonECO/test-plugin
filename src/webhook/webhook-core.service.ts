@@ -11,6 +11,7 @@ import {
   WebhookPartialErrorException,
 } from './webhook-core.exception';
 import { Method } from 'axios';
+import { resumeErrorCore } from 'src/util/resume-erro-core';
 
 @Injectable()
 export class WebhookCoreService {
@@ -77,10 +78,17 @@ export class WebhookCoreService {
         }
       } catch (error) {
         const obj = error.response?.data || error.response || error;
+        if (typeof obj === 'object') {
+          obj.trace = undefined;
+          obj.stack = undefined;
+          obj.request = undefined;
+          obj.config = undefined;
+          obj.headers = undefined;
+        }
         if (typeof obj === 'string') {
           errosList.push({ webhook, error, erroObj: obj, erroString: obj });
         } else {
-          errosList.push({ webhook, error, erroObj: obj, erroString: JSON.stringify(obj) });
+          errosList.push({ webhook, error, erroObj: obj, erroString: resumeErrorCore(obj) });
         }
       }
     }

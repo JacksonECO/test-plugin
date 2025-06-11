@@ -9,6 +9,7 @@ import {
   WebhookNotFoundException,
   WebhookPartialErrorException,
 } from './webhook-core.exception';
+import { resumeErrorCore } from 'src/util/resume-erro-core';
 
 describe('WebhookCoreService', () => {
   const url = mockWebhookOptions().url;
@@ -172,7 +173,7 @@ describe('WebhookCoreService', () => {
       });
       expect(result[1]).toHaveProperty('error', expect.objectContaining({}));
       expect(result[1]).toHaveProperty('erroObj', mockError);
-      expect(result[1]).toHaveProperty('erroString', JSON.stringify(mockError));
+      expect(result[1]).toHaveProperty('erroString', resumeErrorCore(mockError));
     });
 
     it('deve lançar WebhookErrorException em caso de erro ao enviar webhook', async () => {
@@ -258,7 +259,7 @@ describe('WebhookCoreService', () => {
           agencia: agencia,
         });
         expect(error.error[0]).toHaveProperty('erroObj', mockError);
-        expect(error.error[0]).toHaveProperty('erroString', JSON.stringify(mockError));
+        expect(error.error[0]).toHaveProperty('erroString', resumeErrorCore(mockError));
 
         expect(error.success).toHaveLength(1);
         expect(error.success[0]).toHaveProperty('webhook', {

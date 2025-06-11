@@ -18,6 +18,14 @@ export const resumeErrorCore = (error: any): string => {
   }
 
   const temp = error.response?.data || error.response?.message || error.message || error;
+  if (typeof temp === 'object') {
+    temp.trace = undefined;
+    temp.stack = undefined;
+    temp.request = undefined;
+    temp.config = undefined;
+    temp.headers = undefined;
+  }
+
   const status = error.response?.status || error.response?.statusCode || error.status || error.statusCode || 599;
   return status + ' - ' + JSON.stringify(temp);
 };

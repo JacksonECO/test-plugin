@@ -97,7 +97,7 @@ export class LogOptions {
    *
    * @default `log-sistema`
    */
-  logSistemaCollectionName?: string = 'log-sistema';
+  // logSistemaCollectionName?: string = 'log-sistema';
 }
 
 export class WebhookConfigOptions {
@@ -171,7 +171,7 @@ export class WebhookOptions extends WebhookConfigOptions {
    * Nome da coleção de log, onde será registrado as operações do webhook.
    * @default `webhook-sender`
    */
-  logCollectionName?: string = 'webhook-sender';
+  // logCollectionName?: string = 'webhook-sender';
 
   /**
    * Tempo de expiração do log em dias.

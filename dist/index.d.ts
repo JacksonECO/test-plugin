@@ -1,5 +1,6 @@
 export * from './plugin-core.module';
 export * from './options.dto';
+export * from './constants';
 export * from './authorization/authorization-core.module';
 export * from './authorization/decorator/authorization.decorator';
 export * from './authorization/decorator/roles.decorator';

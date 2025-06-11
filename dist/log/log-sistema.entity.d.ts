@@ -8,7 +8,7 @@ export declare class LogSistemaCoreEntity {
   tipo?: string;
   user?: string;
 }
-export declare const createLogSistemaSchema: (collectionName: string) => import('mongoose').Schema<
+export declare const LogSistemaCoreSchema: import('mongoose').Schema<
   LogSistemaCoreEntity,
   import('mongoose').Model<
     LogSistemaCoreEntity,

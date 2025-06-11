@@ -1,5 +1,6 @@
 export * from './plugin-core.module';
 export * from './options.dto';
+export * from './constants';
 
 // Autenticação e autorização das rotas
 export * from './authorization/authorization-core.module';

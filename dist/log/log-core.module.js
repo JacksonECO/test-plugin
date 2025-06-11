@@ -12,7 +12,6 @@ const mongoose_1 = require("@nestjs/mongoose");
 const log_sistema_entity_1 = require("./log-sistema.entity");
 const log_core_repository_1 = require("./log-core.repository");
 const log_core_service_1 = require("./log-core.service");
-const constants_1 = require("../constants");
 const context_core_module_1 = require("../context/context-core.module");
 let LogCoreModule = class LogCoreModule {
 };
@@ -20,13 +19,7 @@ exports.LogCoreModule = LogCoreModule;
 exports.LogCoreModule = LogCoreModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeatureAsync([
-                {
-                    name: log_sistema_entity_1.LogSistemaCoreEntity.name,
-                    inject: [constants_1.CORE_LOG_OPTION],
-                    useFactory: (logOptions) => (0, log_sistema_entity_1.createLogSistemaSchema)(logOptions.logSistemaCollectionName),
-                },
-            ]),
+            mongoose_1.MongooseModule.forFeature([{ name: log_sistema_entity_1.LogSistemaCoreEntity.name, schema: log_sistema_entity_1.LogSistemaCoreSchema }]),
             context_core_module_1.ContextCoreModule,
         ],
         providers: [log_core_repository_1.LogCoreRepository, log_core_service_1.LogCoreService, log_sistema_entity_1.LogSistemaCoreEntity],

@@ -42,7 +42,6 @@ class LogOptions {
     constructor(input) {
         Object.assign(this, input);
     }
-    logSistemaCollectionName = 'log-sistema';
 }
 exports.LogOptions = LogOptions;
 class WebhookConfigOptions {
@@ -69,7 +68,6 @@ class WebhookOptions extends WebhookConfigOptions {
     }
     url;
     logOperation = false;
-    logCollectionName = 'webhook-sender';
     logCollectionDuration = 15;
 }
 exports.WebhookOptions = WebhookOptions;

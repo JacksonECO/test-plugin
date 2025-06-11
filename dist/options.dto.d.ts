@@ -24,7 +24,6 @@ export declare class ClientOptions {
 }
 export declare class LogOptions {
     constructor(input?: LogOptions);
-    logSistemaCollectionName?: string;
 }
 export declare class WebhookConfigOptions {
     constructor(input?: WebhookConfigOptions);
@@ -38,7 +37,6 @@ export declare class WebhookOptions extends WebhookConfigOptions {
     constructor(input?: WebhookOptions);
     url: string;
     logOperation?: boolean;
-    logCollectionName?: string;
     logCollectionDuration?: number;
 }
 export declare class GuardianOptions {

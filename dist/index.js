@@ -16,6 +16,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./plugin-core.module"), exports);
 __exportStar(require("./options.dto"), exports);
+__exportStar(require("./constants"), exports);
 __exportStar(require("./authorization/authorization-core.module"), exports);
 __exportStar(require("./authorization/decorator/authorization.decorator"), exports);
 __exportStar(require("./authorization/decorator/roles.decorator"), exports);

@@ -42,7 +42,7 @@ export class PluginCoreModule {
         },
         {
           provide: CORE_GUARDIAN_OPTION,
-          useValue: new GuardianOptions(option.webhook),
+          useValue: new GuardianOptions(option.guardian),
         },
       ],
       exports: [

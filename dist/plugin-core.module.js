@@ -35,7 +35,7 @@ let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
                 },
                 {
                     provide: constants_1.CORE_GUARDIAN_OPTION,
-                    useValue: new options_dto_1.GuardianOptions(option.webhook),
+                    useValue: new options_dto_1.GuardianOptions(option.guardian),
                 },
             ],
             exports: [

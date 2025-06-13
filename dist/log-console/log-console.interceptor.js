@@ -30,7 +30,7 @@ let LogConsoleInterceptor = class LogConsoleInterceptor {
         const formattedRequestBody = JSON.stringify(request.body ?? {}).substring(0, 10000);
         this.logger.verbose(`${request.method} ${user}\n${routePath}\n${formattedRequestBody}`, `Start ${routePathClean}`);
         return next.handle().pipe((0, operators_1.tap)((response) => {
-            const bigResponse = JSON.stringify(response?.data ?? {}).substring(0, 10000);
+            const bigResponse = JSON.stringify(response ?? {}).substring(0, 10000);
             this.logger.verbose(`${request.method}::${responseHttp?.statusCode ?? ''} ${user} ${Date.now() - now}ms\n${bigResponse}`, `End ${routePathClean}`);
         }), (0, operators_1.catchError)((error) => {
             if (error.response) {

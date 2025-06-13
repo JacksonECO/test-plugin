@@ -1,24 +1,16 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { createLogSistemaSchema, LogSistemaCoreEntity } from './log-sistema.entity';
+import { LogSistemaCoreEntity, LogSistemaCoreSchema } from './log-sistema.entity';
 import { LogCoreRepository } from './log-core.repository';
-import { RequestInfoCoreModule } from 'src/request-info/request-info-core.module';
 import { LogCoreService } from './log-core.service';
-import { CORE_LOG_OPTION } from 'src/constants';
-import { LogOptions } from 'src/options.dto';
+import { ContextCoreModule } from 'src/context/context-core.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
-      {
-        name: LogSistemaCoreEntity.name,
-        inject: [CORE_LOG_OPTION],
-        useFactory: (logOptions: LogOptions) => createLogSistemaSchema(logOptions.logSistemaCollectionName),
-      },
-    ]),
-    RequestInfoCoreModule,
+    MongooseModule.forFeature([{ name: LogSistemaCoreEntity.name, schema: LogSistemaCoreSchema }]),
+    ContextCoreModule,
   ],
-  providers: [LogCoreRepository, LogCoreService],
-  exports: [LogCoreService],
+  providers: [LogCoreRepository, LogCoreService, LogSistemaCoreEntity],
+  exports: [LogCoreService, LogCoreRepository, LogSistemaCoreEntity],
 })
 export class LogCoreModule {}

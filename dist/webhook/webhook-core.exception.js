@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookPartialErrorException = exports.WebhookErrorException = exports.WebhookNotFoundException = exports.RequestWebhookCoreException = exports.WebhookCoreException = void 0;
 const errorMessage = 'Erro inesperado, tente novamente mais tarde';
 class WebhookCoreException extends Error {
-    response = [];
+    success = [];
     event;
     agencia;
     error = [];
-    constructor({ message, error, response, event, agencia } = {}) {
+    constructor({ message, error, success, event, agencia, } = {}) {
         super(message || errorMessage);
         this.event = event;
         this.agencia = agencia;
-        this.response = response;
+        this.success = success;
         this.error = error;
         console.error('Webhook agencia:', agencia, 'evento:', event);
     }
@@ -21,7 +21,9 @@ class RequestWebhookCoreException extends WebhookCoreException {
     constructor(error, event, agencia) {
         super({
             event,
-            error: [{
+            agencia,
+            error: [
+                {
                     webhook: {
                         id: '',
                         tipo: '',
@@ -29,10 +31,12 @@ class RequestWebhookCoreException extends WebhookCoreException {
                         agencia,
                         url: '',
                         updatedAt: new Date(),
-                    }, error
-                }],
+                    },
+                    error,
+                },
+            ],
         });
-        console.error('Erro ao requisitar webhook');
+        console.log('Erro ao requisitar webhook');
     }
 }
 exports.RequestWebhookCoreException = RequestWebhookCoreException;
@@ -42,7 +46,7 @@ class WebhookNotFoundException extends WebhookCoreException {
             event,
             agencia,
         });
-        console.error('Webhook não encontrado');
+        console.log('Webhook não encontrado');
     }
 }
 exports.WebhookNotFoundException = WebhookNotFoundException;
@@ -53,7 +57,7 @@ class WebhookErrorException extends WebhookCoreException {
             agencia: error[0]?.webhook?.agencia,
             event: error[0]?.webhook?.evento,
         });
-        console.error('Erro ao enviar webhook');
+        console.log('Erro ao enviar webhook');
     }
 }
 exports.WebhookErrorException = WebhookErrorException;
@@ -61,11 +65,11 @@ class WebhookPartialErrorException extends WebhookCoreException {
     constructor(error, success) {
         super({
             error,
-            response: success,
+            success,
             agencia: error[0]?.webhook?.agencia,
             event: error[0]?.webhook?.evento,
         });
-        console.error('Erro parcial ao enviar webhook');
+        console.log('Erro parcial ao enviar webhook');
     }
 }
 exports.WebhookPartialErrorException = WebhookPartialErrorException;

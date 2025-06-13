@@ -1,15 +1,23 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { ContextCoreService } from 'src/context/context-core.service';
 import { LogCoreService } from 'src/log/log-core.service';
 
 @Injectable()
 export class LogRequestInterceptor implements NestInterceptor {
-  constructor(private logService: LogCoreService) {}
+  constructor(
+    private logService: LogCoreService,
+    private contextCoreService: ContextCoreService,
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
+
+    this.contextCoreService.set('setInfoRequest', (dto: any) => {
+      request._info = dto;
+    });
 
     return next.handle().pipe(
       tap((response) => {
@@ -27,6 +35,7 @@ export class LogRequestInterceptor implements NestInterceptor {
           request: requestFormat,
           response: response,
           statusCode: responseHttp?.statusCode,
+          info: request._info,
         });
       }),
       catchError((error) => {
@@ -42,6 +51,7 @@ export class LogRequestInterceptor implements NestInterceptor {
           statusCode: error.status || 500,
           request: requestFormat,
           response: error.response || error.message,
+          info: request._info,
         });
 
         throw error;

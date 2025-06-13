@@ -13,14 +13,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogCoreService = void 0;
 const common_1 = require("@nestjs/common");
 const log_core_repository_1 = require("./log-core.repository");
-const request_info_core_service_1 = require("../request-info/request-info-core.service");
+const context_core_module_1 = require("../context/context-core.module");
 let LogCoreService = LogCoreService_1 = class LogCoreService {
     repository;
-    requestInfo;
+    contextService;
     logger = new common_1.Logger(LogCoreService_1.name + 'Plugin');
-    constructor(repository, requestInfo) {
+    constructor(repository, contextService) {
         this.repository = repository;
-        this.requestInfo = requestInfo;
+        this.contextService = contextService;
     }
     async salvarLog(dto) {
         try {
@@ -29,7 +29,7 @@ let LogCoreService = LogCoreService_1 = class LogCoreService {
                 request: this.cleanRequest(dto.request),
                 response: this.cleanRequest(dto.response),
                 dataOcorrencia: new Date(),
-                user: this.requestInfo.getUserEmail(),
+                user: this.contextService.getUserEmail(),
             });
         }
         catch (error) {
@@ -46,10 +46,9 @@ let LogCoreService = LogCoreService_1 = class LogCoreService {
                 request: this.cleanRequest(dto.request),
                 response: this.cleanRequest(dto.response),
                 dataOcorrencia: new Date(),
-                user: this.requestInfo.getUserEmail(),
+                user: this.contextService.getUserEmail(),
                 tipo: 'request',
                 message: dto.method + ': ' + dto.url,
-                info: this.requestInfo.getInfo(),
             });
         }
         catch (error) {
@@ -74,6 +73,6 @@ exports.LogCoreService = LogCoreService;
 exports.LogCoreService = LogCoreService = LogCoreService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [log_core_repository_1.LogCoreRepository,
-        request_info_core_service_1.RequestInfoCoreService])
+        context_core_module_1.ContextCoreService])
 ], LogCoreService);
 //# sourceMappingURL=log-core.service.js.map

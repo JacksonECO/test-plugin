@@ -8,38 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var HttpCoreService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpCoreService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = __importDefault(require("axios"));
 const auth_server_interface_1 = require("../auth-server/auth-server.interface");
-const constants_1 = require("../constants");
-const options_dto_1 = require("../options.dto");
-const request_info_core_service_1 = require("../request-info/request-info-core.service");
-let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
-    authorizationOption;
+let HttpCoreService = class HttpCoreService {
     authServer;
-    requestInfo;
-    isTokenRequest;
     axios;
-    constructor(authorizationOption, authServer, requestInfo, isTokenRequest) {
-        this.authorizationOption = authorizationOption;
+    constructor(authServer) {
         this.authServer = authServer;
-        this.requestInfo = requestInfo;
-        this.isTokenRequest = isTokenRequest;
-        this.isTokenRequest =
-            this.isTokenRequest === false ? false : this.isTokenRequest || this.authorizationOption?.isTokenRequestDefault;
-        this.axios = this.createInstance(this.isTokenRequest);
-    }
-    token(isTokenRequest) {
-        return new HttpCoreService_1(this.authorizationOption, this.authServer, this.requestInfo, isTokenRequest);
+        this.axios = this.createInstance();
     }
     getUri(config) {
         return this.axios.getUri(config);
@@ -77,19 +59,14 @@ let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
     patchForm(url, data, config) {
         return this.axios.patchForm(url, data, config);
     }
-    createInstance(isTokenRequest) {
+    createInstance() {
         const axios = axios_1.default.create({
             headers: { 'Content-Type': 'application/json' },
         });
         axios.interceptors.request.use(async (config) => {
             try {
                 if (!config?.headers?.Authorization) {
-                    if (isTokenRequest && this.requestInfo.getAuthorization()) {
-                        config.headers.Authorization = this.requestInfo.getAuthorization();
-                    }
-                    else {
-                        config.headers.Authorization = await this.authServer.getToken();
-                    }
+                    config.headers.Authorization = await this.authServer.getToken();
                 }
             }
             catch (_) {
@@ -98,7 +75,7 @@ let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
         });
         axios.interceptors.response.use((response) => response, async (error) => {
             const originalRequest = error.config;
-            if (isTokenRequest || error?.response?.status !== 401) {
+            if (error?.response?.status !== 401) {
                 return Promise.reject(error);
             }
             if (originalRequest._retry) {
@@ -118,12 +95,8 @@ let HttpCoreService = HttpCoreService_1 = class HttpCoreService {
     }
 };
 exports.HttpCoreService = HttpCoreService;
-exports.HttpCoreService = HttpCoreService = HttpCoreService_1 = __decorate([
+exports.HttpCoreService = HttpCoreService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(constants_1.CORE_AUTHORIZATION_OPTION)),
-    __param(3, (0, common_1.Inject)('default-undefined')),
-    __metadata("design:paramtypes", [options_dto_1.AuthorizationOption,
-        auth_server_interface_1.AuthServerService,
-        request_info_core_service_1.RequestInfoCoreService, Boolean])
+    __metadata("design:paramtypes", [auth_server_interface_1.AuthServerService])
 ], HttpCoreService);
 //# sourceMappingURL=http-core.service.js.map

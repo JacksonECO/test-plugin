@@ -1,15 +1,9 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { AuthServerService } from 'src/auth-server/auth-server.interface';
-import { AuthorizationOption } from 'src/options.dto';
-import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
 export declare class HttpCoreService {
-    private authorizationOption;
     private authServer;
-    private requestInfo;
-    private isTokenRequest;
     private axios;
-    constructor(authorizationOption: AuthorizationOption, authServer: AuthServerService, requestInfo: RequestInfoCoreService, isTokenRequest: boolean);
-    token(isTokenRequest: boolean): HttpCoreService;
+    constructor(authServer: AuthServerService);
     getUri(config?: AxiosRequestConfig): string;
     request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>;
     get<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R>;

@@ -2,14 +2,16 @@ import { WebhookCoreModel } from './webhook.model';
 
 const errorMessage: string = 'Erro inesperado, tente novamente mais tarde';
 
-export interface WebhookExceptionDTO {
+export interface WebhookExceptionDTO<T = any> {
   webhook: WebhookCoreModel;
+  success?: T;
   error?: any;
-  success?: any;
+  erroObj?: any;
+  erroString?: string;
 }
 
 export class WebhookCoreException extends Error {
-  protected response: WebhookExceptionDTO[] = [];
+  protected success: WebhookExceptionDTO[] = [];
   protected event: string;
   protected agencia: string;
   protected error: WebhookExceptionDTO[] = [];
@@ -17,20 +19,20 @@ export class WebhookCoreException extends Error {
   constructor({
     message,
     error,
-    response,
+    success,
     event,
     agencia,
   }: {
     message?: string;
     event?: string;
     agencia?: string;
-    response?: WebhookExceptionDTO[];
+    success?: WebhookExceptionDTO[];
     error?: WebhookExceptionDTO[];
   } = {}) {
     super(message || errorMessage);
     this.event = event;
     this.agencia = agencia;
-    this.response = response;
+    this.success = success;
     this.error = error;
 
     console.error('Webhook agencia:', agencia, 'evento:', event);
@@ -41,6 +43,7 @@ export class RequestWebhookCoreException extends WebhookCoreException {
   constructor(error: any, event: string, agencia: string) {
     super({
       event,
+      agencia,
       error: [
         {
           webhook: {
@@ -55,7 +58,7 @@ export class RequestWebhookCoreException extends WebhookCoreException {
         },
       ],
     });
-    console.error('Erro ao requisitar webhook');
+    console.log('Erro ao requisitar webhook');
   }
 }
 
@@ -65,7 +68,7 @@ export class WebhookNotFoundException extends WebhookCoreException {
       event,
       agencia,
     });
-    console.error('Webhook não encontrado');
+    console.log('Webhook não encontrado');
   }
 }
 
@@ -76,7 +79,7 @@ export class WebhookErrorException extends WebhookCoreException {
       agencia: error[0]?.webhook?.agencia,
       event: error[0]?.webhook?.evento,
     });
-    console.error('Erro ao enviar webhook');
+    console.log('Erro ao enviar webhook');
   }
 }
 
@@ -84,10 +87,10 @@ export class WebhookPartialErrorException extends WebhookCoreException {
   constructor(error: WebhookExceptionDTO[], success: WebhookExceptionDTO[]) {
     super({
       error,
-      response: success,
+      success,
       agencia: error[0]?.webhook?.agencia,
       event: error[0]?.webhook?.evento,
     });
-    console.error('Erro parcial ao enviar webhook');
+    console.log('Erro parcial ao enviar webhook');
   }
 }

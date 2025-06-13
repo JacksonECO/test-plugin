@@ -1,5 +1,6 @@
 export * from './plugin-core.module';
 export * from './options.dto';
+export * from './constants';
 
 // Autenticação e autorização das rotas
 export * from './authorization/authorization-core.module';
@@ -35,3 +36,12 @@ export * from './webhook/webhook-core.module';
 export * from './webhook/webhook-core.service';
 export * from './webhook/webhook-core.exception';
 export * from './webhook/webhook.model';
+
+// Guardian
+export * from './guardian/guardian-core.module';
+export * from './guardian/guardian-core.service';
+export * from './guardian/message-guardian-core.dto';
+
+// Export module all
+export * from './util/util.module';
+export * from './context/context-core.module';

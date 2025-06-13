@@ -1,9 +1,12 @@
 export declare class PluginCoreOption {
-    authorization: AuthorizationOption;
+    constructor(input?: PluginCoreOption);
+    authorization?: AuthorizationOption;
     log?: LogOptions;
     webhook?: WebhookOptions;
+    guardian?: GuardianOptions;
 }
 export declare class AuthorizationOption {
+    constructor(input?: AuthorizationOption);
     authServerUrl: string;
     isCoreServiceAuth?: boolean;
     isTokenRequestDefault: boolean;
@@ -20,17 +23,25 @@ export declare class ClientOptions {
     realm: string;
 }
 export declare class LogOptions {
-    logSistemaCollectionName?: string;
+    constructor(input?: LogOptions);
 }
-export declare class WebhookOptions {
-    constructor(input?: WebhookOptions);
-    url: string;
-    emptyException: boolean;
+export declare class WebhookConfigOptions {
+    constructor(input?: WebhookConfigOptions);
+    emptyException?: boolean;
     successAndErrorsException?: boolean;
     emptyAlert?: boolean;
     successAndErrorsAlert?: boolean;
-    logOperation?: boolean;
-    logCollectionName?: string;
-    logCollectionDuration?: number;
     combine?(custom: Partial<WebhookOptions>): WebhookOptions;
+}
+export declare class WebhookOptions extends WebhookConfigOptions {
+    constructor(input?: WebhookOptions);
+    url: string;
+    logOperation?: boolean;
+    logCollectionDuration?: number;
+}
+export declare class GuardianOptions {
+    constructor(input?: GuardianOptions);
+    url: string;
+    nameSystem?: string;
+    codigoBanco?: string;
 }

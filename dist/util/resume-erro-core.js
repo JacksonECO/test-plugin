@@ -1,0 +1,32 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.resumeErrorCore = void 0;
+const resumeErrorCore = (error) => {
+    if (error === null) {
+        return 'null';
+    }
+    if (error === undefined) {
+        return 'undefined';
+    }
+    if (['string', 'number', 'bigint', 'symbol'].includes(typeof error)) {
+        return error.toString();
+    }
+    if (error instanceof Date) {
+        return error.toISOString();
+    }
+    if (!(error instanceof Error) && typeof error === 'object' && Object.keys(error).length === 0) {
+        return '{}';
+    }
+    const temp = error.response?.data || error.response?.message || error.message || error;
+    if (typeof temp === 'object') {
+        temp.trace = undefined;
+        temp.stack = undefined;
+        temp.request = undefined;
+        temp.config = undefined;
+        temp.headers = undefined;
+    }
+    const status = error.response?.status || error.response?.statusCode || error.status || error.statusCode || 599;
+    return status + ' - ' + JSON.stringify(temp);
+};
+exports.resumeErrorCore = resumeErrorCore;
+//# sourceMappingURL=resume-erro-core.js.map

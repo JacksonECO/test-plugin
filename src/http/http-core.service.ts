@@ -1,28 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axiosGlobal, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { AuthServerService } from 'src/auth-server/auth-server.interface';
-import { CORE_AUTHORIZATION_OPTION } from 'src/constants';
-import { AuthorizationOption } from 'src/options.dto';
-import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
 
 @Injectable()
 export class HttpCoreService {
   private axios: AxiosInstance;
 
   constructor(
-    @Inject(CORE_AUTHORIZATION_OPTION) private authorizationOption: AuthorizationOption,
     private authServer: AuthServerService,
-    private requestInfo: RequestInfoCoreService,
     // private guardiao: GuardiaoCoreService,
-    @Inject('default-undefined') private isTokenRequest: boolean,
   ) {
-    this.isTokenRequest =
-      this.isTokenRequest === false ? false : this.isTokenRequest || this.authorizationOption?.isTokenRequestDefault;
-    this.axios = this.createInstance(this.isTokenRequest);
-  }
-
-  token(isTokenRequest: boolean) {
-    return new HttpCoreService(this.authorizationOption, this.authServer, this.requestInfo, isTokenRequest);
+    this.axios = this.createInstance();
   }
 
   getUri(config?: AxiosRequestConfig): string {
@@ -62,7 +50,7 @@ export class HttpCoreService {
     return this.axios.patchForm<T, R>(url, data, config);
   }
 
-  private createInstance(isTokenRequest: boolean): AxiosInstance {
+  private createInstance(): AxiosInstance {
     const axios = axiosGlobal.create({
       headers: { 'Content-Type': 'application/json' },
     });
@@ -72,11 +60,7 @@ export class HttpCoreService {
       try {
         // Modificar o config da requisição aqui add o token de autenticação
         if (!config?.headers?.Authorization) {
-          if (isTokenRequest && this.requestInfo.getAuthorization()) {
-            config.headers.Authorization = this.requestInfo.getAuthorization();
-          } else {
-            config.headers.Authorization = await this.authServer.getToken();
-          }
+          config.headers.Authorization = await this.authServer.getToken();
         }
       } catch (_) {
         // TODO: Informar guardião
@@ -90,7 +74,7 @@ export class HttpCoreService {
       (response: any) => response,
       async (error: any) => {
         const originalRequest = error.config;
-        if (isTokenRequest || error?.response?.status !== 401) {
+        if (error?.response?.status !== 401) {
           return Promise.reject(error);
         }
 

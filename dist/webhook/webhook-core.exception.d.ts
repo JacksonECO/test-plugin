@@ -1,19 +1,21 @@
 import { WebhookCoreModel } from './webhook.model';
-export interface WebhookExceptionDTO {
+export interface WebhookExceptionDTO<T = any> {
     webhook: WebhookCoreModel;
+    success?: T;
     error?: any;
-    success?: any;
+    erroObj?: any;
+    erroString?: string;
 }
 export declare class WebhookCoreException extends Error {
-    protected response: WebhookExceptionDTO[];
+    protected success: WebhookExceptionDTO[];
     protected event: string;
     protected agencia: string;
     protected error: WebhookExceptionDTO[];
-    constructor({ message, error, response, event, agencia }?: {
+    constructor({ message, error, success, event, agencia, }?: {
         message?: string;
         event?: string;
         agencia?: string;
-        response?: WebhookExceptionDTO[];
+        success?: WebhookExceptionDTO[];
         error?: WebhookExceptionDTO[];
     });
 }

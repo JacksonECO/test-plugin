@@ -24,7 +24,7 @@ export class LogConsoleInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap((response) => {
-        const bigResponse = JSON.stringify(response?.data ?? {}).substring(0, 10000);
+        const bigResponse = JSON.stringify(response ?? {}).substring(0, 10000);
 
         this.logger.verbose(
           `${request.method}::${responseHttp?.statusCode ?? ''} ${user} ${Date.now() - now}ms\n${bigResponse}`,
@@ -32,6 +32,9 @@ export class LogConsoleInterceptor implements NestInterceptor {
         );
       }),
       catchError((error) => {
+        if (error.response) {
+          error.response.request = undefined;
+        }
         this.logger.error(
           `Error::${error.status} ${routePathClean} ${user} ${
             Date.now() - now

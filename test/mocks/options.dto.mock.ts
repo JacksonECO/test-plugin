@@ -1,5 +1,12 @@
 import { faker } from '@faker-js/faker';
-import { PluginCoreOption, AuthorizationOption, UserOptions, ClientOptions } from '../../src/options.dto';
+import {
+  PluginCoreOption,
+  AuthorizationOption,
+  UserOptions,
+  ClientOptions,
+  WebhookOptions,
+  GuardianOptions,
+} from '../../src/options.dto';
 
 export const mockPluginCoreOption = (): PluginCoreOption => ({
   authorization: mockAuthorizationOption(),
@@ -23,3 +30,16 @@ export const mockClientOptions = (): ClientOptions => ({
   secret: 'mock-client-secret',
   realm: 'mock-realm',
 });
+
+export const mockWebhookOptions = (): WebhookOptions =>
+  new WebhookOptions({
+    url: 'http://mock-webhook-url',
+  });
+
+export const mockGuardianOptions = (base: Partial<GuardianOptions> = {}): GuardianOptions =>
+  new GuardianOptions({
+    url: 'http://mock-guardian-url',
+    codigoBanco: '000',
+    nameSystem: 'Mock System',
+    ...base,
+  });

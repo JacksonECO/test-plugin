@@ -19,22 +19,32 @@ let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
             providers: [
                 {
                     provide: constants_1.CORE_PLUGIN_OPTION,
-                    useValue: option,
+                    useValue: new options_dto_1.PluginCoreOption(option),
                 },
                 {
                     provide: constants_1.CORE_AUTHORIZATION_OPTION,
-                    useValue: option.authorization,
+                    useValue: new options_dto_1.AuthorizationOption(option.authorization),
                 },
                 {
                     provide: constants_1.CORE_LOG_OPTION,
-                    useValue: option.log,
+                    useValue: new options_dto_1.LogOptions(option.log),
                 },
                 {
                     provide: constants_1.CORE_WEBHOOK_OPTION,
                     useValue: new options_dto_1.WebhookOptions(option.webhook),
                 },
+                {
+                    provide: constants_1.CORE_GUARDIAN_OPTION,
+                    useValue: new options_dto_1.GuardianOptions(option.guardian),
+                },
             ],
-            exports: [constants_1.CORE_PLUGIN_OPTION, constants_1.CORE_AUTHORIZATION_OPTION, constants_1.CORE_LOG_OPTION, constants_1.CORE_WEBHOOK_OPTION],
+            exports: [
+                constants_1.CORE_PLUGIN_OPTION,
+                constants_1.CORE_AUTHORIZATION_OPTION,
+                constants_1.CORE_LOG_OPTION,
+                constants_1.CORE_WEBHOOK_OPTION,
+                constants_1.CORE_GUARDIAN_OPTION,
+            ],
         };
     }
 };

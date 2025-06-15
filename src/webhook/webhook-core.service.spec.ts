@@ -10,6 +10,7 @@ import {
   WebhookPartialErrorException,
 } from './webhook-core.exception';
 import { resumeErrorCore } from 'src/util/resume-erro-core';
+import { mockGuardianCoreService } from 'test/mocks/services/webhook.service.mock';
 
 describe('WebhookCoreService', () => {
   const url = mockWebhookOptions().url;
@@ -17,7 +18,7 @@ describe('WebhookCoreService', () => {
   const mockAxios: MockAdapter = new MockAdapter(axios);
 
   beforeEach(() => {
-    service = new WebhookCoreService(mockWebhookOptions(), mockHttpCoreService());
+    service = new WebhookCoreService(mockWebhookOptions(), mockHttpCoreService(), mockGuardianCoreService());
   });
 
   afterEach(() => {
@@ -132,7 +133,7 @@ describe('WebhookCoreService', () => {
       const resp = await service.send(event, agencia, body, methodHttp, { emptyException: false });
       expect(resp).toEqual([]);
       expect(mockAxios.history.get).toHaveLength(1);
-      expect(mockAxios.history.post).toHaveLength(0);
+      expect(mockAxios.history.post).toHaveLength(1);
     });
 
     it('deve retornar erros e sucesso se alguns webhooks falharem, mas sem lançar exception', async () => {
@@ -158,7 +159,7 @@ describe('WebhookCoreService', () => {
 
       expect(result).toHaveLength(2);
       expect(mockAxios.history.get).toHaveLength(1);
-      expect(mockAxios.history.post).toHaveLength(2);
+      expect(mockAxios.history.post).toHaveLength(3);
 
       expect(result[0]).toHaveProperty('success', mockSuccess);
       expect(result[0]).toHaveProperty('webhook', {

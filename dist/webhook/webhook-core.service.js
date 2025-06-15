@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var WebhookCoreService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookCoreService = void 0;
 const common_1 = require("@nestjs/common");
@@ -19,12 +20,16 @@ const options_dto_1 = require("../options.dto");
 const http_core_service_1 = require("../http/http-core.service");
 const webhook_core_exception_1 = require("./webhook-core.exception");
 const resume_erro_core_1 = require("../util/resume-erro-core");
-let WebhookCoreService = class WebhookCoreService {
+const guardian_core_service_1 = require("../guardian/guardian-core.service");
+let WebhookCoreService = WebhookCoreService_1 = class WebhookCoreService {
     webhookOption;
     http;
-    constructor(webhookOption, http) {
+    guardianCoreService;
+    logger = new common_1.Logger(WebhookCoreService_1.name);
+    constructor(webhookOption, http, guardianCoreService) {
         this.webhookOption = webhookOption;
         this.http = http;
+        this.guardianCoreService = guardianCoreService;
     }
     async getWebhookUrl(event, agencia) {
         try {
@@ -48,6 +53,19 @@ let WebhookCoreService = class WebhookCoreService {
         const options = customOption ? this.webhookOption.combine(customOption) : this.webhookOption;
         const webhooks = await this.getWebhookUrl(event, agencia);
         if (!webhooks || webhooks.length === 0) {
+            if (options.emptyAlert) {
+                this.guardianCoreService.send({
+                    title: 'Webhook não encontrado',
+                    agencia: agencia,
+                    info: {
+                        event: event,
+                        metodoHttp: methodHttp,
+                    },
+                    detalhes: {
+                        dto: body,
+                    },
+                });
+            }
             if (options.emptyException) {
                 throw new webhook_core_exception_1.WebhookNotFoundException(event, agencia);
             }
@@ -86,8 +104,23 @@ let WebhookCoreService = class WebhookCoreService {
             }
         }
         if (errosList.length > 0) {
-            errosList.forEach((_) => {
+            errosList.forEach((webhookErros) => {
                 console.log(errosList[errosList.length - 1].erroString);
+                if (options.successAndErrorsAlert) {
+                    this.guardianCoreService.send({
+                        title: 'Erro ao enviar Webhook',
+                        agencia: agencia,
+                        info: {
+                            event: event,
+                            metodoHttp: methodHttp,
+                        },
+                        detalhes: {
+                            dto: body,
+                            webhook: webhookErros.webhook,
+                            erroString: webhookErros.erroString,
+                        },
+                    });
+                }
             });
             if (success > 0 && options.successAndErrorsException) {
                 throw new webhook_core_exception_1.WebhookPartialErrorException(errosList, outputSuccess);
@@ -96,14 +129,16 @@ let WebhookCoreService = class WebhookCoreService {
                 throw new webhook_core_exception_1.WebhookErrorException(errosList);
             }
         }
+        this.logger.log('Webhook enviado com sucesso, event: ' + event + ', agencia: ' + agencia);
         return [...outputSuccess, ...errosList];
     }
 };
 exports.WebhookCoreService = WebhookCoreService;
-exports.WebhookCoreService = WebhookCoreService = __decorate([
+exports.WebhookCoreService = WebhookCoreService = WebhookCoreService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(constants_1.CORE_WEBHOOK_OPTION)),
     __metadata("design:paramtypes", [options_dto_1.WebhookOptions,
-        http_core_service_1.HttpCoreService])
+        http_core_service_1.HttpCoreService,
+        guardian_core_service_1.GuardianCoreService])
 ], WebhookCoreService);
 //# sourceMappingURL=webhook-core.service.js.map

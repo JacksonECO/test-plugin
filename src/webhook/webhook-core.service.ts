@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CORE_WEBHOOK_OPTION } from 'src/constants';
 import { WebhookConfigOptions, WebhookOptions } from 'src/options.dto';
 import { WebhookCoreModel } from './webhook.model';
@@ -12,13 +12,17 @@ import {
 } from './webhook-core.exception';
 import { Method } from 'axios';
 import { resumeErrorCore } from 'src/util/resume-erro-core';
+import { GuardianCoreService } from 'src/guardian/guardian-core.service';
 
 @Injectable()
 export class WebhookCoreService {
+  private logger = new Logger(WebhookCoreService.name);
+
   constructor(
     @Inject(CORE_WEBHOOK_OPTION)
     private webhookOption: WebhookOptions,
     private http: HttpCoreService,
+    private guardianCoreService: GuardianCoreService,
   ) {}
 
   async getWebhookUrl(event: string, agencia: string): Promise<WebhookCoreModel[]> {
@@ -49,8 +53,19 @@ export class WebhookCoreService {
     const options = customOption ? this.webhookOption.combine(customOption) : this.webhookOption;
     const webhooks = await this.getWebhookUrl(event, agencia);
     if (!webhooks || webhooks.length === 0) {
-      // TODO: Verificar e enviar alerta para o guardião
-      // if (options.emptyAlert) { }
+      if (options.emptyAlert) {
+        this.guardianCoreService.send({
+          title: 'Webhook não encontrado',
+          agencia: agencia,
+          info: {
+            event: event,
+            metodoHttp: methodHttp,
+          },
+          detalhes: {
+            dto: body,
+          },
+        });
+      }
 
       // TODO: Criar log
 
@@ -96,10 +111,23 @@ export class WebhookCoreService {
     // TODO: Criar log da operação
 
     if (errosList.length > 0) {
-      errosList.forEach((_: WebhookExceptionDTO) => {
+      errosList.forEach((webhookErros: WebhookExceptionDTO) => {
         console.log(errosList[errosList.length - 1].erroString);
-        // TODO: Enviar alerta para o guardião
-        // if (options.successAndErrorsAlert) { }
+        if (options.successAndErrorsAlert) {
+          this.guardianCoreService.send({
+            title: 'Erro ao enviar Webhook',
+            agencia: agencia,
+            info: {
+              event: event,
+              metodoHttp: methodHttp,
+            },
+            detalhes: {
+              dto: body,
+              webhook: webhookErros.webhook,
+              erroString: webhookErros.erroString,
+            },
+          });
+        }
       });
 
       if (success > 0 && options.successAndErrorsException) {
@@ -109,6 +137,8 @@ export class WebhookCoreService {
         throw new WebhookErrorException(errosList);
       }
     }
+
+    this.logger.log('Webhook enviado com sucesso, event: ' + event + ', agencia: ' + agencia);
 
     return [...outputSuccess, ...errosList];
   }

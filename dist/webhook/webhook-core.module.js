@@ -10,12 +10,13 @@ exports.WebhookCoreModule = void 0;
 const common_1 = require("@nestjs/common");
 const http_core_module_1 = require("../http/http-core.module");
 const webhook_core_service_1 = require("./webhook-core.service");
+const guardian_core_module_1 = require("../guardian/guardian-core.module");
 let WebhookCoreModule = class WebhookCoreModule {
 };
 exports.WebhookCoreModule = WebhookCoreModule;
 exports.WebhookCoreModule = WebhookCoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [http_core_module_1.HttpCoreModule],
+        imports: [http_core_module_1.HttpCoreModule, guardian_core_module_1.GuardianCoreModule],
         providers: [webhook_core_service_1.WebhookCoreService],
         exports: [webhook_core_service_1.WebhookCoreService],
     })

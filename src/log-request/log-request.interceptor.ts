@@ -39,6 +39,7 @@ export class LogRequestInterceptor implements NestInterceptor {
         });
       }),
       catchError((error) => {
+        delete error.response?.req;
         const requestFormat = {
           body: request?.body,
           params: request?.params,

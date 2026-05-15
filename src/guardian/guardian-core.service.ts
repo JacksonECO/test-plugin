@@ -89,7 +89,7 @@ export class GuardianCoreService {
             content: {
               $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
               type: 'AdaptiveCard',
-              version: '1.6',
+              version: '1.5',
               body: [
                 {
                   type: 'ColumnSet',

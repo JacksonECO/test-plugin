@@ -43,6 +43,7 @@ let LogRequestInterceptor = class LogRequestInterceptor {
                 info: request._info,
             });
         }), (0, operators_1.catchError)((error) => {
+            delete error.response?.req;
             const requestFormat = {
                 body: request?.body,
                 params: request?.params,

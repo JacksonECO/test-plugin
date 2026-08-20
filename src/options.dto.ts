@@ -35,8 +35,8 @@ export class PluginCoreOption {
 export class AuthorizationOption {
   constructor(input?: AuthorizationOption) {
     Object.assign(this, input);
-    Object.assign(this.user, input.user);
-    Object.assign(this.client, input.client);
+    this.user = Object.assign({}, input?.user) as UserOptions;
+    this.client = Object.assign({}, input?.client) as ClientOptions;
   }
   /**
    * URL base do servidor de autenticação ou do core banking.

@@ -79,13 +79,21 @@ Deve ser feito apenas uma vez de preferência no `AppModule`
 PluginCoreModule.forRoot({
   authorization: {
     authServerUrl: '<Url do Servidor (Core ou Keycloak)>',
-    realm: '<Nome do reino>',
-    clientId: '<Nome do Cliente>',
-    clientSecret: '<Credentials do Cliente usado>',
-    isCoreServiceAuth: '<Indica se a url do servidor é o core ou o Keycloak>'
+    isCoreServiceAuth: '<Indica se a url do servidor é o core ou o Keycloak>',
+    client: {
+      id: '<Nome do Cliente>',
+      secret: '<Credentials do Cliente usado>',
+      realm: '<Nome do reino>',
+    },
+    user: {
+      username: '<Usuário de serviço, se aplicável>',
+      password: '<Senha do usuário de serviço, se aplicável>',
+    },
   },
 }),
 ```
+
+Atenção: `client.id` precisa estar preenchido para que a validação de roles não-admin funcione (usuários com a role `realm:ROLE_ADMIN` sempre têm acesso irrestrito, independente de `client.id`).
 
 ### Autenticação e autorização das rotas
 

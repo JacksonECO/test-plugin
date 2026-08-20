@@ -1,9 +1,13 @@
 import { CanActivate, ExecutionContext, Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Request } from 'express';
+import { IncomingHttpHeaders } from 'http';
 import { META_UNPROTECTED_AUTH, META_UNPROTECTED } from '../decorator/authorization.decorator';
 import { AuthServerService } from '../../auth-server/auth-server.interface';
 import { CORE_AUTHORIZATION_OPTION } from 'src/constants';
 import { AuthorizationOption } from 'src/options.dto';
+
+type RequestWithUser = Request & { user?: Record<string, unknown> & { email?: string } };
 
 @Injectable()
 export class AuthCustomGuard implements CanActivate {
@@ -37,7 +41,7 @@ export class AuthCustomGuard implements CanActivate {
 
     // Obtém o contexto HTTP
     const httpContext = context.switchToHttp();
-    const request = httpContext.getRequest();
+    const request = httpContext.getRequest<RequestWithUser>();
 
     const jwt = this.extractJwt(request?.headers);
     const isJwtEmpty = jwt === null || jwt === undefined;
@@ -75,7 +79,7 @@ export class AuthCustomGuard implements CanActivate {
    * @param headers Cabeçalhos da requisição.
    * @returns O token JWT ou `null` se não encontrado.
    */
-  protected extractJwt(headers: any) {
+  protected extractJwt(headers: IncomingHttpHeaders): string | null {
     if (!headers?.authorization) {
       return null;
     }
@@ -98,7 +102,7 @@ export class AuthCustomGuard implements CanActivate {
    * @param addUser Informações adicionais do usuário.
    * @returns Objeto do usuário com informações do token e adicionais.
    */
-  protected parseToken(token: string, addUser: any): string {
+  protected parseToken(token: string, addUser: any): Record<string, unknown> & { email?: string } {
     const parts = token.split('.');
     const user = JSON.parse(Buffer.from(parts[1], 'base64').toString());
 

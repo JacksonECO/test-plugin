@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
+exports.TratamentoErroOptions = exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
 class PluginCoreOption {
     constructor(input) {
         this.authorization = new AuthorizationOption(input?.authorization);
@@ -80,4 +80,12 @@ class GuardianOptions {
     codigoBanco;
 }
 exports.GuardianOptions = GuardianOptions;
+class TratamentoErroOptions {
+    constructor(input) {
+        Object.assign(this, input);
+    }
+    tipoLogPadrao = 'SYSTEM';
+    mensagemPadrao = 'Erro inesperado, tente novamente mais tarde';
+}
+exports.TratamentoErroOptions = TratamentoErroOptions;
 //# sourceMappingURL=options.dto.js.map

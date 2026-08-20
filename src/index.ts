@@ -42,6 +42,13 @@ export * from './guardian/guardian-core.module';
 export * from './guardian/guardian-core.service';
 export * from './guardian/message-guardian-core.dto';
 
+// Tratamento de erro
+export * from './tratamento-erro/tratamento-erro-core.module';
+export * from './tratamento-erro/tratamento-erro-core.service';
+export * from './tratamento-erro/interfaces/erro-identificado.interface';
+export * from './tratamento-erro/interfaces/contexto-erro.interface';
+export * from './tratamento-erro/interfaces/tratamento-erro-log.repository';
+
 // Export module all
 export * from './util/util.module';
 export * from './context/context-core.module';

@@ -41,6 +41,11 @@ __exportStar(require("./webhook/webhook.model"), exports);
 __exportStar(require("./guardian/guardian-core.module"), exports);
 __exportStar(require("./guardian/guardian-core.service"), exports);
 __exportStar(require("./guardian/message-guardian-core.dto"), exports);
+__exportStar(require("./tratamento-erro/tratamento-erro-core.module"), exports);
+__exportStar(require("./tratamento-erro/tratamento-erro-core.service"), exports);
+__exportStar(require("./tratamento-erro/interfaces/erro-identificado.interface"), exports);
+__exportStar(require("./tratamento-erro/interfaces/contexto-erro.interface"), exports);
+__exportStar(require("./tratamento-erro/interfaces/tratamento-erro-log.repository"), exports);
 __exportStar(require("./util/util.module"), exports);
 __exportStar(require("./context/context-core.module"), exports);
 //# sourceMappingURL=index.js.map

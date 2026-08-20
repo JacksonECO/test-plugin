@@ -198,3 +198,21 @@ export class GuardianOptions {
    */
   codigoBanco?: string;
 }
+
+export class TratamentoErroOptions {
+  constructor(input?: TratamentoErroOptions) {
+    Object.assign(this, input);
+  }
+
+  /**
+   * Tipo de log usado quando o contexto não especifica `tipoLog`.
+   * @default `SYSTEM`
+   */
+  tipoLogPadrao?: string = 'SYSTEM';
+
+  /**
+   * Mensagem usada quando o erro não é `HttpException` nem Axios, e não tem `.message`.
+   * @default `Erro inesperado, tente novamente mais tarde`
+   */
+  mensagemPadrao?: string = 'Erro inesperado, tente novamente mais tarde';
+}

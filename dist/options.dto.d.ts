@@ -45,3 +45,8 @@ export declare class GuardianOptions {
     nameSystem?: string;
     codigoBanco?: string;
 }
+export declare class TratamentoErroOptions {
+    constructor(input?: TratamentoErroOptions);
+    tipoLogPadrao?: string;
+    mensagemPadrao?: string;
+}

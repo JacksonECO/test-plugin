@@ -197,6 +197,42 @@ const listLogger: LogLevel[] = ['log', 'debug', 'error', 'warn', 'verbose', 'fat
 Logger.overrideLogger(listLogger);
 ```
 
+### Tratamento de erro
+
+Consolida o fluxo de identificar o erro → registrar no Mongo → notificar o Guardião (se for um erro inesperado) → relançar, evitando reimplementar essa lógica em cada serviço. Import `TratamentoErroCoreModule.forRoot(...)`:
+
+```javascript
+TratamentoErroCoreModule.forRoot(
+  {
+    tipoLogPadrao: 'SYSTEM', // opcional, default 'SYSTEM'
+    mensagemPadrao: 'Erro inesperado, tente novamente mais tarde', // opcional
+  },
+  // Liga o token de persistência ao repositório Mongo já existente no seu serviço.
+  // O repositório precisa implementar `salvarRequisicao(dto)` (interface `TratamentoErroLogRepository`).
+  { provide: CORE_TRATAMENTO_ERRO_LOG_REPOSITORY, useExisting: LogMongoRepositoryService },
+  // Parâmetro opcional: módulos a importar para que o `useExisting` acima consiga resolver
+  // `LogMongoRepositoryService` (necessário se ele não estiver em um módulo `@Global()`).
+  [LogMongoModule],
+),
+```
+
+Depois, injete `TratamentoErroCoreService` onde precisar tratar erros:
+
+```javascript
+try {
+  ...
+} catch (error) {
+  await this.tratamentoErro.tratar(error, { agencia: '1234', tipoLog: 'ARRECADACAO' });
+}
+```
+
+- **`tratar(error, contexto?)`**: identifica o erro (`HttpException`, erro Axios, ou erro genérico), registra no Mongo, notifica o Guardião se for um erro inesperado (status ≥ 500), e relança o erro original (ou `InternalServerErrorException` se não for um `HttpException`). Uso típico: substituir um `throw error` cru dentro de um `catch`.
+- **`notificar(error, contexto?)`**: mesma identificação/registro/notificação de `tratar`, mas não relança, use quando o erro já foi tratado de outra forma e você só precisa registrar/alertar.
+- **`notificarSempre(mensagem, contexto?)`**: registra e notifica sem precisar de um objeto de erro, para avisos manuais que não vieram de uma exceção.
+
+O parâmetro `contexto` (opcional, interface `ContextoErro`) aceita `agencia`, `request` (payload de origem (**não passe headers/credenciais**), ele vai para o Mongo e para o card do Teams), `tipoLog`, `statusCode`, `mensagem` (sobrescreve a mensagem usada no log/notificação) e `falha` (sobrescreve o campo enviado ao Guardião).
+
+Uma falha ao notificar o Guardião ou ao registrar no Mongo nunca trava o fluxo, ambas são protegidas internamente e apenas logadas via `Logger` em caso de erro, para que uma indisponibilidade externa não derrube a aplicação nem mascare o erro de negócio original.
 
 <br/>
 <br/>

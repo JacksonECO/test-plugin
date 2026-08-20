@@ -11,13 +11,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogConsoleInterceptor = void 0;
 const common_1 = require("@nestjs/common");
+const core_1 = require("@nestjs/core");
 const operators_1 = require("rxjs/operators");
 const request_info_core_service_1 = require("../request-info/request-info-core.service");
+const log_exclude_decorator_1 = require("../log-request/decorator/log-exclude.decorator");
+const remove_fields_1 = require("../log-request/util/remove-fields");
+const redact_fields_1 = require("../log-request/util/redact-fields");
+const OMITIDO = '"[omitido]"';
 let LogConsoleInterceptor = class LogConsoleInterceptor {
     requestInfoCoreService;
+    reflector;
     logger = new common_1.Logger('Request');
-    constructor(requestInfoCoreService) {
+    constructor(requestInfoCoreService, reflector) {
         this.requestInfoCoreService = requestInfoCoreService;
+        this.reflector = reflector;
     }
     intercept(context, next) {
         const now = Date.now();
@@ -27,18 +34,39 @@ let LogConsoleInterceptor = class LogConsoleInterceptor {
         const routePath = request.path || request.config?.url || request.url;
         const routePathClean = routePath?.includes('?') ? routePath.substring(0, routePath.indexOf('?')) : routePath;
         const user = this.requestInfoCoreService.getUserEmail() || this.getIP(request);
-        const formattedRequestBody = JSON.stringify(request.body ?? {}).substring(0, 10000);
+        const logExclude = this.reflector.getAllAndOverride(log_exclude_decorator_1.META_LOG_EXCLUDE, [
+            context.getClass(),
+            context.getHandler(),
+        ]);
+        const formattedRequestBody = this.formatRequestBody(request, logExclude);
         this.logger.verbose(`${request.method} ${user}\n${routePath}\n${formattedRequestBody}`, `Start ${routePathClean}`);
         return next.handle().pipe((0, operators_1.tap)((response) => {
-            const bigResponse = JSON.stringify(response ?? {}).substring(0, 10000);
+            const bigResponse = this.formatResponse(response, logExclude);
             this.logger.verbose(`${request.method}::${responseHttp?.statusCode ?? ''} ${user} ${Date.now() - now}ms\n${bigResponse}`, `End ${routePathClean}`);
         }), (0, operators_1.catchError)((error) => {
             if (error.response) {
                 error.response.request = undefined;
             }
-            this.logger.error(`Error::${error.status} ${routePathClean} ${user} ${Date.now() - now}ms\n${JSON.stringify(error.response || error.message).substring(0, 10000)}`, error.stack.toString(), '');
+            this.logger.error(`Error::${error.status} ${routePathClean} ${user} ${Date.now() - now}ms\n${this.formatResponse(error.response || error.message, logExclude)}`, error?.stack?.toString() ?? '', '');
             throw error;
         }));
+    }
+    formatRequestBody(request, logExclude) {
+        if (logExclude?.excludeRequest) {
+            return OMITIDO;
+        }
+        const wrapper = { body: request?.body ?? {} };
+        const semRemovidos = (0, remove_fields_1.removeFields)(wrapper, logExclude?.requestFields);
+        const semRedacted = (0, redact_fields_1.redactFields)(semRemovidos, logExclude?.requestFieldsRedact);
+        return JSON.stringify(semRedacted.body).substring(0, 10000);
+    }
+    formatResponse(response, logExclude) {
+        if (logExclude?.excludeResponse) {
+            return OMITIDO;
+        }
+        const semRemovidos = (0, remove_fields_1.removeFields)(response ?? {}, logExclude?.responseFields);
+        const semRedacted = (0, redact_fields_1.redactFields)(semRemovidos, logExclude?.responseFieldsRedact);
+        return JSON.stringify(semRedacted).substring(0, 10000);
     }
     getIP(request) {
         let ip;
@@ -56,6 +84,7 @@ let LogConsoleInterceptor = class LogConsoleInterceptor {
 exports.LogConsoleInterceptor = LogConsoleInterceptor;
 exports.LogConsoleInterceptor = LogConsoleInterceptor = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [request_info_core_service_1.RequestInfoCoreService])
+    __metadata("design:paramtypes", [request_info_core_service_1.RequestInfoCoreService,
+        core_1.Reflector])
 ], LogConsoleInterceptor);
 //# sourceMappingURL=log-console.interceptor.js.map

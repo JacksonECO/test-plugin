@@ -187,6 +187,22 @@ LogConsoleCoreModule()
 
 Utiliza o nível `Verbose` para as printar as informações de todas as requests e responses de sucesso. E utiliza o nível `Error` para os responses que resultar em algum erro.
 
+### Removendo ou ocultando dados sensíveis do log
+
+Para não persistir/imprimir campos sensíveis (senha, token, etc.) do request/response, use o decorador `@LogExclude(...)` na rota (controller ou handler). Funciona tanto para o log salvo no Mongo (`LogRequestCoreModule.request()`) quanto para o console (`LogConsoleCoreModule()`), ambos leem a mesma configuração.
+
+```javascript
+@LogExclude({
+  requestFields: ['body.senha'],        // remove o campo por completo do log
+  responseFieldsRedact: ['token'],      // mantém o campo no log, mas troca o valor por '***'
+  excludeRequest: true,                 // não loga o request inteiro desta rota
+  excludeResponse: true,                // não loga o response inteiro desta rota
+})
+```
+
+Os campos em `requestFields`/`responseFields`/`requestFieldsRedact`/`responseFieldsRedact` são caminhos separados por ponto (ex.: `'body.senha'`, `'usuario.token'`). A diferença entre remover e "redactar": `requestFields`/`responseFields` apagam o campo do log; `requestFieldsRedact`/`responseFieldsRedact` mantêm o campo presente, só substituindo o valor por uma máscara (`'***'` por padrão), útil quando você quer saber que o campo veio preenchido sem expor o valor.
+
+`excludeRequest`/`excludeResponse` têm prioridade sobre as listas de campos: se `true`, nem tenta aplicar remoção/redação, simplesmente não loga aquela parte.
 
 #### Configuração dos níveis de logs ativados
 

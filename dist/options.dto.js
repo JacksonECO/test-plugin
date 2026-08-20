@@ -17,8 +17,8 @@ exports.PluginCoreOption = PluginCoreOption;
 class AuthorizationOption {
     constructor(input) {
         Object.assign(this, input);
-        Object.assign(this.user, input.user);
-        Object.assign(this.client, input.client);
+        this.user = Object.assign({}, input?.user);
+        this.client = Object.assign({}, input?.client);
     }
     authServerUrl;
     isCoreServiceAuth = false;

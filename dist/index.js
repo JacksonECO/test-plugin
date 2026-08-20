@@ -31,6 +31,7 @@ __exportStar(require("./log/log-sistema.entity"), exports);
 __exportStar(require("./log/log-core.service"), exports);
 __exportStar(require("./log/log-core.repository"), exports);
 __exportStar(require("./log-request/log-request-core.module"), exports);
+__exportStar(require("./log-request/decorator/log-exclude.decorator"), exports);
 __exportStar(require("./log-console/log-console-core.module"), exports);
 __exportStar(require("./http/http-core.module"), exports);
 __exportStar(require("./http/http-core.service"), exports);

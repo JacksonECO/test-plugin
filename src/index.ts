@@ -23,6 +23,7 @@ export * from './log/log-core.repository';
 
 // Salvar log das requisições
 export * from './log-request/log-request-core.module';
+export * from './log-request/decorator/log-exclude.decorator';
 
 // Printar log das requisições
 export * from './log-console/log-console-core.module';

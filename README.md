@@ -79,13 +79,21 @@ Deve ser feito apenas uma vez de preferência no `AppModule`
 PluginCoreModule.forRoot({
   authorization: {
     authServerUrl: '<Url do Servidor (Core ou Keycloak)>',
-    realm: '<Nome do reino>',
-    clientId: '<Nome do Cliente>',
-    clientSecret: '<Credentials do Cliente usado>',
-    isCoreServiceAuth: '<Indica se a url do servidor é o core ou o Keycloak>'
+    isCoreServiceAuth: '<Indica se a url do servidor é o core ou o Keycloak>',
+    client: {
+      id: '<Nome do Cliente>',
+      secret: '<Credentials do Cliente usado>',
+      realm: '<Nome do reino>',
+    },
+    user: {
+      username: '<Usuário de serviço, se aplicável>',
+      password: '<Senha do usuário de serviço, se aplicável>',
+    },
   },
 }),
 ```
+
+Atenção: `client.id` precisa estar preenchido para que a validação de roles não-admin funcione (usuários com a role `realm:ROLE_ADMIN` sempre têm acesso irrestrito, independente de `client.id`).
 
 ### Autenticação e autorização das rotas
 
@@ -177,16 +185,101 @@ await this.logService.salvarLog({
 })
 ```
 
-### Console/logs das requests
+#### Campos opcionais do log (systemName, ip e correlationId)
 
-Para gerar consoles automático com todas as informações recebidas. 
+Além dos campos gravados sempre (`dataOcorrencia`, `message`, `request`, `response`, `info`, `statusCode`, `tipo`, `user`), existem três campos opcionais que só são gravados quando configurados em `PluginCoreModule.forRoot({ log: ... })`:
 
 ```javascript
-LogConsoleCoreModule()
+PluginCoreModule.forRoot({
+  log: {
+    systemName: 'core-pix',           // grava o campo `systemName` em todos os logs
+    salvarIp: true,                   // grava o `ip` de origem da request
+    salvarCorrelationId: true,        // grava o `correlationId` da request
+    correlationIdHeader: 'x-correlation-id', // default: 'x-correlation-id'
+  },
+}),
+```
+
+O `correlationId` é lido do header configurado pelo `LogRequestCoreModule.request()` e propagado no contexto da request, então logs manuais (`salvarLog`) feitos durante aquela request também saem com o mesmo id.
+
+Essas flags controlam apenas a **captura automática**: `systemName`, `ip` e `correlationId` informados explicitamente no DTO são sempre gravados, mesmo com a config desligada.
+
+```javascript
+await this.logService.salvarLog({
+  message: 'Conciliação finalizada',
+  correlationId: idDoLote, // sempre gravado, independente da config
+})
+```
+
+### Console/logs das requests
+
+Para gerar consoles automático com todas as informações recebidas.
+
+```javascript
+LogConsoleCoreModule,
 ```
 
 Utiliza o nível `Verbose` para as printar as informações de todas as requests e responses de sucesso. E utiliza o nível `Error` para os responses que resultar em algum erro.
 
+O log sai no formato abaixo, com a tag `LoggingInterceptor`:
+
+```
+VERBOSE [LoggingInterceptor] Start Request for /qrcode/decodificar
+method=POST ip=127.0.0.1 user=fulano@banco.com
+{"qrCode":"000201..."}
+
+VERBOSE [LoggingInterceptor] End Request for /qrcode/decodificar
+method=POST::201 ip=127.0.0.1 user=fulano@banco.com duration=42ms
+{"valor":10.5}
+```
+
+Como cada ambiente configura de um jeito, use `LogConsoleCoreModule.forRoot(...)` para customizar (todos os campos são opcionais):
+
+```javascript
+LogConsoleCoreModule.forRoot({
+  habilitado: configService.get('LOG_REQUEST') !== 'false', // default: env LOG_REQUEST (ligado se ausente ou 'true')
+  nivel: 'log',                                             // default: 'verbose' — nível do log de sucesso
+  contexto: 'LoggingInterceptor',                           // default: 'LoggingInterceptor' — tag exibida no log
+  rotasIgnoradas: ['/ispb', '/webhook', '/feriado', '/ping'], // default: [] — ignora o log de sucesso dessas rotas (por prefixo)
+}),
+```
+
+Erros são sempre logados (nível `Error`), mesmo em rota ignorada ou com o log de sucesso desabilitado. O `End Request` também respeita o `@LogCustom({ salvarSucesso: false })` da rota.
+
+### Customizando o log de uma rota (@LogCustom)
+
+Para customizar o que é logado numa rota — omitir/mascarar dados sensíveis (senha, token, etc.) ou controlar se o log de sucesso é salvo — use o decorador `@LogCustom(...)` no controller ou handler. Funciona tanto para o log salvo no Mongo (`LogRequestCoreModule.request()`) quanto para o console (`LogConsoleCoreModule()`), ambos leem a mesma configuração.
+
+```javascript
+@LogCustom({
+  tipo: 'STR',                            // tipo do log, usado para filtros (só Mongo)
+  mensagem: 'Buscando todas as STR',      // substitui a mensagem padrão `method: url` (só Mongo)
+  excluirCampoRequest: ['body.senha'],    // remove o campo por completo do log
+  mascararCampoResponse: ['token'],       // mantém o campo no log, mas troca o valor por '***'
+  excluirRequest: true,                   // não loga o request inteiro desta rota
+  excluirResponse: true,                  // não loga o response inteiro desta rota
+})
+```
+
+Os campos em `excluirCampoRequest`/`excluirCampoResponse`/`mascararCampoRequest`/`mascararCampoResponse` são caminhos separados por ponto (ex.: `'body.senha'`, `'usuario.token'`). A diferença entre remover e mascarar: `excluirCampoRequest`/`excluirCampoResponse` apagam o campo do log; `mascararCampoRequest`/`mascararCampoResponse` mantêm o campo presente, só substituindo o valor por uma máscara (`'***'` por padrão), útil quando você quer saber que o campo veio preenchido sem expor o valor.
+
+`excluirRequest`/`excluirResponse` têm prioridade sobre as listas de campos: se `true`, nem tenta aplicar remoção/mascaramento, simplesmente não loga aquela parte.
+
+Quando o response de sucesso é grande ou sensível (ex.: imagem/base64 de uma decodificação de QRCode), mas você ainda quer o log de erro completo, use `salvarResponseSucesso: false`:
+
+```javascript
+@LogCustom({
+  salvarResponseSucesso: false, // não loga o response quando a requisição for bem-sucedida (2xx); em erro, o response continua sendo logado
+})
+```
+
+Para não persistir no Mongo nenhum log (nem request, nem response) de requisições bem-sucedidas — o erro continua sempre sendo persistido — use `salvarSucesso: false`. Diferente de `salvarResponseSucesso`, essa opção não afeta o log de console:
+
+```javascript
+@LogCustom({
+  salvarSucesso: false, // não persiste no Mongo o log desta rota quando a requisição for bem-sucedida (2xx)
+})
+```
 
 #### Configuração dos níveis de logs ativados
 
@@ -197,6 +290,42 @@ const listLogger: LogLevel[] = ['log', 'debug', 'error', 'warn', 'verbose', 'fat
 Logger.overrideLogger(listLogger);
 ```
 
+### Tratamento de erro
+
+Consolida o fluxo de identificar o erro → registrar no Mongo → notificar o Guardião (se for um erro inesperado) → relançar, evitando reimplementar essa lógica em cada serviço. Import `TratamentoErroCoreModule.forRoot(...)`:
+
+```javascript
+TratamentoErroCoreModule.forRoot(
+  {
+    tipoLogPadrao: 'SYSTEM', // opcional, default 'SYSTEM'
+    mensagemPadrao: 'Erro inesperado, tente novamente mais tarde', // opcional
+  },
+  // Liga o token de persistência ao repositório Mongo já existente no seu serviço.
+  // O repositório precisa implementar `salvarRequisicao(dto)` (interface `TratamentoErroLogRepository`).
+  { provide: CORE_TRATAMENTO_ERRO_LOG_REPOSITORY, useExisting: LogMongoRepositoryService },
+  // Parâmetro opcional: módulos a importar para que o `useExisting` acima consiga resolver
+  // `LogMongoRepositoryService` (necessário se ele não estiver em um módulo `@Global()`).
+  [LogMongoModule],
+),
+```
+
+Depois, injete `TratamentoErroCoreService` onde precisar tratar erros:
+
+```javascript
+try {
+  ...
+} catch (error) {
+  await this.tratamentoErro.tratar(error, { agencia: '1234', tipoLog: 'ARRECADACAO' });
+}
+```
+
+- **`tratar(error, contexto?)`**: identifica o erro (`HttpException`, erro Axios, ou erro genérico), registra no Mongo, notifica o Guardião se for um erro inesperado (status ≥ 500), e relança o erro original (ou `InternalServerErrorException` se não for um `HttpException`). Uso típico: substituir um `throw error` cru dentro de um `catch`.
+- **`notificar(error, contexto?)`**: mesma identificação/registro/notificação de `tratar`, mas não relança, use quando o erro já foi tratado de outra forma e você só precisa registrar/alertar.
+- **`notificarSempre(mensagem, contexto?)`**: registra e notifica sem precisar de um objeto de erro, para avisos manuais que não vieram de uma exceção.
+
+O parâmetro `contexto` (opcional, interface `ContextoErro`) aceita `agencia`, `request` (payload de origem (**não passe headers/credenciais**), ele vai para o Mongo e para o card do Teams), `tipoLog`, `statusCode`, `mensagem` (sobrescreve a mensagem usada no log/notificação) e `falha` (sobrescreve o campo enviado ao Guardião).
+
+Uma falha ao notificar o Guardião ou ao registrar no Mongo nunca trava o fluxo, ambas são protegidas internamente e apenas logadas via `Logger` em caso de erro, para que uma indisponibilidade externa não derrube a aplicação nem mascare o erro de negócio original.
 
 <br/>
 <br/>

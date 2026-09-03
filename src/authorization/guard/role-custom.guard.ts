@@ -5,6 +5,10 @@ import { RoleMatchingMode, RoleMerge } from '../decorator/roles.enum';
 import { META_ROLES_CUSTOM, RoleCustomDecoratorOptionsInterface } from '../decorator/roles.decorator';
 import { CORE_AUTHORIZATION_OPTION } from '../../constants';
 import { AuthorizationOption } from 'src/options.dto';
+import { UserRequest } from 'src/request-info/user-request.model';
+import { Request } from 'express';
+
+type RequestWithUser = Request & { user?: UserRequest };
 
 @Injectable()
 export class RoleCustomGuard implements CanActivate {
@@ -66,7 +70,7 @@ export class RoleCustomGuard implements CanActivate {
 
     // Extrai a requisição HTTP
     const httpContext = context.switchToHttp();
-    const request = httpContext.getRequest();
+    const request = httpContext.getRequest<RequestWithUser>();
 
     // Se não for uma requisição HTTP, ignora este guard
     if (!request) {
@@ -122,14 +126,14 @@ export class RoleCustomGuard implements CanActivate {
    * @param role Role a ser verificada.
    * @returns Retorna `true` se o usuário possuir a role, caso contrário `false`.
    */
-  private hasRole(user: any, role: string) {
-    if (!this.authorizationOption.client.id) {
-      return false;
-    }
-
+  private hasRole(user: UserRequest, role: string) {
     // Admins possuem todas as roles
     if (this.hasRealmRole(user, 'ROLE_ADMIN')) {
       return true;
+    }
+
+    if (!this.authorizationOption.client.id) {
+      return false;
     }
 
     const parts = role.split(':');
@@ -150,7 +154,7 @@ export class RoleCustomGuard implements CanActivate {
    * @param roleName Nome da role.
    * @returns Retorna `true` se o usuário possuir a role, caso contrário `false`.
    */
-  private hasRealmRole(user: any, roleName: string) {
+  private hasRealmRole(user: UserRequest, roleName: string) {
     if (!user.realm_access || !user.realm_access.roles) {
       return false;
     }
@@ -165,7 +169,7 @@ export class RoleCustomGuard implements CanActivate {
    * @param roleName Nome da role.
    * @returns Retorna `true` se o usuário possuir a role, caso contrário `false`.
    */
-  private hasApplicationRoleAgencia(user: any, clientId: string, roleName: string) {
+  private hasApplicationRoleAgencia(user: UserRequest, clientId: string, roleName: string) {
     if (!user.resource_access) {
       return false;
     }
@@ -183,7 +187,7 @@ export class RoleCustomGuard implements CanActivate {
    * @param user Usuário autenticado.
    * @returns Lista de clientes/agências.
    */
-  private getClients(user: any) {
+  private getClients(user: UserRequest) {
     if (!user?.resource_access) {
       return [];
     }
@@ -199,7 +203,7 @@ export class RoleCustomGuard implements CanActivate {
    * @param role Role a ser verificada.
    * @returns Lista de clientes/agências com a role.
    */
-  private getClientsWithRole(user: any, role: string): string[] {
+  private getClientsWithRole(user: UserRequest, role: string): string[] {
     if (this.hasRealmRole(user, 'ROLE_ADMIN')) {
       return this.getClients(user);
     }
@@ -215,7 +219,11 @@ export class RoleCustomGuard implements CanActivate {
    * @param user Usuário autenticado.
    * @param roleMetaData Metadados da role.
    */
-  private addAgenciaRequest(request: any, user: any, roleMetaData: RoleCustomDecoratorOptionsInterface): void {
+  private addAgenciaRequest(
+    request: RequestWithUser,
+    user: UserRequest,
+    roleMetaData: RoleCustomDecoratorOptionsInterface,
+  ): void {
     roleMetaData.agenciaFieldName = roleMetaData.agenciaFieldName || 'agencia';
 
     const agencias = this.getClientsWithRole(user, roleMetaData.roles[0]);
@@ -242,7 +250,7 @@ export class RoleCustomGuard implements CanActivate {
     //   agenciasRequest = request.params[roleMetaData.agenciaFieldName];
     // } else
     if (roleMetaData.agenciaLocation === 'query') {
-      agenciasRequest = request.query?.[roleMetaData.agenciaFieldName];
+      agenciasRequest = request.query?.[roleMetaData.agenciaFieldName] as string | string[];
     } else if (roleMetaData.agenciaLocation === 'body') {
       agenciasRequest = request.body?.[roleMetaData.agenciaFieldName];
     }

@@ -13,7 +13,7 @@ export const resumeErrorCore = (error: any): string => {
     return error.toISOString();
   }
 
-  if (!(error instanceof Error) && typeof error === 'object' && Object.keys(error).length === 0) {
+  if (!(error instanceof Error) && typeof error === 'object' && Object.keys(error as object).length === 0) {
     return '{}';
   }
 

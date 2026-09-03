@@ -25,6 +25,18 @@ export class LogSistemaCoreEntity {
 
   @Prop({ type: String })
   user?: string;
+
+  /** Nome do sistema que gerou o log. Gravado quando `LogOptions.systemName` está configurado. */
+  @Prop({ type: String })
+  systemName?: string;
+
+  /** IP de origem da requisição. Gravado quando `LogOptions.salvarIp` está ativo. */
+  @Prop({ type: String })
+  ip?: string;
+
+  /** Id de correlação da requisição. Gravado quando `LogOptions.salvarCorrelationId` está ativo. */
+  @Prop({ type: String })
+  correlationId?: string;
 }
 
 export const LogSistemaCoreSchema = SchemaFactory.createForClass(LogSistemaCoreEntity);

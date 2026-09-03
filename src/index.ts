@@ -23,6 +23,7 @@ export * from './log/log-core.repository';
 
 // Salvar log das requisições
 export * from './log-request/log-request-core.module';
+export * from './log-request/decorator/log-custom.decorator';
 
 // Printar log das requisições
 export * from './log-console/log-console-core.module';
@@ -41,6 +42,13 @@ export * from './webhook/webhook.model';
 export * from './guardian/guardian-core.module';
 export * from './guardian/guardian-core.service';
 export * from './guardian/message-guardian-core.dto';
+
+// Tratamento de erro
+export * from './tratamento-erro/tratamento-erro-core.module';
+export * from './tratamento-erro/tratamento-erro-core.service';
+export * from './tratamento-erro/interfaces/erro-identificado.interface';
+export * from './tratamento-erro/interfaces/contexto-erro.interface';
+export * from './tratamento-erro/interfaces/tratamento-erro-log.repository';
 
 // Export module all
 export * from './util/util.module';

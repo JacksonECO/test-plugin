@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import axiosGlobal, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axiosGlobal, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { AuthServerService } from 'src/auth-server/auth-server.interface';
 
 @Injectable()
@@ -56,7 +62,7 @@ export class HttpCoreService {
     });
 
     // Interceptor de Requisição
-    axios.interceptors.request.use(async (config: any) => {
+    axios.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
       try {
         // Modificar o config da requisição aqui add o token de autenticação
         if (!config?.headers?.Authorization) {
@@ -71,9 +77,9 @@ export class HttpCoreService {
 
     // Interceptor de Resposta
     axios.interceptors.response.use(
-      (response: any) => response,
-      async (error: any) => {
-        const originalRequest = error.config;
+      (response: AxiosResponse) => response,
+      async (error: AxiosError) => {
+        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
         if (error?.response?.status !== 401) {
           return Promise.reject(error);
         }

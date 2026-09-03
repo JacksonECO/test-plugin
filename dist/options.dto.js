@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
+exports.LogConsoleOptions = exports.TratamentoErroOptions = exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
 class PluginCoreOption {
     constructor(input) {
         this.authorization = new AuthorizationOption(input?.authorization);
@@ -17,8 +17,8 @@ exports.PluginCoreOption = PluginCoreOption;
 class AuthorizationOption {
     constructor(input) {
         Object.assign(this, input);
-        Object.assign(this.user, input.user);
-        Object.assign(this.client, input.client);
+        this.user = Object.assign({}, input?.user);
+        this.client = Object.assign({}, input?.client);
     }
     authServerUrl;
     isCoreServiceAuth = false;
@@ -42,6 +42,10 @@ class LogOptions {
     constructor(input) {
         Object.assign(this, input);
     }
+    systemName;
+    salvarIp = false;
+    salvarCorrelationId = false;
+    correlationIdHeader = 'x-correlation-id';
 }
 exports.LogOptions = LogOptions;
 class WebhookConfigOptions {
@@ -80,4 +84,22 @@ class GuardianOptions {
     codigoBanco;
 }
 exports.GuardianOptions = GuardianOptions;
+class TratamentoErroOptions {
+    constructor(input) {
+        Object.assign(this, input);
+    }
+    tipoLogPadrao = 'SYSTEM';
+    mensagemPadrao = 'Erro inesperado, tente novamente mais tarde';
+}
+exports.TratamentoErroOptions = TratamentoErroOptions;
+class LogConsoleOptions {
+    constructor(input) {
+        Object.assign(this, input);
+    }
+    habilitado;
+    nivel = 'verbose';
+    contexto = 'LoggingInterceptor';
+    rotasIgnoradas = [];
+}
+exports.LogConsoleOptions = LogConsoleOptions;
 //# sourceMappingURL=options.dto.js.map

@@ -4,6 +4,9 @@ export interface LogSistemaCreateModel {
     statusCode?: number;
     request?: any;
     response?: any;
+    systemName?: string;
+    ip?: string;
+    correlationId?: string;
 }
 export interface LogSistemaModel extends LogSistemaCreateModel {
     dataOcorrencia: Date;
@@ -21,4 +24,9 @@ export interface LogSistemaRequestModel {
     request?: any;
     response?: any;
     info?: Record<string, string | number>;
+    tipo?: string;
+    message?: string;
+    systemName?: string;
+    ip?: string;
+    correlationId?: string;
 }

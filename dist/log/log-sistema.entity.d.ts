@@ -7,6 +7,9 @@ export declare class LogSistemaCoreEntity {
     statusCode?: number;
     tipo?: string;
     user?: string;
+    systemName?: string;
+    ip?: string;
+    correlationId?: string;
 }
 export declare const LogSistemaCoreSchema: import("mongoose").Schema<LogSistemaCoreEntity, import("mongoose").Model<LogSistemaCoreEntity, any, any, any, import("mongoose").Document<unknown, any, LogSistemaCoreEntity> & LogSistemaCoreEntity & {
     _id: import("mongoose").Types.ObjectId;

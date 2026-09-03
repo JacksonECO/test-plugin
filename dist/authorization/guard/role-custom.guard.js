@@ -99,11 +99,11 @@ let RoleCustomGuard = RoleCustomGuard_1 = class RoleCustomGuard {
         return true;
     }
     hasRole(user, role) {
-        if (!this.authorizationOption.client.id) {
-            return false;
-        }
         if (this.hasRealmRole(user, 'ROLE_ADMIN')) {
             return true;
+        }
+        if (!this.authorizationOption.client.id) {
+            return false;
         }
         const parts = role.split(':');
         if (parts.length === 1) {

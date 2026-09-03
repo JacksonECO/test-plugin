@@ -1,0 +1,6 @@
+allowBuilds:
+  '@nestjs/core': true
+  '@swc/core': true
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@swc/core'

@@ -7,7 +7,7 @@ export class ContextCoreInterceptor implements NestInterceptor {
   constructor(private contextService: ContextCoreService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
 
     return new Observable((observer) => {
       this.contextService.run(() => {

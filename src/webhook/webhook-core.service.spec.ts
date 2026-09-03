@@ -11,6 +11,7 @@ import {
 } from './webhook-core.exception';
 import { resumeErrorCore } from 'src/util/resume-erro-core';
 import { mockGuardianCoreService } from 'test/mocks/services/webhook.service.mock';
+import { WebhookCoreModel } from './webhook.model';
 
 describe('WebhookCoreService', () => {
   const url = mockWebhookOptions().url;
@@ -292,7 +293,9 @@ describe('WebhookCoreService', () => {
       jest
         .spyOn(WebhookCoreService.prototype, 'getWebhookUrl')
         .mockReturnValue(
-          Promise.resolve([{ url: 'http://example.com/webhook1', evento: event, agencia: agencia } as any]),
+          Promise.resolve([
+            { url: 'http://example.com/webhook1', evento: event, agencia: agencia } as unknown as WebhookCoreModel,
+          ]),
         );
 
       await expect(service.send(event, agencia, body, methodHttp)).rejects.toThrow(WebhookErrorException);

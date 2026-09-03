@@ -1,34 +1,23 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { getModelToken } from '@nestjs/mongoose';
 import { LogCoreRepository } from './log-core.repository';
 import { LogSistemaCoreEntity } from './log-sistema.entity';
-import { Model } from 'mongoose';
 import { HttpCoreService } from 'src/http/http-core.service';
 import { mockAuthorizationOption } from 'test/mocks/options.dto.mock';
-import { CORE_LOG_OPTION } from 'src/constants';
-import { LogOptions } from 'src/options.dto';
 import { AuthServerKeycloakService } from 'src/auth-server/auth-server-keycloak.service';
 import { mockCacheManager } from 'test/mocks/services/cacheManeger.service.mock';
-import { LogCoreModule } from './log-core.module';
-import { Global, Module } from '@nestjs/common';
 
-@Global()
-@Module({
-  providers: [
-    {
-      provide: CORE_LOG_OPTION,
-      useValue: new LogOptions(), // Mock do valor esperado
-    },
-  ],
-  exports: [CORE_LOG_OPTION],
-})
-class TestCoreLogModule {}
+class MockLogSistemaModel {
+  save(): Promise<void> {
+    return Promise.resolve();
+  }
+}
 
 describe('LogCoreRepository', () => {
   let repository: LogCoreRepository;
-  let model: Model<LogSistemaCoreEntity>;
+  let model: typeof MockLogSistemaModel;
   let module: TestingModule;
 
   const urlBase = 'http://host.com';
@@ -40,19 +29,18 @@ describe('LogCoreRepository', () => {
   const httpRequest = new HttpCoreService(authServer);
 
   beforeAll(async () => {
-    const now = new Date();
-    const day = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`; // DD/MM/YYYY
-
     module = await Test.createTestingModule({
-      imports: [
-        TestCoreLogModule,
-        MongooseModule.forRoot('mongodb://localhost:27017/plugin-core-test-' + day),
-        LogCoreModule,
+      providers: [
+        LogCoreRepository,
+        {
+          provide: getModelToken(LogSistemaCoreEntity.name),
+          useValue: MockLogSistemaModel,
+        },
       ],
     }).compile();
 
     repository = module.get<LogCoreRepository>(LogCoreRepository);
-    model = module.get<Model<LogSistemaCoreEntity>>(getModelToken(LogSistemaCoreEntity.name));
+    model = module.get(getModelToken(LogSistemaCoreEntity.name));
   });
 
   beforeEach(() => {

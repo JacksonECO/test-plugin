@@ -8,24 +8,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var LogCoreService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LogCoreService = void 0;
+exports.LogCoreService = exports.CONTEXT_CORRELATION_ID = void 0;
 const common_1 = require("@nestjs/common");
 const log_core_repository_1 = require("./log-core.repository");
 const context_core_module_1 = require("../context/context-core.module");
+const constants_1 = require("../constants");
+const options_dto_1 = require("../options.dto");
+exports.CONTEXT_CORRELATION_ID = 'correlationId';
 let LogCoreService = LogCoreService_1 = class LogCoreService {
     repository;
     contextService;
+    option;
     logger = new common_1.Logger(LogCoreService_1.name + 'Plugin');
-    constructor(repository, contextService) {
+    constructor(repository, contextService, option) {
         this.repository = repository;
         this.contextService = contextService;
+        this.option = option;
     }
     async salvarLog(dto) {
         try {
             await this.repository.save({
                 ...dto,
+                ...this.camposOpcionais(dto),
                 request: this.cleanRequest(dto.request),
                 response: this.cleanRequest(dto.response),
                 dataOcorrencia: new Date(),
@@ -43,17 +52,26 @@ let LogCoreService = LogCoreService_1 = class LogCoreService {
             }
             await this.repository.save({
                 ...dto,
+                ...this.camposOpcionais(dto),
                 request: this.cleanRequest(dto.request),
                 response: this.cleanRequest(dto.response),
                 dataOcorrencia: new Date(),
                 user: this.contextService.getUserEmail(),
-                tipo: 'request',
-                message: dto.method + ': ' + dto.url,
+                tipo: dto.tipo ?? 'request',
+                message: dto.message ?? dto.method + ': ' + dto.url,
             });
         }
         catch (error) {
             this.logger.error('Erro ao salvar uma requisição ' + dto.url, error);
         }
+    }
+    camposOpcionais(dto) {
+        return {
+            systemName: dto.systemName ?? this.option?.systemName,
+            ip: dto.ip ?? (this.option?.salvarIp ? this.contextService.getIp() : undefined),
+            correlationId: dto.correlationId ??
+                (this.option?.salvarCorrelationId ? this.contextService.get(exports.CONTEXT_CORRELATION_ID) : undefined),
+        };
     }
     cleanRequest(request) {
         if (request?.['request'] || request?.['name'] == 'HttpException') {
@@ -72,7 +90,10 @@ let LogCoreService = LogCoreService_1 = class LogCoreService {
 exports.LogCoreService = LogCoreService;
 exports.LogCoreService = LogCoreService = LogCoreService_1 = __decorate([
     (0, common_1.Injectable)(),
+    __param(2, (0, common_1.Optional)()),
+    __param(2, (0, common_1.Inject)(constants_1.CORE_LOG_OPTION)),
     __metadata("design:paramtypes", [log_core_repository_1.LogCoreRepository,
-        context_core_module_1.ContextCoreService])
+        context_core_module_1.ContextCoreService,
+        options_dto_1.LogOptions])
 ], LogCoreService);
 //# sourceMappingURL=log-core.service.js.map

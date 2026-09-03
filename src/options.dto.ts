@@ -98,6 +98,35 @@ export class LogOptions {
    * @default `log-sistema`
    */
   // logSistemaCollectionName?: string = 'log-sistema';
+
+  /**
+   * Nome do sistema gravado no campo `systemName` de todos os logs.
+   *
+   * Quando não informado, o campo não é gravado.
+   */
+  systemName?: string;
+
+  /**
+   * Grava o IP de origem da requisição no campo `ip`.
+   *
+   * Só afeta a captura automática: um `ip` informado explicitamente no DTO é sempre gravado.
+   * @default `false`
+   */
+  salvarIp?: boolean = false;
+
+  /**
+   * Grava o id de correlação no campo `correlationId`, lido do header `correlationIdHeader`.
+   *
+   * Só afeta a captura automática: um `correlationId` informado explicitamente no DTO é sempre gravado.
+   * @default `false`
+   */
+  salvarCorrelationId?: boolean = false;
+
+  /**
+   * Header de onde o id de correlação é lido quando `salvarCorrelationId` está ativo.
+   * @default `x-correlation-id`
+   */
+  correlationIdHeader?: string = 'x-correlation-id';
 }
 
 export class WebhookConfigOptions {
@@ -215,4 +244,45 @@ export class TratamentoErroOptions {
    * @default `Erro inesperado, tente novamente mais tarde`
    */
   mensagemPadrao?: string = 'Erro inesperado, tente novamente mais tarde';
+}
+
+/**
+ * Opções do log de console das requisições (`LogConsoleCoreModule.forRoot(...)`).
+ *
+ * Cada ambiente configura de um jeito (env própria, `ConfigService`, rotas ruidosas diferentes),
+ * por isso tudo aqui é opcional: sem `forRoot`, valem os defaults abaixo.
+ */
+export class LogConsoleOptions {
+  constructor(input?: LogConsoleOptions) {
+    Object.assign(this, input);
+  }
+
+  /**
+   * Habilita o log de console das requisições de sucesso (Start/End).
+   *
+   * Quando não informado, usa a env `LOG_REQUEST`: habilitado se ela estiver ausente ou for `'true'`.
+   * Passe o valor explicitamente para usar a config do próprio ambiente (ex.: `ConfigService`).
+   *
+   * Erros são sempre logados, independente desta opção.
+   */
+  habilitado?: boolean;
+
+  /**
+   * Nível usado no log de sucesso (Start/End). Erros usam sempre o nível `error`.
+   * @default `verbose`
+   */
+  nivel?: 'verbose' | 'log' | 'debug' = 'verbose';
+
+  /**
+   * Nome exibido na tag do log (ex.: `VERBOSE [LoggingInterceptor] ...`).
+   * @default `LoggingInterceptor`
+   */
+  contexto?: string = 'LoggingInterceptor';
+
+  /**
+   * Rotas cujo log de sucesso (Start/End) deve ser ignorado, comparadas por prefixo
+   * (ex.: `['/ispb', '/webhook', '/feriado', '/ping']`). Erros continuam sendo logados.
+   * @default `[]`
+   */
+  rotasIgnoradas?: string[] = [];
 }

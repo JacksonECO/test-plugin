@@ -24,6 +24,10 @@ export declare class ClientOptions {
 }
 export declare class LogOptions {
     constructor(input?: LogOptions);
+    systemName?: string;
+    salvarIp?: boolean;
+    salvarCorrelationId?: boolean;
+    correlationIdHeader?: string;
 }
 export declare class WebhookConfigOptions {
     constructor(input?: WebhookConfigOptions);
@@ -49,4 +53,11 @@ export declare class TratamentoErroOptions {
     constructor(input?: TratamentoErroOptions);
     tipoLogPadrao?: string;
     mensagemPadrao?: string;
+}
+export declare class LogConsoleOptions {
+    constructor(input?: LogConsoleOptions);
+    habilitado?: boolean;
+    nivel?: 'verbose' | 'log' | 'debug';
+    contexto?: string;
+    rotasIgnoradas?: string[];
 }

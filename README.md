@@ -185,32 +185,101 @@ await this.logService.salvarLog({
 })
 ```
 
-### Console/logs das requests
+#### Campos opcionais do log (systemName, ip e correlationId)
 
-Para gerar consoles automático com todas as informações recebidas. 
+Além dos campos gravados sempre (`dataOcorrencia`, `message`, `request`, `response`, `info`, `statusCode`, `tipo`, `user`), existem três campos opcionais que só são gravados quando configurados em `PluginCoreModule.forRoot({ log: ... })`:
 
 ```javascript
-LogConsoleCoreModule()
+PluginCoreModule.forRoot({
+  log: {
+    systemName: 'core-pix',           // grava o campo `systemName` em todos os logs
+    salvarIp: true,                   // grava o `ip` de origem da request
+    salvarCorrelationId: true,        // grava o `correlationId` da request
+    correlationIdHeader: 'x-correlation-id', // default: 'x-correlation-id'
+  },
+}),
+```
+
+O `correlationId` é lido do header configurado pelo `LogRequestCoreModule.request()` e propagado no contexto da request, então logs manuais (`salvarLog`) feitos durante aquela request também saem com o mesmo id.
+
+Essas flags controlam apenas a **captura automática**: `systemName`, `ip` e `correlationId` informados explicitamente no DTO são sempre gravados, mesmo com a config desligada.
+
+```javascript
+await this.logService.salvarLog({
+  message: 'Conciliação finalizada',
+  correlationId: idDoLote, // sempre gravado, independente da config
+})
+```
+
+### Console/logs das requests
+
+Para gerar consoles automático com todas as informações recebidas.
+
+```javascript
+LogConsoleCoreModule,
 ```
 
 Utiliza o nível `Verbose` para as printar as informações de todas as requests e responses de sucesso. E utiliza o nível `Error` para os responses que resultar em algum erro.
 
-### Removendo ou ocultando dados sensíveis do log
+O log sai no formato abaixo, com a tag `LoggingInterceptor`:
 
-Para não persistir/imprimir campos sensíveis (senha, token, etc.) do request/response, use o decorador `@LogExclude(...)` na rota (controller ou handler). Funciona tanto para o log salvo no Mongo (`LogRequestCoreModule.request()`) quanto para o console (`LogConsoleCoreModule()`), ambos leem a mesma configuração.
+```
+VERBOSE [LoggingInterceptor] Start Request for /qrcode/decodificar
+method=POST ip=127.0.0.1 user=fulano@banco.com
+{"qrCode":"000201..."}
+
+VERBOSE [LoggingInterceptor] End Request for /qrcode/decodificar
+method=POST::201 ip=127.0.0.1 user=fulano@banco.com duration=42ms
+{"valor":10.5}
+```
+
+Como cada ambiente configura de um jeito, use `LogConsoleCoreModule.forRoot(...)` para customizar (todos os campos são opcionais):
 
 ```javascript
-@LogExclude({
-  requestFields: ['body.senha'],        // remove o campo por completo do log
-  responseFieldsRedact: ['token'],      // mantém o campo no log, mas troca o valor por '***'
-  excludeRequest: true,                 // não loga o request inteiro desta rota
-  excludeResponse: true,                // não loga o response inteiro desta rota
+LogConsoleCoreModule.forRoot({
+  habilitado: configService.get('LOG_REQUEST') !== 'false', // default: env LOG_REQUEST (ligado se ausente ou 'true')
+  nivel: 'log',                                             // default: 'verbose' — nível do log de sucesso
+  contexto: 'LoggingInterceptor',                           // default: 'LoggingInterceptor' — tag exibida no log
+  rotasIgnoradas: ['/ispb', '/webhook', '/feriado', '/ping'], // default: [] — ignora o log de sucesso dessas rotas (por prefixo)
+}),
+```
+
+Erros são sempre logados (nível `Error`), mesmo em rota ignorada ou com o log de sucesso desabilitado. O `End Request` também respeita o `@LogCustom({ salvarSucesso: false })` da rota.
+
+### Customizando o log de uma rota (@LogCustom)
+
+Para customizar o que é logado numa rota — omitir/mascarar dados sensíveis (senha, token, etc.) ou controlar se o log de sucesso é salvo — use o decorador `@LogCustom(...)` no controller ou handler. Funciona tanto para o log salvo no Mongo (`LogRequestCoreModule.request()`) quanto para o console (`LogConsoleCoreModule()`), ambos leem a mesma configuração.
+
+```javascript
+@LogCustom({
+  tipo: 'STR',                            // tipo do log, usado para filtros (só Mongo)
+  mensagem: 'Buscando todas as STR',      // substitui a mensagem padrão `method: url` (só Mongo)
+  excluirCampoRequest: ['body.senha'],    // remove o campo por completo do log
+  mascararCampoResponse: ['token'],       // mantém o campo no log, mas troca o valor por '***'
+  excluirRequest: true,                   // não loga o request inteiro desta rota
+  excluirResponse: true,                  // não loga o response inteiro desta rota
 })
 ```
 
-Os campos em `requestFields`/`responseFields`/`requestFieldsRedact`/`responseFieldsRedact` são caminhos separados por ponto (ex.: `'body.senha'`, `'usuario.token'`). A diferença entre remover e "redactar": `requestFields`/`responseFields` apagam o campo do log; `requestFieldsRedact`/`responseFieldsRedact` mantêm o campo presente, só substituindo o valor por uma máscara (`'***'` por padrão), útil quando você quer saber que o campo veio preenchido sem expor o valor.
+Os campos em `excluirCampoRequest`/`excluirCampoResponse`/`mascararCampoRequest`/`mascararCampoResponse` são caminhos separados por ponto (ex.: `'body.senha'`, `'usuario.token'`). A diferença entre remover e mascarar: `excluirCampoRequest`/`excluirCampoResponse` apagam o campo do log; `mascararCampoRequest`/`mascararCampoResponse` mantêm o campo presente, só substituindo o valor por uma máscara (`'***'` por padrão), útil quando você quer saber que o campo veio preenchido sem expor o valor.
 
-`excludeRequest`/`excludeResponse` têm prioridade sobre as listas de campos: se `true`, nem tenta aplicar remoção/redação, simplesmente não loga aquela parte.
+`excluirRequest`/`excluirResponse` têm prioridade sobre as listas de campos: se `true`, nem tenta aplicar remoção/mascaramento, simplesmente não loga aquela parte.
+
+Quando o response de sucesso é grande ou sensível (ex.: imagem/base64 de uma decodificação de QRCode), mas você ainda quer o log de erro completo, use `salvarResponseSucesso: false`:
+
+```javascript
+@LogCustom({
+  salvarResponseSucesso: false, // não loga o response quando a requisição for bem-sucedida (2xx); em erro, o response continua sendo logado
+})
+```
+
+Para não persistir no Mongo nenhum log (nem request, nem response) de requisições bem-sucedidas — o erro continua sempre sendo persistido — use `salvarSucesso: false`. Diferente de `salvarResponseSucesso`, essa opção não afeta o log de console:
+
+```javascript
+@LogCustom({
+  salvarSucesso: false, // não persiste no Mongo o log desta rota quando a requisição for bem-sucedida (2xx)
+})
+```
 
 #### Configuração dos níveis de logs ativados
 

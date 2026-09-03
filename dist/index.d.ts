@@ -15,7 +15,7 @@ export * from './log/log-sistema.entity';
 export * from './log/log-core.service';
 export * from './log/log-core.repository';
 export * from './log-request/log-request-core.module';
-export * from './log-request/decorator/log-exclude.decorator';
+export * from './log-request/decorator/log-custom.decorator';
 export * from './log-console/log-console-core.module';
 export * from './http/http-core.module';
 export * from './http/http-core.service';

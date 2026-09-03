@@ -20,6 +20,9 @@ let LogSistemaCoreEntity = class LogSistemaCoreEntity {
     statusCode;
     tipo;
     user;
+    systemName;
+    ip;
+    correlationId;
 };
 exports.LogSistemaCoreEntity = LogSistemaCoreEntity;
 __decorate([
@@ -54,6 +57,18 @@ __decorate([
     (0, mongoose_1.Prop)({ type: String }),
     __metadata("design:type", String)
 ], LogSistemaCoreEntity.prototype, "user", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: String }),
+    __metadata("design:type", String)
+], LogSistemaCoreEntity.prototype, "systemName", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: String }),
+    __metadata("design:type", String)
+], LogSistemaCoreEntity.prototype, "ip", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: String }),
+    __metadata("design:type", String)
+], LogSistemaCoreEntity.prototype, "correlationId", void 0);
 exports.LogSistemaCoreEntity = LogSistemaCoreEntity = __decorate([
     (0, mongoose_1.Schema)({ collection: 'log-sistema' })
 ], LogSistemaCoreEntity);

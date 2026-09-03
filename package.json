@@ -4,6 +4,7 @@
   "description": "Plugin NestJS compartilhado entre os microsserviços do Core Banking com autenticação/autorização, logs, tratamento de erro e integração com Guardião e webhooks.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "packageManager": "pnpm@11.22.0",
   "author": "",
   "private": true,
   "license": "UNLICENSED",

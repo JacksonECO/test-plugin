@@ -7,6 +7,7 @@ export class PluginCoreOption {
     this.log = new LogOptions(input?.log);
     this.webhook = new WebhookOptions(input?.webhook);
     this.guardian = new GuardianOptions(input?.guardian);
+    this.http = new HttpOptions(input?.http);
   }
   /**
    * Configurações de autorização.
@@ -27,6 +28,30 @@ export class PluginCoreOption {
    * Configurações do guardião.
    */
   guardian?: GuardianOptions;
+
+  /**
+   * Configurações do cliente HTTP usado pelo HttpCoreService.
+   */
+  http?: HttpOptions;
+}
+
+/**
+ * Representa as opções do cliente HTTP usado pelo HttpCoreService para todas as
+ * requisições de saída (webhooks, chamadas a serviços externos, etc).
+ */
+export class HttpOptions {
+  constructor(input?: HttpOptions) {
+    Object.assign(this, input);
+  }
+
+  /**
+   * Timeout, em milissegundos, aplicado a toda requisição feita pelo HttpCoreService.
+   * Sem isso, uma dependência de rede lenta/travada segura a requisição indefinidamente
+   * (o padrão do axios é `0`, ou seja, sem timeout algum).
+   *
+   * @default 30000
+   */
+  timeout: number = 30000;
 }
 
 /**

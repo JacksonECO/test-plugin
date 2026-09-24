@@ -1,19 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LogConsoleOptions = exports.TratamentoErroOptions = exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.PluginCoreOption = void 0;
+exports.LogConsoleOptions = exports.TratamentoErroOptions = exports.GuardianOptions = exports.WebhookOptions = exports.WebhookConfigOptions = exports.LogOptions = exports.ClientOptions = exports.UserOptions = exports.AuthorizationOption = exports.HttpOptions = exports.PluginCoreOption = void 0;
 class PluginCoreOption {
     constructor(input) {
         this.authorization = new AuthorizationOption(input?.authorization);
         this.log = new LogOptions(input?.log);
         this.webhook = new WebhookOptions(input?.webhook);
         this.guardian = new GuardianOptions(input?.guardian);
+        this.http = new HttpOptions(input?.http);
     }
     authorization;
     log;
     webhook;
     guardian;
+    http;
 }
 exports.PluginCoreOption = PluginCoreOption;
+class HttpOptions {
+    constructor(input) {
+        Object.assign(this, input);
+    }
+    timeout = 30000;
+}
+exports.HttpOptions = HttpOptions;
 class AuthorizationOption {
     constructor(input) {
         Object.assign(this, input);

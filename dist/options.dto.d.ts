@@ -4,6 +4,11 @@ export declare class PluginCoreOption {
     log?: LogOptions;
     webhook?: WebhookOptions;
     guardian?: GuardianOptions;
+    http?: HttpOptions;
+}
+export declare class HttpOptions {
+    constructor(input?: HttpOptions);
+    timeout: number;
 }
 export declare class AuthorizationOption {
     constructor(input?: AuthorizationOption);

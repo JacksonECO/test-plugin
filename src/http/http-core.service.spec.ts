@@ -3,6 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
 import { AuthServerServiceMock, mockAuthServerService } from 'test/mocks/services/auth-server.service.mock';
 import { InternalServerErrorException } from '@nestjs/common';
+import { HttpOptions } from 'src/options.dto';
 
 describe('HttpCoreService', () => {
   const urlBase = 'http://host.com';
@@ -22,6 +23,16 @@ describe('HttpCoreService', () => {
 
   it('deve estar definido', () => {
     expect(service).toBeDefined();
+  });
+
+  it('usa o timeout padrão de 30000ms quando nenhuma HttpOptions é fornecida', () => {
+    expect((service as any).axios.defaults.timeout).toBe(30000);
+  });
+
+  it('usa o timeout customizado quando fornecido via HttpOptions', () => {
+    const servicoComTimeoutCustomizado = new HttpCoreService(authServerService, { timeout: 5000 } as HttpOptions);
+
+    expect((servicoComTimeoutCustomizado as any).axios.defaults.timeout).toBe(5000);
   });
 
   it('deve usar o token do serviço', async () => {

@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,11 +19,15 @@ exports.HttpCoreService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = __importDefault(require("axios"));
 const auth_server_interface_1 = require("../auth-server/auth-server.interface");
+const constants_1 = require("../constants");
+const options_dto_1 = require("../options.dto");
 let HttpCoreService = class HttpCoreService {
     authServer;
+    httpOption;
     axios;
-    constructor(authServer) {
+    constructor(authServer, httpOption) {
         this.authServer = authServer;
+        this.httpOption = httpOption;
         this.axios = this.createInstance();
     }
     getUri(config) {
@@ -62,6 +69,7 @@ let HttpCoreService = class HttpCoreService {
     createInstance() {
         const axios = axios_1.default.create({
             headers: { 'Content-Type': 'application/json' },
+            timeout: this.httpOption?.timeout ?? 30000,
         });
         axios.interceptors.request.use(async (config) => {
             try {
@@ -97,6 +105,9 @@ let HttpCoreService = class HttpCoreService {
 exports.HttpCoreService = HttpCoreService;
 exports.HttpCoreService = HttpCoreService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [auth_server_interface_1.AuthServerService])
+    __param(1, (0, common_1.Optional)()),
+    __param(1, (0, common_1.Inject)(constants_1.CORE_HTTP_OPTION)),
+    __metadata("design:paramtypes", [auth_server_interface_1.AuthServerService,
+        options_dto_1.HttpOptions])
 ], HttpCoreService);
 //# sourceMappingURL=http-core.service.js.map

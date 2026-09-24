@@ -37,6 +37,10 @@ let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
                     provide: constants_1.CORE_GUARDIAN_OPTION,
                     useValue: new options_dto_1.GuardianOptions(option.guardian),
                 },
+                {
+                    provide: constants_1.CORE_HTTP_OPTION,
+                    useValue: new options_dto_1.HttpOptions(option.http),
+                },
             ],
             exports: [
                 constants_1.CORE_PLUGIN_OPTION,
@@ -44,6 +48,7 @@ let PluginCoreModule = PluginCoreModule_1 = class PluginCoreModule {
                 constants_1.CORE_LOG_OPTION,
                 constants_1.CORE_WEBHOOK_OPTION,
                 constants_1.CORE_GUARDIAN_OPTION,
+                constants_1.CORE_HTTP_OPTION,
             ],
         };
     }

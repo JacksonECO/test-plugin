@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import axiosGlobal, {
   AxiosError,
   AxiosInstance,
@@ -7,6 +7,8 @@ import axiosGlobal, {
   InternalAxiosRequestConfig,
 } from 'axios';
 import { AuthServerService } from 'src/auth-server/auth-server.interface';
+import { CORE_HTTP_OPTION } from 'src/constants';
+import { HttpOptions } from 'src/options.dto';
 
 @Injectable()
 export class HttpCoreService {
@@ -15,6 +17,7 @@ export class HttpCoreService {
   constructor(
     private authServer: AuthServerService,
     // private guardiao: GuardiaoCoreService,
+    @Optional() @Inject(CORE_HTTP_OPTION) private httpOption?: HttpOptions,
   ) {
     this.axios = this.createInstance();
   }
@@ -59,6 +62,7 @@ export class HttpCoreService {
   private createInstance(): AxiosInstance {
     const axios = axiosGlobal.create({
       headers: { 'Content-Type': 'application/json' },
+      timeout: this.httpOption?.timeout ?? 30000,
     });
 
     // Interceptor de Requisição

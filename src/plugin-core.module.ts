@@ -2,11 +2,19 @@ import { DynamicModule, Global } from '@nestjs/common';
 import {
   CORE_AUTHORIZATION_OPTION,
   CORE_GUARDIAN_OPTION,
+  CORE_HTTP_OPTION,
   CORE_LOG_OPTION,
   CORE_PLUGIN_OPTION,
   CORE_WEBHOOK_OPTION,
 } from './constants';
-import { AuthorizationOption, GuardianOptions, LogOptions, PluginCoreOption, WebhookOptions } from './options.dto';
+import {
+  AuthorizationOption,
+  GuardianOptions,
+  HttpOptions,
+  LogOptions,
+  PluginCoreOption,
+  WebhookOptions,
+} from './options.dto';
 
 /**
  * Módulo principal do plugin core.
@@ -44,6 +52,10 @@ export class PluginCoreModule {
           provide: CORE_GUARDIAN_OPTION,
           useValue: new GuardianOptions(option.guardian),
         },
+        {
+          provide: CORE_HTTP_OPTION,
+          useValue: new HttpOptions(option.http),
+        },
       ],
       exports: [
         CORE_PLUGIN_OPTION,
@@ -51,6 +63,7 @@ export class PluginCoreModule {
         CORE_LOG_OPTION,
         CORE_WEBHOOK_OPTION,
         CORE_GUARDIAN_OPTION,
+        CORE_HTTP_OPTION,
       ],
     };
   }

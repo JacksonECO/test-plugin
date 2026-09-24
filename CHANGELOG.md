@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/JacksonECO/test-plugin/compare/v1.0.0...v1.1.0) (2026-09-24)
+
+
+### Features
+
+* **http:** adicionar opções de configuração de timeout ([2139ff1](https://github.com/JacksonECO/test-plugin/commit/2139ff1adc13075a7c6a9c76ff0a4035da585b02))
+
 # 1.0.0 (2026-09-03)
 
 

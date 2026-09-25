@@ -88,6 +88,69 @@ describe('IdentificaErroCoreService', () => {
     expect(resultado.mensagem).toBe('Request failed with status code 400');
   });
 
+  it('extrai mensagem de convenção REST "erro"/"error" quando não há "mensagem"/"message"', () => {
+    const error = {
+      isAxiosError: true,
+      message: 'Request failed with status code 400',
+      response: { status: 400, data: { erro: 'Beneficiário não encontrado' } },
+    };
+
+    const resultado = service.identificar(error);
+
+    expect(resultado.mensagem).toBe('Beneficiário não encontrado');
+  });
+
+  it('extrai mensagem de payload no formato RFC 7807 (detail/title)', () => {
+    const error = {
+      isAxiosError: true,
+      message: 'Request failed with status code 400',
+      response: { status: 400, data: { title: 'Bad Request', detail: 'CPF inválido' } },
+    };
+
+    const resultado = service.identificar(error);
+
+    expect(resultado.mensagem).toBe('CPF inválido');
+  });
+
+  it('concatena array de mensagens do corpo de erro do axios (ex: filtro padrão do Nest)', () => {
+    const error = {
+      isAxiosError: true,
+      message: 'Request failed with status code 400',
+      response: {
+        status: 400,
+        data: { message: ['campo A é obrigatório', 'campo B é inválido'], error: 'Bad Request' },
+      },
+    };
+
+    const resultado = service.identificar(error);
+
+    expect(resultado.mensagem).toBe('campo A é obrigatório, campo B é inválido');
+  });
+
+  it('usa error.message quando o corpo de erro do axios é um formato não mapeado (ex: JD)', () => {
+    const error = {
+      isAxiosError: true,
+      message: 'Request failed with status code 500',
+      response: { status: 500, data: { jdCodigoErro: 'EDDA0076' } },
+    };
+
+    const resultado = service.identificar(error);
+
+    expect(resultado.mensagem).toBe('Request failed with status code 500');
+  });
+
+  it('usa error.message quando o corpo de erro do axios é uma string vazia', () => {
+    const error = {
+      isAxiosError: true,
+      message: 'Request failed with status code 500',
+      response: { status: 500, data: '' },
+    };
+
+    const resultado = service.identificar(error);
+
+    expect(resultado.mensagem).toBe('Request failed with status code 500');
+  });
+
   it('classifica AxiosError sem response (timeout/conexão) como inesperado com statusCode 500 via fallback genérico', () => {
     const error = {
       isAxiosError: true,

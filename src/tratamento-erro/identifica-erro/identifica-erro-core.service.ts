@@ -27,7 +27,7 @@ export class IdentificaErroCoreService {
     if (error?.isAxiosError && error.response) {
       const statusCode = error.response.status;
       return {
-        mensagem: error.response.data?.mensagem || error.response.data?.message || error.message,
+        mensagem: this.extrairMensagemAxios(error.response.data, error.message as string),
         statusCode,
         tipo: statusCode < 500 ? 'esperado' : 'inesperado',
         erroOriginal: error,
@@ -40,5 +40,28 @@ export class IdentificaErroCoreService {
       tipo: 'inesperado',
       erroOriginal: error,
     };
+  }
+
+  /**
+   * Tenta extrair uma mensagem legível do corpo de erro de uma API externa.
+   * Cobre os formatos mais comuns entre os parceiros integrados (campo solto
+   * "mensagem"/"message", convenção REST "error"/"erro", RFC 7807 "detail"/"title",
+   * ou body de texto puro). Cai no `fallback` (a mensagem genérica do axios) quando
+   * nenhum desses campos existe — formatos totalmente heterogêneos (ex: JD) continuam
+   * exigindo tratamento próprio no consumidor.
+   */
+  private extrairMensagemAxios(data: any, fallback: string): string {
+    if (data == null) {
+      return fallback;
+    }
+    if (typeof data === 'string') {
+      return data.trim() || fallback;
+    }
+
+    const candidato = data.mensagem ?? data.message ?? data.erro ?? data.error ?? data.detail ?? data.title;
+    if (Array.isArray(candidato)) {
+      return candidato.length ? candidato.join(', ') : fallback;
+    }
+    return candidato ?? fallback;
   }
 }

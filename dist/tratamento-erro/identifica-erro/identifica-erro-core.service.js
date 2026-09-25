@@ -36,7 +36,7 @@ let IdentificaErroCoreService = class IdentificaErroCoreService {
         if (error?.isAxiosError && error.response) {
             const statusCode = error.response.status;
             return {
-                mensagem: error.response.data?.mensagem || error.response.data?.message || error.message,
+                mensagem: this.extrairMensagemAxios(error.response.data, error.message),
                 statusCode,
                 tipo: statusCode < 500 ? 'esperado' : 'inesperado',
                 erroOriginal: error,
@@ -48,6 +48,19 @@ let IdentificaErroCoreService = class IdentificaErroCoreService {
             tipo: 'inesperado',
             erroOriginal: error,
         };
+    }
+    extrairMensagemAxios(data, fallback) {
+        if (data == null) {
+            return fallback;
+        }
+        if (typeof data === 'string') {
+            return data.trim() || fallback;
+        }
+        const candidato = data.mensagem ?? data.message ?? data.erro ?? data.error ?? data.detail ?? data.title;
+        if (Array.isArray(candidato)) {
+            return candidato.length ? candidato.join(', ') : fallback;
+        }
+        return candidato ?? fallback;
     }
 };
 exports.IdentificaErroCoreService = IdentificaErroCoreService;

@@ -26,37 +26,37 @@ export class HttpCoreService {
     return this.axios.getUri(config);
   }
   request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.request<T, R>(config);
+    return this.axios.request<T, R>(config) as Promise<R>;
   }
   get<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.get<T, R>(url, config);
+    return this.axios.get<T, R>(url, config) as Promise<R>;
   }
   delete<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.delete<T, R>(url, config);
+    return this.axios.delete<T, R>(url, config) as Promise<R>;
   }
   head<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.head<T, R>(url, config);
+    return this.axios.head<T, R>(url, config) as Promise<R>;
   }
   options<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.options<T, R>(url, config);
+    return this.axios.options<T, R>(url, config) as Promise<R>;
   }
   post<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.post<T, R>(url, data, config);
+    return this.axios.post<T, R>(url, data, config) as Promise<R>;
   }
   put<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.put<T, R>(url, data, config);
+    return this.axios.put<T, R>(url, data, config) as Promise<R>;
   }
   patch<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.patch<T, R>(url, data, config);
+    return this.axios.patch<T, R>(url, data, config) as Promise<R>;
   }
   postForm<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.postForm<T, R>(url, data, config);
+    return this.axios.postForm<T, R>(url, data, config) as Promise<R>;
   }
   putForm<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.putForm<T, R>(url, data, config);
+    return this.axios.putForm<T, R>(url, data, config) as Promise<R>;
   }
   patchForm<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return this.axios.patchForm<T, R>(url, data, config);
+    return this.axios.patchForm<T, R>(url, data, config) as Promise<R>;
   }
 
   private createInstance(): AxiosInstance {

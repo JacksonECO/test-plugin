@@ -36,6 +36,35 @@ describe('RegistraErroMongoCoreService', () => {
       });
     });
 
+    it('inclui statusCode e data do response do axios quando o erroOriginal é AxiosError', async () => {
+      const erroOriginal = {
+        isAxiosError: true,
+        name: 'AxiosError',
+        message: 'Request failed with status code 502',
+        stack: 'stack trace',
+        response: { status: 502, data: { jdCodigoErro: 'EDDA0076', descricao: 'Erro interno JD' } },
+      };
+
+      await service.registrar({
+        mensagem: 'Request failed with status code 502',
+        statusCode: 502,
+        tipo: 'inesperado',
+        erroOriginal,
+      });
+
+      expect(logRepository.salvarRequisicao).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: {
+            name: 'AxiosError',
+            message: 'Request failed with status code 502',
+            stack: 'stack trace',
+            statusCode: 502,
+            data: { jdCodigoErro: 'EDDA0076', descricao: 'Erro interno JD' },
+          },
+        }),
+      );
+    });
+
     it('usa tipoLog e mensagem do contexto quando fornecidos', async () => {
       await service.registrar(
         { mensagem: 'mensagem original', statusCode: 400, tipo: 'esperado', erroOriginal: new Error('x') },

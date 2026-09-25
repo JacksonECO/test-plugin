@@ -16,6 +16,7 @@ const identifica_erro_core_service_1 = require("./identifica-erro/identifica-err
 const notifica_erro_guardiao_core_service_1 = require("./notifica-erro-guardiao/notifica-erro-guardiao-core.service");
 const registra_erro_mongo_core_service_1 = require("./registra-erro-mongo/registra-erro-mongo-core.service");
 const tratar_erros_core_service_1 = require("./tratar-erros/tratar-erros-core.service");
+const ERRO_JA_TRATADO = Symbol('erroJaTratado');
 let TratamentoErroCoreService = TratamentoErroCoreService_1 = class TratamentoErroCoreService {
     identificaErroService;
     notificaErroGuardiaoService;
@@ -29,15 +30,28 @@ let TratamentoErroCoreService = TratamentoErroCoreService_1 = class TratamentoEr
         this.tratarErros = tratarErros;
     }
     async tratar(error, contexto) {
+        const jaTratado = this.estaTratado(error);
         const erroIdentificado = this.identificarComContexto(error, contexto);
-        await this.registrarComProtecao(erroIdentificado, contexto);
-        await this.notificaErroGuardiaoService.notificarSeNecessario(erroIdentificado, contexto);
-        this.tratarErros.lancar(erroIdentificado);
+        if (!jaTratado) {
+            await this.registrarComProtecao(erroIdentificado, contexto);
+            await this.notificaErroGuardiaoService.notificarSeNecessario(erroIdentificado, contexto);
+        }
+        try {
+            this.tratarErros.lancar(erroIdentificado);
+        }
+        catch (erroFinal) {
+            this.marcarComoTratado(erroFinal);
+            throw erroFinal;
+        }
     }
     async notificar(error, contexto) {
+        if (this.estaTratado(error)) {
+            return;
+        }
         const erroIdentificado = this.identificarComContexto(error, contexto);
         await this.registrarComProtecao(erroIdentificado, contexto);
         await this.notificaErroGuardiaoService.notificarSeNecessario(erroIdentificado, contexto);
+        this.marcarComoTratado(erroIdentificado.erroOriginal);
     }
     async notificarSempre(mensagem, contexto) {
         await this.registrarSempreComProtecao(mensagem, contexto);
@@ -65,6 +79,14 @@ let TratamentoErroCoreService = TratamentoErroCoreService_1 = class TratamentoEr
             return erroIdentificado;
         }
         return { ...erroIdentificado, mensagem: contexto.mensagem };
+    }
+    estaTratado(error) {
+        return typeof error === 'object' && error !== null && error[ERRO_JA_TRATADO] === true;
+    }
+    marcarComoTratado(error) {
+        if (typeof error === 'object' && error !== null) {
+            Object.defineProperty(error, ERRO_JA_TRATADO, { value: true, enumerable: false, configurable: true });
+        }
     }
 };
 exports.TratamentoErroCoreService = TratamentoErroCoreService;

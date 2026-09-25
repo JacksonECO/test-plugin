@@ -34,6 +34,9 @@ let RegistraErroMongoCoreService = class RegistraErroMongoCoreService {
                 name: erroOriginal?.name,
                 message: erroOriginal?.message,
                 stack: erroOriginal?.stack,
+                ...(erroOriginal?.isAxiosError && erroOriginal?.response
+                    ? { statusCode: erroOriginal.response.status, data: erroOriginal.response.data }
+                    : {}),
             },
         });
     }

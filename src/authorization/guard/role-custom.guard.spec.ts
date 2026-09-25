@@ -28,8 +28,8 @@ describe('RoleCustomGuard', () => {
 
   it('libera acesso para admin mesmo quando client.id não está configurado', async () => {
     const guard = buildGuard({ client: {} as any });
-    jest.spyOn(reflector, 'getAll').mockReturnValue([{ roles: ['algum-recurso'], mode: RoleMatchingMode.ALL }]);
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAll').mockReturnValue([{ roles: ['algum-recurso'], mode: RoleMatchingMode.ALL }]);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
 
     const request = {
       user: { realm_access: { roles: ['ROLE_ADMIN'] } },
@@ -42,8 +42,8 @@ describe('RoleCustomGuard', () => {
 
   it('nega acesso para usuário não-admin sem a role exigida quando client.id não está configurado', async () => {
     const guard = buildGuard({ client: {} as any });
-    jest.spyOn(reflector, 'getAll').mockReturnValue([{ roles: ['algum-recurso'], mode: RoleMatchingMode.ALL }]);
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAll').mockReturnValue([{ roles: ['algum-recurso'], mode: RoleMatchingMode.ALL }]);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
 
     const request = {
       user: { realm_access: { roles: [] }, resource_access: {} },
@@ -56,8 +56,8 @@ describe('RoleCustomGuard', () => {
 
   it('libera acesso para admin quando client.id está configurado normalmente', async () => {
     const guard = buildGuard({ client: { id: 'meu-client' } as any });
-    jest.spyOn(reflector, 'getAll').mockReturnValue([{ roles: ['algum-recurso'], mode: RoleMatchingMode.ALL }]);
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAll').mockReturnValue([{ roles: ['algum-recurso'], mode: RoleMatchingMode.ALL }]);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
 
     const request = {
       user: { realm_access: { roles: ['ROLE_ADMIN'] } },

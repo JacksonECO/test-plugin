@@ -1,5 +1,5 @@
 import { MessageGuardianCoreDTO } from './message-guardian-core.dto';
-import { GuardianOptions } from 'src/options.dto';
+import { GuardianOptions } from "../options.dto";
 export declare class GuardianCoreService {
     protected guardianOptions: GuardianOptions;
     private logger;

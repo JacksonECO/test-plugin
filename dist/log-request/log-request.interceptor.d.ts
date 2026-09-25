@@ -1,9 +1,9 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { ContextCoreService } from 'src/context/context-core.service';
-import { LogCoreService } from 'src/log/log-core.service';
-import { LogOptions } from 'src/options.dto';
+import { ContextCoreService } from "../context/context-core.service";
+import { LogCoreService } from "../log/log-core.service";
+import { LogOptions } from "../options.dto";
 export declare class LogRequestInterceptor implements NestInterceptor {
     private logService;
     private contextCoreService;

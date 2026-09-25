@@ -88,7 +88,7 @@ describe('AuthServerKeycloakService', () => {
       };
       mockAxios.onPost(urlAuth).reply(200, mockResponse);
 
-      const setToken = jest.spyOn(cache, 'set');
+      const setToken = vi.spyOn(cache, 'set');
 
       const token = await service.getTokenForce();
       expect(token).toBe('Bearer mock-access-token');
@@ -130,7 +130,7 @@ describe('AuthServerKeycloakService', () => {
       };
       mockAxios.onPost(urlAuth).reply(200, mockResponse);
 
-      const setToken = jest.spyOn(cache, 'set').mockImplementation(async () => {
+      const setToken = vi.spyOn(cache, 'set').mockImplementation(async () => {
         throw new Error();
       });
 
@@ -149,8 +149,8 @@ describe('AuthServerKeycloakService', () => {
         expires_in: 3600,
       };
       mockAxios.onPost(urlAuth).reply(200, mockResponse);
-      const getToken = jest.spyOn(cache, 'get');
-      const newToken = jest.spyOn(service, 'getTokenForce');
+      const getToken = vi.spyOn(cache, 'get');
+      const newToken = vi.spyOn(service, 'getTokenForce');
 
       const result = await service.getToken();
 
@@ -161,8 +161,8 @@ describe('AuthServerKeycloakService', () => {
 
     it('Deve retornar o token do cache quando existir', async () => {
       const token = 'mock-token';
-      const getToken = jest.spyOn(cache, 'get');
-      const newToken = jest.spyOn(service, 'getTokenForce');
+      const getToken = vi.spyOn(cache, 'get');
+      const newToken = vi.spyOn(service, 'getTokenForce');
 
       await cache.set(AuthServerKeycloakService.keyAuthCache, token);
 

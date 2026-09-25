@@ -23,8 +23,8 @@ describe('WebhookCoreService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.restoreAllMocks();
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
     mockAxios.reset();
   });
 
@@ -290,13 +290,11 @@ describe('WebhookCoreService', () => {
         .reply(200, mockResponse1);
 
       service['http'] = undefined; // Forçar um erro especifico
-      jest
-        .spyOn(WebhookCoreService.prototype, 'getWebhookUrl')
-        .mockReturnValue(
-          Promise.resolve([
-            { url: 'http://example.com/webhook1', evento: event, agencia: agencia } as unknown as WebhookCoreModel,
-          ]),
-        );
+      vi.spyOn(WebhookCoreService.prototype, 'getWebhookUrl').mockReturnValue(
+        Promise.resolve([
+          { url: 'http://example.com/webhook1', evento: event, agencia: agencia } as unknown as WebhookCoreModel,
+        ]),
+      );
 
       await expect(service.send(event, agencia, body, methodHttp)).rejects.toThrow(WebhookErrorException);
     });

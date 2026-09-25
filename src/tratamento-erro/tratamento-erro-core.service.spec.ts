@@ -1,3 +1,4 @@
+import type { Mocked } from 'vitest';
 import { InternalServerErrorException } from '@nestjs/common';
 import { TratamentoErroCoreService } from './tratamento-erro-core.service';
 import { IdentificaErroCoreService } from './identifica-erro/identifica-erro-core.service';
@@ -7,10 +8,10 @@ import { TratarErrosCoreService } from './tratar-erros/tratar-erros-core.service
 
 describe('TratamentoErroCoreService', () => {
   let service: TratamentoErroCoreService;
-  let identificaErroService: jest.Mocked<IdentificaErroCoreService>;
-  let notificaErroGuardiaoService: jest.Mocked<NotificaErroGuardiaoCoreService>;
-  let registraErroMongoService: jest.Mocked<RegistraErroMongoCoreService>;
-  let tratarErros: jest.Mocked<TratarErrosCoreService>;
+  let identificaErroService: Mocked<IdentificaErroCoreService>;
+  let notificaErroGuardiaoService: Mocked<NotificaErroGuardiaoCoreService>;
+  let registraErroMongoService: Mocked<RegistraErroMongoCoreService>;
+  let tratarErros: Mocked<TratarErrosCoreService>;
 
   const erroIdentificadoBase = {
     mensagem: 'falha de conexão',
@@ -20,14 +21,14 @@ describe('TratamentoErroCoreService', () => {
   };
 
   beforeEach(() => {
-    identificaErroService = { identificar: jest.fn().mockReturnValue(erroIdentificadoBase) } as any;
+    identificaErroService = { identificar: vi.fn().mockReturnValue(erroIdentificadoBase) } as any;
     notificaErroGuardiaoService = {
-      notificarSeNecessario: jest.fn(),
-      notificarSempre: jest.fn(),
+      notificarSeNecessario: vi.fn(),
+      notificarSempre: vi.fn(),
     } as any;
-    registraErroMongoService = { registrar: jest.fn(), registrarSempre: jest.fn() } as any;
+    registraErroMongoService = { registrar: vi.fn(), registrarSempre: vi.fn() } as any;
     tratarErros = {
-      lancar: jest.fn().mockImplementation(() => {
+      lancar: vi.fn().mockImplementation(() => {
         throw new InternalServerErrorException('falha de conexão');
       }),
     } as any;

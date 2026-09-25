@@ -17,7 +17,7 @@ describe('HttpCoreService', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     mockAxios.reset();
   });
 
@@ -57,7 +57,7 @@ describe('HttpCoreService', () => {
   ])('resposta com status $status não deve tentar obter um novo token', async ({ status }) => {
     const req = mockAxios.onGet(urlBase).reply(status, {});
 
-    const getTokenForce = jest.spyOn(authServerService, 'getTokenForce');
+    const getTokenForce = vi.spyOn(authServerService, 'getTokenForce');
 
     await service.get(urlBase).catch(() => {});
 
@@ -70,7 +70,7 @@ describe('HttpCoreService', () => {
   it('resposta com status 401 deve tentar obter um novo token', async () => {
     const req = mockAxios.onGet(urlBase).reply(401, {});
 
-    const getTokenForce = jest.spyOn(authServerService, 'getTokenForce');
+    const getTokenForce = vi.spyOn(authServerService, 'getTokenForce');
 
     await service.get(urlBase).catch(() => {});
 
@@ -83,7 +83,7 @@ describe('HttpCoreService', () => {
   it('tratar erro ao tentar obter um novo token', async () => {
     const req = mockAxios.onGet(urlBase).reply(401, {});
 
-    const getTokenForce = jest.spyOn(authServerService, 'getTokenForce').mockImplementation(() => {
+    const getTokenForce = vi.spyOn(authServerService, 'getTokenForce').mockImplementation(() => {
       throw new InternalServerErrorException('Erro ao obter token');
     });
 

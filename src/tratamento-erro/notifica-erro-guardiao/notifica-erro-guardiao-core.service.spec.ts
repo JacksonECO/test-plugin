@@ -1,15 +1,16 @@
+import type { Mocked } from 'vitest';
 import { NotificaErroGuardiaoCoreService } from './notifica-erro-guardiao-core.service';
 import { GuardianCoreService } from '../../guardian/guardian-core.service';
 import { TratamentoErroLogRepository } from '../interfaces/tratamento-erro-log.repository';
 
 describe('NotificaErroGuardiaoCoreService', () => {
   let service: NotificaErroGuardiaoCoreService;
-  let guardianCoreService: jest.Mocked<GuardianCoreService>;
-  let logRepository: jest.Mocked<TratamentoErroLogRepository>;
+  let guardianCoreService: Mocked<GuardianCoreService>;
+  let logRepository: Mocked<TratamentoErroLogRepository>;
 
   beforeEach(() => {
-    guardianCoreService = { enviarErro: jest.fn() } as any;
-    logRepository = { salvarRequisicao: jest.fn() };
+    guardianCoreService = { enviarErro: vi.fn() } as any;
+    logRepository = { salvarRequisicao: vi.fn() };
     service = new NotificaErroGuardiaoCoreService(guardianCoreService, logRepository);
   });
 

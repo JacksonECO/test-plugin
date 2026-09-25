@@ -1,9 +1,9 @@
-import { WebhookConfigOptions, WebhookOptions } from 'src/options.dto';
+import { WebhookConfigOptions, WebhookOptions } from "../options.dto";
 import { WebhookCoreModel } from './webhook.model';
-import { HttpCoreService } from 'src/http/http-core.service';
+import { HttpCoreService } from "../http/http-core.service";
 import { WebhookExceptionDTO } from './webhook-core.exception';
 import { Method } from 'axios';
-import { GuardianCoreService } from 'src/guardian/guardian-core.service';
+import { GuardianCoreService } from "../guardian/guardian-core.service";
 export declare class WebhookCoreService {
     private webhookOption;
     private http;

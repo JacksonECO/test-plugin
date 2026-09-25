@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
+import { RequestInfoCoreService } from "../request-info/request-info-core.service";
 export declare class HttpCoreRequestService {
     private requestInfo;
     private axios;

@@ -15,15 +15,15 @@ describe('AuthCustomGuard', () => {
   let authServerService: AuthServerService;
 
   const mockReflector = {
-    getAllAndOverride: jest.fn().mockReturnValue(false),
+    getAllAndOverride: vi.fn().mockReturnValue(false),
   };
 
   const mockExecutionContext = {
-    switchToHttp: jest.fn().mockReturnValue({
-      getRequest: jest.fn(),
+    switchToHttp: vi.fn().mockReturnValue({
+      getRequest: vi.fn(),
     }),
-    getHandler: jest.fn(),
-    getClass: jest.fn(),
+    getHandler: vi.fn(),
+    getClass: vi.fn(),
   } as unknown as ExecutionContext;
 
   beforeEach(async () => {
@@ -36,19 +36,19 @@ describe('AuthCustomGuard', () => {
     reflector = module.get<Reflector>(Reflector);
     authServerService = module.get<AuthServerService>(AuthServerService);
 
-    jest.spyOn(authServerService, 'validateToken').mockImplementation((token: string) => {
+    vi.spyOn(authServerService, 'validateToken').mockImplementation((token: string) => {
       if (token === 'invalid.jwt.token') {
         return Promise.resolve([false, {}]);
       }
       return Promise.resolve([true, { email: 'user@example.com' }]);
     });
-    jest
-      .spyOn(mockExecutionContext.switchToHttp(), 'getRequest')
-      .mockReturnValue({ headers: { authorization: tokenValid } });
+    vi.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({
+      headers: { authorization: tokenValid },
+    });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('deve estar definido', () => {
@@ -56,23 +56,23 @@ describe('AuthCustomGuard', () => {
   });
 
   it('deve permitir acesso a rotas não protegidas', async () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(true);
-    jest.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: {} });
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(true);
+    vi.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: {} });
 
     const result = await guard.canActivate(mockExecutionContext);
     expect(result).toBe(true);
   });
 
   it('deve permitir acesso a rotas com user opcional não informado', async () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
-    jest.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: {} });
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    vi.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: {} });
 
     const result = await guard.canActivate(mockExecutionContext);
     expect(result).toBe(true);
   });
 
   it('deve permitir acesso a rotas com user opcional, sendo informado deve ser extraído suas informações', async () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
 
     const result = await guard.canActivate(mockExecutionContext);
     expect(result).toBe(true);
@@ -84,8 +84,8 @@ describe('AuthCustomGuard', () => {
   });
 
   it('deve permitir acesso a rotas com user opcional, mesmo com JWT inválido', async () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
-    jest.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    vi.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({
       headers: { authorization: 'Bearer invalid.jwt.token' },
     });
 
@@ -95,13 +95,13 @@ describe('AuthCustomGuard', () => {
   });
 
   it('deve lançar UnauthorizedException se o JWT estiver ausente em rotas protegidas', async () => {
-    jest.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: {} });
+    vi.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({ headers: {} });
 
     await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
   });
 
   it('deve lançar UnauthorizedException se o JWT for inválido', async () => {
-    jest.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({
+    vi.spyOn(mockExecutionContext.switchToHttp(), 'getRequest').mockReturnValue({
       headers: { authorization: 'Bearer invalid.jwt.token' },
     });
 

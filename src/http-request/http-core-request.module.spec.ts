@@ -24,8 +24,8 @@ describe('HttpCoreRequestModule', () => {
     expect(module).toBeDefined();
   });
 
-  it('deve prover corretamente', () => {
-    const service = moduleTest.get<HttpCoreRequestService>(HttpCoreRequestService);
+  it('deve prover corretamente', async () => {
+    const service = await moduleTest.resolve<HttpCoreRequestService>(HttpCoreRequestService);
     expect(service).toBeDefined();
 
     const paramUndefined = moduleTest.get('default-undefined');

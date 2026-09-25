@@ -8,7 +8,7 @@ import { TratamentoErroOptions } from '../options.dto';
 
 describe('TratamentoErroCoreModule', () => {
   it('resolve TratamentoErroCoreService com as dependências configuradas via forRoot', async () => {
-    const fakeLogRepository = { salvarRequisicao: jest.fn() };
+    const fakeLogRepository = { salvarRequisicao: vi.fn() };
 
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -35,7 +35,7 @@ describe('TratamentoErroCoreModule', () => {
   it('não exporta os serviços internos, só a fachada', () => {
     const dynamicModule = TratamentoErroCoreModule.forRoot({} as unknown as TratamentoErroOptions, {
       provide: CORE_TRATAMENTO_ERRO_LOG_REPOSITORY,
-      useValue: { salvarRequisicao: jest.fn() },
+      useValue: { salvarRequisicao: vi.fn() },
     });
 
     expect(dynamicModule.exports).toEqual([TratamentoErroCoreService]);

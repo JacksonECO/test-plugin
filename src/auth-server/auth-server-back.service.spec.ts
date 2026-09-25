@@ -111,7 +111,7 @@ describe('AuthServerBackService', () => {
       };
       mockAxios.onPost(options.authServerUrl + '/system-user/auth').reply(200, mockResponse);
 
-      const setToken = jest.spyOn(cache, 'set');
+      const setToken = vi.spyOn(cache, 'set');
 
       const token = await service.getTokenForce();
       expect(token).toBe('Bearer mock-access-token');
@@ -164,7 +164,7 @@ describe('AuthServerBackService', () => {
       };
       mockAxios.onPost(options.authServerUrl + '/system-user/auth').reply(200, mockResponse);
 
-      const setToken = jest.spyOn(cache, 'set').mockImplementation(async () => {
+      const setToken = vi.spyOn(cache, 'set').mockImplementation(async () => {
         throw new Error();
       });
 
@@ -185,8 +185,8 @@ describe('AuthServerBackService', () => {
         },
       };
       mockAxios.onPost(options.authServerUrl + '/system-user/auth').reply(200, mockResponse);
-      const getToken = jest.spyOn(cache, 'get');
-      const newToken = jest.spyOn(service, 'getTokenForce');
+      const getToken = vi.spyOn(cache, 'get');
+      const newToken = vi.spyOn(service, 'getTokenForce');
 
       const result = await service.getToken();
 
@@ -197,8 +197,8 @@ describe('AuthServerBackService', () => {
 
     it('Deve retornar o token do cache quando existir', async () => {
       const token = 'mock-token';
-      const getToken = jest.spyOn(cache, 'get');
-      const newToken = jest.spyOn(service, 'getTokenForce');
+      const getToken = vi.spyOn(cache, 'get');
+      const newToken = vi.spyOn(service, 'getTokenForce');
 
       await cache.set(AuthServerBackService.keyAuthCache, token);
 

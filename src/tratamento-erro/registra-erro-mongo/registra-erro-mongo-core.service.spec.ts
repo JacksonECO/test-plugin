@@ -1,13 +1,14 @@
+import type { Mocked } from 'vitest';
 import { RegistraErroMongoCoreService } from './registra-erro-mongo-core.service';
 import { TratamentoErroOptions } from '../../options.dto';
 import { TratamentoErroLogRepository } from '../interfaces/tratamento-erro-log.repository';
 
 describe('RegistraErroMongoCoreService', () => {
   let service: RegistraErroMongoCoreService;
-  let logRepository: jest.Mocked<TratamentoErroLogRepository>;
+  let logRepository: Mocked<TratamentoErroLogRepository>;
 
   beforeEach(() => {
-    logRepository = { salvarRequisicao: jest.fn() };
+    logRepository = { salvarRequisicao: vi.fn() };
     service = new RegistraErroMongoCoreService(logRepository, new TratamentoErroOptions());
   });
 

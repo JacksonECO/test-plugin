@@ -53,7 +53,7 @@ describe('LogCoreRepository', () => {
   });
 
   afterEach(async () => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     mockAxios.reset();
   });
 
@@ -77,7 +77,7 @@ describe('LogCoreRepository', () => {
         user: 'test@example.com',
       };
 
-      const saveMock = jest.spyOn(model.prototype, 'save');
+      const saveMock = vi.spyOn(model.prototype, 'save');
       mockAxios.onGet(urlBase).reply(200, mockAuthorizationOption());
 
       try {
@@ -112,7 +112,7 @@ describe('LogCoreRepository', () => {
       user: 'test@example.com',
     };
 
-    const saveMock = jest.spyOn(model.prototype, 'save');
+    const saveMock = vi.spyOn(model.prototype, 'save');
 
     try {
       dto.response = await httpRequest.get(urlBase);

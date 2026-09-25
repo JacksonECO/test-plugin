@@ -1,8 +1,8 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { RequestInfoCoreService } from 'src/request-info/request-info-core.service';
-import { LogConsoleOptions } from 'src/options.dto';
+import { RequestInfoCoreService } from "../request-info/request-info-core.service";
+import { LogConsoleOptions } from "../options.dto";
 export declare class LogConsoleInterceptor implements NestInterceptor {
     private readonly requestInfoCoreService;
     private readonly reflector;

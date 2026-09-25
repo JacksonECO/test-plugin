@@ -31,11 +31,11 @@ describe('LogConsoleCoreModule', () => {
 
   afterEach(async () => {
     await app?.close();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('intercepta a request logando em verbose quando importado direto (sem forRoot)', async () => {
-    const verboseSpy = jest.spyOn(Logger.prototype, 'verbose').mockImplementation();
+    const verboseSpy = vi.spyOn(Logger.prototype, 'verbose').mockImplementation(() => undefined);
     app = await buildApp([LogConsoleCoreModule]);
 
     await request(app.getHttpServer()).get('/teste').expect(200);
@@ -46,8 +46,8 @@ describe('LogConsoleCoreModule', () => {
   });
 
   it('mantém o interceptor ativo e aplica as opções do forRoot (nível e tag)', async () => {
-    const logSpy = jest.spyOn(Logger.prototype, 'log').mockImplementation();
-    const verboseSpy = jest.spyOn(Logger.prototype, 'verbose').mockImplementation();
+    const logSpy = vi.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
+    const verboseSpy = vi.spyOn(Logger.prototype, 'verbose').mockImplementation(() => undefined);
     app = await buildApp([LogConsoleCoreModule.forRoot({ nivel: 'log', contexto: 'MeuLog' } as LogConsoleOptions)]);
 
     await request(app.getHttpServer()).get('/teste').expect(200);
@@ -57,7 +57,7 @@ describe('LogConsoleCoreModule', () => {
   });
 
   it('não loga as rotas configuradas em rotasIgnoradas', async () => {
-    const verboseSpy = jest.spyOn(Logger.prototype, 'verbose').mockImplementation();
+    const verboseSpy = vi.spyOn(Logger.prototype, 'verbose').mockImplementation(() => undefined);
     app = await buildApp([LogConsoleCoreModule.forRoot({ rotasIgnoradas: ['/teste'] } as LogConsoleOptions)]);
 
     await request(app.getHttpServer()).get('/teste').expect(200);

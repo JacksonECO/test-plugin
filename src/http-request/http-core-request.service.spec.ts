@@ -22,7 +22,7 @@ describe('HttpCoreRequestService', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     mockAxios.reset();
   });
 
@@ -53,7 +53,7 @@ describe('HttpCoreRequestService', () => {
   ])('resposta com status $status não deve tentar obter um novo token', async ({ status }) => {
     const req = mockAxios.onGet(urlBase).reply(status, {});
 
-    const getTokenForce = jest.spyOn(authServerService, 'getTokenForce');
+    const getTokenForce = vi.spyOn(authServerService, 'getTokenForce');
 
     await service.get(urlBase).catch(() => {});
 

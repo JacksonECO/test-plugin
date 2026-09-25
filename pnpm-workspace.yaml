@@ -1,6 +1,10 @@
 allowBuilds:
   '@nestjs/core': true
+  '@parcel/watcher': false
   '@swc/core': true
+  unrs-resolver: false
+minimumReleaseAgeExclude:
+  - vite@8.3.1
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@swc/core'

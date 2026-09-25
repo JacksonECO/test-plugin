@@ -1,5 +1,5 @@
 import { Cache } from 'cache-manager';
-import { AuthorizationOption } from 'src/options.dto';
+import { AuthorizationOption } from "../options.dto";
 export declare abstract class AuthServerService {
     protected authorizationOption: AuthorizationOption;
     protected cacheManager: Cache;

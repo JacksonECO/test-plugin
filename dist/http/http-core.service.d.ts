@@ -1,6 +1,6 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { AuthServerService } from 'src/auth-server/auth-server.interface';
-import { HttpOptions } from 'src/options.dto';
+import { AuthServerService } from "../auth-server/auth-server.interface";
+import { HttpOptions } from "../options.dto";
 export declare class HttpCoreService {
     private authServer;
     private httpOption?;

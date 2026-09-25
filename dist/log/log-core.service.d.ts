@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { LogCoreRepository } from './log-core.repository';
 import { LogSistemaCreateModel, LogSistemaRequestModel } from './log-core.model';
-import { ContextCoreService } from 'src/context/context-core.module';
-import { LogOptions } from 'src/options.dto';
+import { ContextCoreService } from "../context/context-core.module";
+import { LogOptions } from "../options.dto";
 export declare const CONTEXT_CORRELATION_ID = "correlationId";
 export declare class LogCoreService {
     protected repository: LogCoreRepository;

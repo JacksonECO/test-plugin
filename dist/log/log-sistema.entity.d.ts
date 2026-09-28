@@ -13,19 +13,7 @@ export declare class LogSistemaCoreEntity {
 }
 export declare const LogSistemaCoreSchema: import('mongoose').Schema<
   LogSistemaCoreEntity,
-  import('mongoose').Model<
-    LogSistemaCoreEntity,
-    any,
-    any,
-    any,
-    import('mongoose').Document<unknown, any, LogSistemaCoreEntity, any, {}> &
-      LogSistemaCoreEntity & {
-        _id: import('mongoose').Types.ObjectId;
-      } & {
-        __v: number;
-      },
-    any
-  >,
+  import('mongoose').Model<LogSistemaCoreEntity, any, any, any, any, any, LogSistemaCoreEntity>,
   {},
   {},
   {},
@@ -35,13 +23,288 @@ export declare const LogSistemaCoreSchema: import('mongoose').Schema<
   import('mongoose').Document<
     unknown,
     {},
-    import('mongoose').FlatRecord<LogSistemaCoreEntity>,
-    {},
+    LogSistemaCoreEntity,
+    {
+      id: string;
+    },
     import('mongoose').DefaultSchemaOptions
   > &
-    import('mongoose').FlatRecord<LogSistemaCoreEntity> & {
-      _id: import('mongoose').Types.ObjectId;
-    } & {
-      __v: number;
-    }
+    Omit<
+      LogSistemaCoreEntity & {
+        _id: import('mongoose').Types.ObjectId;
+      } & {
+        __v: number;
+      },
+      'id'
+    > &
+    import('mongoose').HydratedDocumentOverrides<{
+      id: string;
+    }>,
+  {
+    dataOcorrencia?: import('mongoose').SchemaDefinitionProperty<
+      Date,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    message?: import('mongoose').SchemaDefinitionProperty<
+      string,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    request?: import('mongoose').SchemaDefinitionProperty<
+      any,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    response?: import('mongoose').SchemaDefinitionProperty<
+      any,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    info?: import('mongoose').SchemaDefinitionProperty<
+      any,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    statusCode?: import('mongoose').SchemaDefinitionProperty<
+      number,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    tipo?: import('mongoose').SchemaDefinitionProperty<
+      string,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    user?: import('mongoose').SchemaDefinitionProperty<
+      string,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    systemName?: import('mongoose').SchemaDefinitionProperty<
+      string,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    ip?: import('mongoose').SchemaDefinitionProperty<
+      string,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+    correlationId?: import('mongoose').SchemaDefinitionProperty<
+      string,
+      LogSistemaCoreEntity,
+      import('mongoose').Document<
+        unknown,
+        {},
+        LogSistemaCoreEntity,
+        {
+          id: string;
+        },
+        import('mongoose').DefaultSchemaOptions
+      > &
+        Omit<
+          LogSistemaCoreEntity & {
+            _id: import('mongoose').Types.ObjectId;
+          } & {
+            __v: number;
+          },
+          'id'
+        > &
+        import('mongoose').HydratedDocumentOverrides<{
+          id: string;
+        }>
+    >;
+  },
+  LogSistemaCoreEntity
 >;
